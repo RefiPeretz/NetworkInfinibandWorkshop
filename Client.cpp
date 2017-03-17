@@ -41,7 +41,10 @@ int main(int argc, char** argv)
 	t2+=end.tv_sec+(end.tv_usec/1000000.0);
 	printf("received - %c\n", ack);
 	//calculate and print mean rtt
-	printf("RTT = %g ms\n",(t2-t1)/100);
+	double rtt = (t2-t1)/100;
+	printf("RTT = %g ms\n", rtt);
+	printf("Packet Rate = 1 / %g = %g byte / ms \n", rtt, 1000/rtt);
+
 	delete stream;
   }
 
