@@ -3,14 +3,17 @@ project(ex1v2)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp Stream.cpp Stream.hpp Connector.cpp Connector.hpp
+set(SOURCE_FILES Stream.cpp Stream.hpp Connector.cpp Connector.hpp
     Acceptor.cpp Acceptor.hpp)
 add_executable(ex1v2 ${SOURCE_FILES})
 
+set(SSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp Acceptor.hpp SingleStreamTcpServer.cpp)
+add_executable(SingleStreamTcpServer ${SSTS})
 
-set(SERVER Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp Acceptor.hpp Server.cpp)
-add_executable(server ${SERVER})
+set(SSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
+    Acceptor.hpp SingleStreamTcpClient.cpp)
+add_executable(SingleStreamTcpClient ${SSTC})
 
-set(CLIENT Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
-    Acceptor.hpp Client.cpp)
-add_executable(client ${CLIENT})
+set(MSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
+    Acceptor.hpp MultiStreamSizeClient.cpp)
+add_executable(MultiStreamSizeClient ${MSTS})
