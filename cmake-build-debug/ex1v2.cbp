@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="ex1v2"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="client">
+				<Option output="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 client"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="client/fast">
+				<Option output="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 client/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="server">
+				<Option output="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 server"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="server/fast">
+				<Option output="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 server/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ex1v2">
+				<Option output="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/ex1v2" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 ex1v2"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ex1v2/fast">
+				<Option output="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/ex1v2" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 ex1v2/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/ex1v2/Acceptor.cpp">
+			<Option target="client"/>
+			<Option target="server"/>
+			<Option target="ex1v2"/>
+		</Unit>
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/ex1v2/Acceptor.hpp">
+			<Option target="client"/>
+			<Option target="server"/>
+			<Option target="ex1v2"/>
+		</Unit>
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/ex1v2/Client.cpp">
+			<Option target="client"/>
+		</Unit>
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/ex1v2/Connector.cpp">
+			<Option target="client"/>
+			<Option target="server"/>
+			<Option target="ex1v2"/>
+		</Unit>
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/ex1v2/Connector.hpp">
+			<Option target="client"/>
+			<Option target="server"/>
+			<Option target="ex1v2"/>
+		</Unit>
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/ex1v2/Server.cpp">
+			<Option target="server"/>
+		</Unit>
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/ex1v2/Stream.cpp">
+			<Option target="client"/>
+			<Option target="server"/>
+			<Option target="ex1v2"/>
+		</Unit>
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/ex1v2/Stream.hpp">
+			<Option target="client"/>
+			<Option target="server"/>
+			<Option target="ex1v2"/>
+		</Unit>
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/ex1v2/main.cpp">
+			<Option target="ex1v2"/>
+		</Unit>
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/ex1v2/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

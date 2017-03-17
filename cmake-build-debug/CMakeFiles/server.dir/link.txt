@@ -1,0 +1,1 @@
+/usr/bin/c++   -g   CMakeFiles/server.dir/Stream.cpp.o CMakeFiles/server.dir/Connector.cpp.o CMakeFiles/server.dir/Acceptor.cpp.o CMakeFiles/server.dir/Server.cpp.o  -o server 
