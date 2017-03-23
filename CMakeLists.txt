@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.6)
 project(ex1v2)
-
+SET(LDFLAGS "-pthread")
 set(CMAKE_CXX_STANDARD 11)
+
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -Wall -Wextra")
 
 set(SSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp Acceptor.hpp SingleStreamTcpServer.cpp)
 add_executable(SingleStreamTcpServer ${SSTS})
@@ -17,3 +19,7 @@ add_executable(MultiStreamTcpClient ${MSTS})
 set(VSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
     Acceptor.hpp VaryingSizeTcpClient.cpp)
 add_executable(VaryingSizeTcpClient ${VSTC})
+
+set(MTTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
+    Acceptor.hpp MultiThreadTcpServer.cpp)
+add_executable(MultiThreadTcpServer ${MTTS})
