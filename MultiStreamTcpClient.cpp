@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 		//child process
 		++counter;
 		printf("child process: counter=%d, clientNum=%d\n", counter, clientNum);
-		client("localhost", 8081);
+		client("localhost", 8080);
 	  }
 	  else if (pid < 0)
 	  {

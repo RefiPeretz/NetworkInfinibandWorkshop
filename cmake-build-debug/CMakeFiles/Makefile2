@@ -45,128 +45,202 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /mnt/sdb1/APPS/clion-2016.1.1/bin/cmake/bin/cmake
+CMAKE_COMMAND = /home/raphael/clion-2016.3.4/bin/cmake/bin/cmake
 
 # The command to remove a file.
-RM = /mnt/sdb1/APPS/clion-2016.1.1/bin/cmake/bin/cmake -E remove -f
+RM = /home/raphael/clion-2016.3.4/bin/cmake/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/sdb1/Projects/H_CCW17/ex1v2
+CMAKE_SOURCE_DIR = /home/raphael/H_CCW17
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug
+CMAKE_BINARY_DIR = /home/raphael/H_CCW17/cmake-build-debug
 
 #=============================================================================
-# Target rules for target CMakeFiles/client.dir
+# Target rules for target CMakeFiles/MultiThreadTcpServer.dir
 
 # All Build rule for target.
-CMakeFiles/client.dir/all:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/depend
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5 "Built target client"
-.PHONY : CMakeFiles/client.dir/all
+CMakeFiles/MultiThreadTcpServer.dir/all:
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/depend
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/raphael/H_CCW17/cmake-build-debug/CMakeFiles --progress-num=6,7,8,9,10 "Built target MultiThreadTcpServer"
+.PHONY : CMakeFiles/MultiThreadTcpServer.dir/all
 
 # Include target in all.
-all: CMakeFiles/client.dir/all
+all: CMakeFiles/MultiThreadTcpServer.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/client.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/CMakeFiles 5
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/client.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/client.dir/rule
+CMakeFiles/MultiThreadTcpServer.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles 5
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/MultiThreadTcpServer.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/MultiThreadTcpServer.dir/rule
 
 # Convenience name for target.
-client: CMakeFiles/client.dir/rule
+MultiThreadTcpServer: CMakeFiles/MultiThreadTcpServer.dir/rule
 
-.PHONY : client
-
-# clean rule for target.
-CMakeFiles/client.dir/clean:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/clean
-.PHONY : CMakeFiles/client.dir/clean
+.PHONY : MultiThreadTcpServer
 
 # clean rule for target.
-clean: CMakeFiles/client.dir/clean
+CMakeFiles/MultiThreadTcpServer.dir/clean:
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/clean
+.PHONY : CMakeFiles/MultiThreadTcpServer.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/MultiThreadTcpServer.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/server.dir
+# Target rules for target CMakeFiles/VaryingSizeTcpClient.dir
 
 # All Build rule for target.
-CMakeFiles/server.dir/all:
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/depend
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/CMakeFiles --progress-num=11,12,13,14,15 "Built target server"
-.PHONY : CMakeFiles/server.dir/all
+CMakeFiles/VaryingSizeTcpClient.dir/all:
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/depend
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/raphael/H_CCW17/cmake-build-debug/CMakeFiles --progress-num=21,22,23,24,25 "Built target VaryingSizeTcpClient"
+.PHONY : CMakeFiles/VaryingSizeTcpClient.dir/all
 
 # Include target in all.
-all: CMakeFiles/server.dir/all
+all: CMakeFiles/VaryingSizeTcpClient.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/server.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/CMakeFiles 5
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/server.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/server.dir/rule
+CMakeFiles/VaryingSizeTcpClient.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles 5
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/VaryingSizeTcpClient.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/VaryingSizeTcpClient.dir/rule
 
 # Convenience name for target.
-server: CMakeFiles/server.dir/rule
+VaryingSizeTcpClient: CMakeFiles/VaryingSizeTcpClient.dir/rule
 
-.PHONY : server
-
-# clean rule for target.
-CMakeFiles/server.dir/clean:
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/clean
-.PHONY : CMakeFiles/server.dir/clean
+.PHONY : VaryingSizeTcpClient
 
 # clean rule for target.
-clean: CMakeFiles/server.dir/clean
+CMakeFiles/VaryingSizeTcpClient.dir/clean:
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/clean
+.PHONY : CMakeFiles/VaryingSizeTcpClient.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/VaryingSizeTcpClient.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/ex1v2.dir
+# Target rules for target CMakeFiles/MultiStreamTcpClient.dir
 
 # All Build rule for target.
-CMakeFiles/ex1v2.dir/all:
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/depend
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/CMakeFiles --progress-num=6,7,8,9,10 "Built target ex1v2"
-.PHONY : CMakeFiles/ex1v2.dir/all
+CMakeFiles/MultiStreamTcpClient.dir/all:
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/depend
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/raphael/H_CCW17/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5 "Built target MultiStreamTcpClient"
+.PHONY : CMakeFiles/MultiStreamTcpClient.dir/all
 
 # Include target in all.
-all: CMakeFiles/ex1v2.dir/all
+all: CMakeFiles/MultiStreamTcpClient.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/ex1v2.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/CMakeFiles 5
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/ex1v2.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/ex1v2.dir/rule
+CMakeFiles/MultiStreamTcpClient.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles 5
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/MultiStreamTcpClient.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/MultiStreamTcpClient.dir/rule
 
 # Convenience name for target.
-ex1v2: CMakeFiles/ex1v2.dir/rule
+MultiStreamTcpClient: CMakeFiles/MultiStreamTcpClient.dir/rule
 
-.PHONY : ex1v2
-
-# clean rule for target.
-CMakeFiles/ex1v2.dir/clean:
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/clean
-.PHONY : CMakeFiles/ex1v2.dir/clean
+.PHONY : MultiStreamTcpClient
 
 # clean rule for target.
-clean: CMakeFiles/ex1v2.dir/clean
+CMakeFiles/MultiStreamTcpClient.dir/clean:
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/clean
+.PHONY : CMakeFiles/MultiStreamTcpClient.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/MultiStreamTcpClient.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/SingleStreamTcpClient.dir
+
+# All Build rule for target.
+CMakeFiles/SingleStreamTcpClient.dir/all:
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/depend
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/raphael/H_CCW17/cmake-build-debug/CMakeFiles --progress-num=11,12,13,14,15 "Built target SingleStreamTcpClient"
+.PHONY : CMakeFiles/SingleStreamTcpClient.dir/all
+
+# Include target in all.
+all: CMakeFiles/SingleStreamTcpClient.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/SingleStreamTcpClient.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles 5
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/SingleStreamTcpClient.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/SingleStreamTcpClient.dir/rule
+
+# Convenience name for target.
+SingleStreamTcpClient: CMakeFiles/SingleStreamTcpClient.dir/rule
+
+.PHONY : SingleStreamTcpClient
+
+# clean rule for target.
+CMakeFiles/SingleStreamTcpClient.dir/clean:
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/clean
+.PHONY : CMakeFiles/SingleStreamTcpClient.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/SingleStreamTcpClient.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/SingleStreamTcpServer.dir
+
+# All Build rule for target.
+CMakeFiles/SingleStreamTcpServer.dir/all:
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/depend
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/raphael/H_CCW17/cmake-build-debug/CMakeFiles --progress-num=16,17,18,19,20 "Built target SingleStreamTcpServer"
+.PHONY : CMakeFiles/SingleStreamTcpServer.dir/all
+
+# Include target in all.
+all: CMakeFiles/SingleStreamTcpServer.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/SingleStreamTcpServer.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles 5
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/SingleStreamTcpServer.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/SingleStreamTcpServer.dir/rule
+
+# Convenience name for target.
+SingleStreamTcpServer: CMakeFiles/SingleStreamTcpServer.dir/rule
+
+.PHONY : SingleStreamTcpServer
+
+# clean rule for target.
+CMakeFiles/SingleStreamTcpServer.dir/clean:
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/clean
+.PHONY : CMakeFiles/SingleStreamTcpServer.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/SingleStreamTcpServer.dir/clean
 
 .PHONY : clean
 

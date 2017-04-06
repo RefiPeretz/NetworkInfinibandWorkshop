@@ -1,1 +1,0 @@
-/usr/bin/c++   -g   CMakeFiles/client.dir/Stream.cpp.o CMakeFiles/client.dir/Connector.cpp.o CMakeFiles/client.dir/Acceptor.cpp.o CMakeFiles/client.dir/Client.cpp.o  -o client 

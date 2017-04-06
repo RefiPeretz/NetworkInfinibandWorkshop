@@ -39,19 +39,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /mnt/sdb1/APPS/clion-2016.1.1/bin/cmake/bin/cmake
+CMAKE_COMMAND = /home/raphael/clion-2016.3.4/bin/cmake/bin/cmake
 
 # The command to remove a file.
-RM = /mnt/sdb1/APPS/clion-2016.1.1/bin/cmake/bin/cmake -E remove -f
+RM = /home/raphael/clion-2016.3.4/bin/cmake/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/sdb1/Projects/H_CCW17/ex1v2
+CMAKE_SOURCE_DIR = /home/raphael/H_CCW17
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug
+CMAKE_BINARY_DIR = /home/raphael/H_CCW17/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/mnt/sdb1/APPS/clion-2016.1.1/bin/cmake/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	/home/raphael/clion-2016.3.4/bin/cmake/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -70,7 +70,7 @@ edit_cache/fast: edit_cache
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/mnt/sdb1/APPS/clion-2016.1.1/bin/cmake/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/home/raphael/clion-2016.3.4/bin/cmake/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/CMakeFiles /mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb1/Projects/H_CCW17/ex1v2/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,43 +111,69 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named client
+# Target rules for targets named MultiThreadTcpServer
 
 # Build rule for target.
-client: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 client
-.PHONY : client
+MultiThreadTcpServer: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 MultiThreadTcpServer
+.PHONY : MultiThreadTcpServer
 
 # fast build rule for target.
-client/fast:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/build
-.PHONY : client/fast
+MultiThreadTcpServer/fast:
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/build
+.PHONY : MultiThreadTcpServer/fast
 
 #=============================================================================
-# Target rules for targets named server
+# Target rules for targets named VaryingSizeTcpClient
 
 # Build rule for target.
-server: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 server
-.PHONY : server
+VaryingSizeTcpClient: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 VaryingSizeTcpClient
+.PHONY : VaryingSizeTcpClient
 
 # fast build rule for target.
-server/fast:
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/build
-.PHONY : server/fast
+VaryingSizeTcpClient/fast:
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/build
+.PHONY : VaryingSizeTcpClient/fast
 
 #=============================================================================
-# Target rules for targets named ex1v2
+# Target rules for targets named MultiStreamTcpClient
 
 # Build rule for target.
-ex1v2: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 ex1v2
-.PHONY : ex1v2
+MultiStreamTcpClient: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 MultiStreamTcpClient
+.PHONY : MultiStreamTcpClient
 
 # fast build rule for target.
-ex1v2/fast:
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/build
-.PHONY : ex1v2/fast
+MultiStreamTcpClient/fast:
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/build
+.PHONY : MultiStreamTcpClient/fast
+
+#=============================================================================
+# Target rules for targets named SingleStreamTcpClient
+
+# Build rule for target.
+SingleStreamTcpClient: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 SingleStreamTcpClient
+.PHONY : SingleStreamTcpClient
+
+# fast build rule for target.
+SingleStreamTcpClient/fast:
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/build
+.PHONY : SingleStreamTcpClient/fast
+
+#=============================================================================
+# Target rules for targets named SingleStreamTcpServer
+
+# Build rule for target.
+SingleStreamTcpServer: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 SingleStreamTcpServer
+.PHONY : SingleStreamTcpServer
+
+# fast build rule for target.
+SingleStreamTcpServer/fast:
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/build
+.PHONY : SingleStreamTcpServer/fast
 
 Acceptor.o: Acceptor.cpp.o
 
@@ -155,9 +181,11 @@ Acceptor.o: Acceptor.cpp.o
 
 # target to build an object file
 Acceptor.cpp.o:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Acceptor.cpp.o
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/Acceptor.cpp.o
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/Acceptor.cpp.o
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Acceptor.cpp.o
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Acceptor.cpp.o
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Acceptor.cpp.o
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Acceptor.cpp.o
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Acceptor.cpp.o
 .PHONY : Acceptor.cpp.o
 
 Acceptor.i: Acceptor.cpp.i
@@ -166,9 +194,11 @@ Acceptor.i: Acceptor.cpp.i
 
 # target to preprocess a source file
 Acceptor.cpp.i:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Acceptor.cpp.i
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/Acceptor.cpp.i
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/Acceptor.cpp.i
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Acceptor.cpp.i
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Acceptor.cpp.i
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Acceptor.cpp.i
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Acceptor.cpp.i
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Acceptor.cpp.i
 .PHONY : Acceptor.cpp.i
 
 Acceptor.s: Acceptor.cpp.s
@@ -177,37 +207,12 @@ Acceptor.s: Acceptor.cpp.s
 
 # target to generate assembly for a file
 Acceptor.cpp.s:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Acceptor.cpp.s
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/Acceptor.cpp.s
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/Acceptor.cpp.s
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Acceptor.cpp.s
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Acceptor.cpp.s
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Acceptor.cpp.s
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Acceptor.cpp.s
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Acceptor.cpp.s
 .PHONY : Acceptor.cpp.s
-
-Client.o: Client.cpp.o
-
-.PHONY : Client.o
-
-# target to build an object file
-Client.cpp.o:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Client.cpp.o
-.PHONY : Client.cpp.o
-
-Client.i: Client.cpp.i
-
-.PHONY : Client.i
-
-# target to preprocess a source file
-Client.cpp.i:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Client.cpp.i
-.PHONY : Client.cpp.i
-
-Client.s: Client.cpp.s
-
-.PHONY : Client.s
-
-# target to generate assembly for a file
-Client.cpp.s:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Client.cpp.s
-.PHONY : Client.cpp.s
 
 Connector.o: Connector.cpp.o
 
@@ -215,9 +220,11 @@ Connector.o: Connector.cpp.o
 
 # target to build an object file
 Connector.cpp.o:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Connector.cpp.o
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/Connector.cpp.o
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/Connector.cpp.o
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Connector.cpp.o
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Connector.cpp.o
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Connector.cpp.o
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Connector.cpp.o
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Connector.cpp.o
 .PHONY : Connector.cpp.o
 
 Connector.i: Connector.cpp.i
@@ -226,9 +233,11 @@ Connector.i: Connector.cpp.i
 
 # target to preprocess a source file
 Connector.cpp.i:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Connector.cpp.i
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/Connector.cpp.i
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/Connector.cpp.i
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Connector.cpp.i
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Connector.cpp.i
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Connector.cpp.i
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Connector.cpp.i
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Connector.cpp.i
 .PHONY : Connector.cpp.i
 
 Connector.s: Connector.cpp.s
@@ -237,37 +246,120 @@ Connector.s: Connector.cpp.s
 
 # target to generate assembly for a file
 Connector.cpp.s:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Connector.cpp.s
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/Connector.cpp.s
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/Connector.cpp.s
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Connector.cpp.s
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Connector.cpp.s
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Connector.cpp.s
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Connector.cpp.s
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Connector.cpp.s
 .PHONY : Connector.cpp.s
 
-Server.o: Server.cpp.o
+MultiStreamTcpClient.o: MultiStreamTcpClient.cpp.o
 
-.PHONY : Server.o
+.PHONY : MultiStreamTcpClient.o
 
 # target to build an object file
-Server.cpp.o:
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/Server.cpp.o
-.PHONY : Server.cpp.o
+MultiStreamTcpClient.cpp.o:
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/MultiStreamTcpClient.cpp.o
+.PHONY : MultiStreamTcpClient.cpp.o
 
-Server.i: Server.cpp.i
+MultiStreamTcpClient.i: MultiStreamTcpClient.cpp.i
 
-.PHONY : Server.i
+.PHONY : MultiStreamTcpClient.i
 
 # target to preprocess a source file
-Server.cpp.i:
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/Server.cpp.i
-.PHONY : Server.cpp.i
+MultiStreamTcpClient.cpp.i:
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/MultiStreamTcpClient.cpp.i
+.PHONY : MultiStreamTcpClient.cpp.i
 
-Server.s: Server.cpp.s
+MultiStreamTcpClient.s: MultiStreamTcpClient.cpp.s
 
-.PHONY : Server.s
+.PHONY : MultiStreamTcpClient.s
 
 # target to generate assembly for a file
-Server.cpp.s:
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/Server.cpp.s
-.PHONY : Server.cpp.s
+MultiStreamTcpClient.cpp.s:
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/MultiStreamTcpClient.cpp.s
+.PHONY : MultiStreamTcpClient.cpp.s
+
+MultiThreadTcpServer.o: MultiThreadTcpServer.cpp.o
+
+.PHONY : MultiThreadTcpServer.o
+
+# target to build an object file
+MultiThreadTcpServer.cpp.o:
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/MultiThreadTcpServer.cpp.o
+.PHONY : MultiThreadTcpServer.cpp.o
+
+MultiThreadTcpServer.i: MultiThreadTcpServer.cpp.i
+
+.PHONY : MultiThreadTcpServer.i
+
+# target to preprocess a source file
+MultiThreadTcpServer.cpp.i:
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/MultiThreadTcpServer.cpp.i
+.PHONY : MultiThreadTcpServer.cpp.i
+
+MultiThreadTcpServer.s: MultiThreadTcpServer.cpp.s
+
+.PHONY : MultiThreadTcpServer.s
+
+# target to generate assembly for a file
+MultiThreadTcpServer.cpp.s:
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/MultiThreadTcpServer.cpp.s
+.PHONY : MultiThreadTcpServer.cpp.s
+
+SingleStreamTcpClient.o: SingleStreamTcpClient.cpp.o
+
+.PHONY : SingleStreamTcpClient.o
+
+# target to build an object file
+SingleStreamTcpClient.cpp.o:
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/SingleStreamTcpClient.cpp.o
+.PHONY : SingleStreamTcpClient.cpp.o
+
+SingleStreamTcpClient.i: SingleStreamTcpClient.cpp.i
+
+.PHONY : SingleStreamTcpClient.i
+
+# target to preprocess a source file
+SingleStreamTcpClient.cpp.i:
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/SingleStreamTcpClient.cpp.i
+.PHONY : SingleStreamTcpClient.cpp.i
+
+SingleStreamTcpClient.s: SingleStreamTcpClient.cpp.s
+
+.PHONY : SingleStreamTcpClient.s
+
+# target to generate assembly for a file
+SingleStreamTcpClient.cpp.s:
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/SingleStreamTcpClient.cpp.s
+.PHONY : SingleStreamTcpClient.cpp.s
+
+SingleStreamTcpServer.o: SingleStreamTcpServer.cpp.o
+
+.PHONY : SingleStreamTcpServer.o
+
+# target to build an object file
+SingleStreamTcpServer.cpp.o:
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/SingleStreamTcpServer.cpp.o
+.PHONY : SingleStreamTcpServer.cpp.o
+
+SingleStreamTcpServer.i: SingleStreamTcpServer.cpp.i
+
+.PHONY : SingleStreamTcpServer.i
+
+# target to preprocess a source file
+SingleStreamTcpServer.cpp.i:
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/SingleStreamTcpServer.cpp.i
+.PHONY : SingleStreamTcpServer.cpp.i
+
+SingleStreamTcpServer.s: SingleStreamTcpServer.cpp.s
+
+.PHONY : SingleStreamTcpServer.s
+
+# target to generate assembly for a file
+SingleStreamTcpServer.cpp.s:
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/SingleStreamTcpServer.cpp.s
+.PHONY : SingleStreamTcpServer.cpp.s
 
 Stream.o: Stream.cpp.o
 
@@ -275,9 +367,11 @@ Stream.o: Stream.cpp.o
 
 # target to build an object file
 Stream.cpp.o:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Stream.cpp.o
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/Stream.cpp.o
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/Stream.cpp.o
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Stream.cpp.o
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Stream.cpp.o
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Stream.cpp.o
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Stream.cpp.o
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Stream.cpp.o
 .PHONY : Stream.cpp.o
 
 Stream.i: Stream.cpp.i
@@ -286,9 +380,11 @@ Stream.i: Stream.cpp.i
 
 # target to preprocess a source file
 Stream.cpp.i:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Stream.cpp.i
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/Stream.cpp.i
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/Stream.cpp.i
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Stream.cpp.i
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Stream.cpp.i
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Stream.cpp.i
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Stream.cpp.i
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Stream.cpp.i
 .PHONY : Stream.cpp.i
 
 Stream.s: Stream.cpp.s
@@ -297,37 +393,39 @@ Stream.s: Stream.cpp.s
 
 # target to generate assembly for a file
 Stream.cpp.s:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/Stream.cpp.s
-	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/Stream.cpp.s
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/Stream.cpp.s
+	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Stream.cpp.s
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Stream.cpp.s
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Stream.cpp.s
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Stream.cpp.s
+	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Stream.cpp.s
 .PHONY : Stream.cpp.s
 
-main.o: main.cpp.o
+VaryingSizeTcpClient.o: VaryingSizeTcpClient.cpp.o
 
-.PHONY : main.o
+.PHONY : VaryingSizeTcpClient.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/main.cpp.o
-.PHONY : main.cpp.o
+VaryingSizeTcpClient.cpp.o:
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/VaryingSizeTcpClient.cpp.o
+.PHONY : VaryingSizeTcpClient.cpp.o
 
-main.i: main.cpp.i
+VaryingSizeTcpClient.i: VaryingSizeTcpClient.cpp.i
 
-.PHONY : main.i
+.PHONY : VaryingSizeTcpClient.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/main.cpp.i
-.PHONY : main.cpp.i
+VaryingSizeTcpClient.cpp.i:
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/VaryingSizeTcpClient.cpp.i
+.PHONY : VaryingSizeTcpClient.cpp.i
 
-main.s: main.cpp.s
+VaryingSizeTcpClient.s: VaryingSizeTcpClient.cpp.s
 
-.PHONY : main.s
+.PHONY : VaryingSizeTcpClient.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) -f CMakeFiles/ex1v2.dir/build.make CMakeFiles/ex1v2.dir/main.cpp.s
-.PHONY : main.cpp.s
+VaryingSizeTcpClient.cpp.s:
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/VaryingSizeTcpClient.cpp.s
+.PHONY : VaryingSizeTcpClient.cpp.s
 
 # Help Target
 help:
@@ -337,27 +435,35 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... client"
-	@echo "... server"
-	@echo "... ex1v2"
+	@echo "... MultiThreadTcpServer"
+	@echo "... VaryingSizeTcpClient"
+	@echo "... MultiStreamTcpClient"
+	@echo "... SingleStreamTcpClient"
+	@echo "... SingleStreamTcpServer"
 	@echo "... Acceptor.o"
 	@echo "... Acceptor.i"
 	@echo "... Acceptor.s"
-	@echo "... Client.o"
-	@echo "... Client.i"
-	@echo "... Client.s"
 	@echo "... Connector.o"
 	@echo "... Connector.i"
 	@echo "... Connector.s"
-	@echo "... Server.o"
-	@echo "... Server.i"
-	@echo "... Server.s"
+	@echo "... MultiStreamTcpClient.o"
+	@echo "... MultiStreamTcpClient.i"
+	@echo "... MultiStreamTcpClient.s"
+	@echo "... MultiThreadTcpServer.o"
+	@echo "... MultiThreadTcpServer.i"
+	@echo "... MultiThreadTcpServer.s"
+	@echo "... SingleStreamTcpClient.o"
+	@echo "... SingleStreamTcpClient.i"
+	@echo "... SingleStreamTcpClient.s"
+	@echo "... SingleStreamTcpServer.o"
+	@echo "... SingleStreamTcpServer.i"
+	@echo "... SingleStreamTcpServer.s"
 	@echo "... Stream.o"
 	@echo "... Stream.i"
 	@echo "... Stream.s"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... VaryingSizeTcpClient.o"
+	@echo "... VaryingSizeTcpClient.i"
+	@echo "... VaryingSizeTcpClient.s"
 .PHONY : help
 
 
