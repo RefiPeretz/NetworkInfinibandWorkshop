@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 	struct timeval start, end;
 	double t1, t2;
 	Connector *connector = new Connector();
-	Stream *stream = connector->connect("localhost", 8081);
+	Stream *stream = connector->connect("localhost", 8080);
 	if (stream)
 	{
 	  t1 = 0.0;

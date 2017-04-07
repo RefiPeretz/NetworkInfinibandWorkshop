@@ -1,1 +1,1 @@
-CMake: 3.6.3@/mnt/sdb1/APPS/clion-2016.1.1/bin/cmake/bin/cmake
+CMake: 3.6.3@/home/raphael/clion-2016.3.4/bin/cmake/bin/cmake
