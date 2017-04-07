@@ -8,324 +8,379 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="NonBlockingTcpServer">
+				<Option output="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/NonBlockingTcpServer" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 NonBlockingTcpServer"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="NonBlockingTcpServer/fast">
+				<Option output="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/NonBlockingTcpServer" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 NonBlockingTcpServer/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="MultiThreadTcpServer">
-				<Option output="/home/raphael/H_CCW17/cmake-build-debug/MultiThreadTcpServer" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option output="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/MultiThreadTcpServer" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 MultiThreadTcpServer"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 MultiThreadTcpServer"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="MultiThreadTcpServer/fast">
-				<Option output="/home/raphael/H_CCW17/cmake-build-debug/MultiThreadTcpServer" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option output="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/MultiThreadTcpServer" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 MultiThreadTcpServer/fast"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 MultiThreadTcpServer/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="VaryingSizeTcpClient">
-				<Option output="/home/raphael/H_CCW17/cmake-build-debug/VaryingSizeTcpClient" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option output="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/VaryingSizeTcpClient" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 VaryingSizeTcpClient"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 VaryingSizeTcpClient"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="VaryingSizeTcpClient/fast">
-				<Option output="/home/raphael/H_CCW17/cmake-build-debug/VaryingSizeTcpClient" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option output="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/VaryingSizeTcpClient" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 VaryingSizeTcpClient/fast"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 VaryingSizeTcpClient/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="MultiStreamTcpClient">
-				<Option output="/home/raphael/H_CCW17/cmake-build-debug/MultiStreamTcpClient" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option output="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/MultiStreamTcpClient" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 MultiStreamTcpClient"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 MultiStreamTcpClient"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="MultiStreamTcpClient/fast">
-				<Option output="/home/raphael/H_CCW17/cmake-build-debug/MultiStreamTcpClient" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option output="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/MultiStreamTcpClient" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 MultiStreamTcpClient/fast"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 MultiStreamTcpClient/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="SingleStreamTcpClient">
-				<Option output="/home/raphael/H_CCW17/cmake-build-debug/SingleStreamTcpClient" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option output="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/SingleStreamTcpClient" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 SingleStreamTcpClient"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 SingleStreamTcpClient"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="SingleStreamTcpClient/fast">
-				<Option output="/home/raphael/H_CCW17/cmake-build-debug/SingleStreamTcpClient" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option output="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/SingleStreamTcpClient" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 SingleStreamTcpClient/fast"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 SingleStreamTcpClient/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="SingleStreamTcpServer">
-				<Option output="/home/raphael/H_CCW17/cmake-build-debug/SingleStreamTcpServer" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option output="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/SingleStreamTcpServer" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 SingleStreamTcpServer"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 SingleStreamTcpServer"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="SingleStreamTcpServer/fast">
-				<Option output="/home/raphael/H_CCW17/cmake-build-debug/SingleStreamTcpServer" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option output="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/SingleStreamTcpServer" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/sdb1/Projects/H_CCW17/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/include/c++/6"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/6"/>
+					<Add directory="/usr/include/c++/6/backward"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 SingleStreamTcpServer/fast"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 SingleStreamTcpServer/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/sdb1/Projects/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/raphael/H_CCW17/Acceptor.cpp">
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/Acceptor.cpp">
+			<Option target="NonBlockingTcpServer"/>
 			<Option target="MultiThreadTcpServer"/>
 			<Option target="VaryingSizeTcpClient"/>
 			<Option target="MultiStreamTcpClient"/>
 			<Option target="SingleStreamTcpClient"/>
 			<Option target="SingleStreamTcpServer"/>
 		</Unit>
-		<Unit filename="/home/raphael/H_CCW17/Acceptor.hpp">
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/Acceptor.hpp">
+			<Option target="NonBlockingTcpServer"/>
 			<Option target="MultiThreadTcpServer"/>
 			<Option target="VaryingSizeTcpClient"/>
 			<Option target="MultiStreamTcpClient"/>
 			<Option target="SingleStreamTcpClient"/>
 			<Option target="SingleStreamTcpServer"/>
 		</Unit>
-		<Unit filename="/home/raphael/H_CCW17/Connector.cpp">
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/Connector.cpp">
+			<Option target="NonBlockingTcpServer"/>
 			<Option target="MultiThreadTcpServer"/>
 			<Option target="VaryingSizeTcpClient"/>
 			<Option target="MultiStreamTcpClient"/>
 			<Option target="SingleStreamTcpClient"/>
 			<Option target="SingleStreamTcpServer"/>
 		</Unit>
-		<Unit filename="/home/raphael/H_CCW17/Connector.hpp">
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/Connector.hpp">
+			<Option target="NonBlockingTcpServer"/>
 			<Option target="MultiThreadTcpServer"/>
 			<Option target="VaryingSizeTcpClient"/>
 			<Option target="MultiStreamTcpClient"/>
 			<Option target="SingleStreamTcpClient"/>
 			<Option target="SingleStreamTcpServer"/>
 		</Unit>
-		<Unit filename="/home/raphael/H_CCW17/MultiStreamTcpClient.cpp">
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/MultiStreamTcpClient.cpp">
 			<Option target="MultiStreamTcpClient"/>
 		</Unit>
-		<Unit filename="/home/raphael/H_CCW17/MultiThreadTcpServer.cpp">
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/MultiThreadTcpServer.cpp">
 			<Option target="MultiThreadTcpServer"/>
 		</Unit>
-		<Unit filename="/home/raphael/H_CCW17/SingleStreamTcpClient.cpp">
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/NonBlockingTcpServer.cpp">
+			<Option target="NonBlockingTcpServer"/>
+		</Unit>
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/SingleStreamTcpClient.cpp">
 			<Option target="SingleStreamTcpClient"/>
 		</Unit>
-		<Unit filename="/home/raphael/H_CCW17/SingleStreamTcpServer.cpp">
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/SingleStreamTcpServer.cpp">
 			<Option target="SingleStreamTcpServer"/>
 		</Unit>
-		<Unit filename="/home/raphael/H_CCW17/Stream.cpp">
-			<Option target="MultiThreadTcpServer"/>
-			<Option target="VaryingSizeTcpClient"/>
-			<Option target="MultiStreamTcpClient"/>
-			<Option target="SingleStreamTcpClient"/>
-			<Option target="SingleStreamTcpServer"/>
-		</Unit>
-		<Unit filename="/home/raphael/H_CCW17/Stream.hpp">
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/Stream.cpp">
+			<Option target="NonBlockingTcpServer"/>
 			<Option target="MultiThreadTcpServer"/>
 			<Option target="VaryingSizeTcpClient"/>
 			<Option target="MultiStreamTcpClient"/>
 			<Option target="SingleStreamTcpClient"/>
 			<Option target="SingleStreamTcpServer"/>
 		</Unit>
-		<Unit filename="/home/raphael/H_CCW17/VaryingSizeTcpClient.cpp">
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/Stream.hpp">
+			<Option target="NonBlockingTcpServer"/>
+			<Option target="MultiThreadTcpServer"/>
+			<Option target="VaryingSizeTcpClient"/>
+			<Option target="MultiStreamTcpClient"/>
+			<Option target="SingleStreamTcpClient"/>
+			<Option target="SingleStreamTcpServer"/>
+		</Unit>
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/VaryingSizeTcpClient.cpp">
 			<Option target="VaryingSizeTcpClient"/>
 		</Unit>
-		<Unit filename="/home/raphael/H_CCW17/CMakeLists.txt">
+		<Unit filename="/mnt/sdb1/Projects/H_CCW17/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

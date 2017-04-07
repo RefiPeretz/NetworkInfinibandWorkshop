@@ -39,19 +39,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /home/raphael/clion-2016.3.4/bin/cmake/bin/cmake
+CMAKE_COMMAND = /mnt/sdb1/APPS/clion-2016.1.1/bin/cmake/bin/cmake
 
 # The command to remove a file.
-RM = /home/raphael/clion-2016.3.4/bin/cmake/bin/cmake -E remove -f
+RM = /mnt/sdb1/APPS/clion-2016.1.1/bin/cmake/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/raphael/H_CCW17
+CMAKE_SOURCE_DIR = /mnt/sdb1/Projects/H_CCW17
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/raphael/H_CCW17/cmake-build-debug
+CMAKE_BINARY_DIR = /mnt/sdb1/Projects/H_CCW17/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/raphael/H_CCW17/cmake-build-debug
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/home/raphael/clion-2016.3.4/bin/cmake/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	/mnt/sdb1/APPS/clion-2016.1.1/bin/cmake/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -70,7 +70,7 @@ edit_cache/fast: edit_cache
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/home/raphael/clion-2016.3.4/bin/cmake/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/mnt/sdb1/APPS/clion-2016.1.1/bin/cmake/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb1/Projects/H_CCW17/cmake-build-debug/CMakeFiles /mnt/sdb1/Projects/H_CCW17/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/sdb1/Projects/H_CCW17/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -109,6 +109,19 @@ preinstall/fast:
 depend:
 	$(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+#=============================================================================
+# Target rules for targets named NonBlockingTcpServer
+
+# Build rule for target.
+NonBlockingTcpServer: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 NonBlockingTcpServer
+.PHONY : NonBlockingTcpServer
+
+# fast build rule for target.
+NonBlockingTcpServer/fast:
+	$(MAKE) -f CMakeFiles/NonBlockingTcpServer.dir/build.make CMakeFiles/NonBlockingTcpServer.dir/build
+.PHONY : NonBlockingTcpServer/fast
 
 #=============================================================================
 # Target rules for targets named MultiThreadTcpServer
@@ -181,6 +194,7 @@ Acceptor.o: Acceptor.cpp.o
 
 # target to build an object file
 Acceptor.cpp.o:
+	$(MAKE) -f CMakeFiles/NonBlockingTcpServer.dir/build.make CMakeFiles/NonBlockingTcpServer.dir/Acceptor.cpp.o
 	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Acceptor.cpp.o
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Acceptor.cpp.o
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Acceptor.cpp.o
@@ -194,6 +208,7 @@ Acceptor.i: Acceptor.cpp.i
 
 # target to preprocess a source file
 Acceptor.cpp.i:
+	$(MAKE) -f CMakeFiles/NonBlockingTcpServer.dir/build.make CMakeFiles/NonBlockingTcpServer.dir/Acceptor.cpp.i
 	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Acceptor.cpp.i
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Acceptor.cpp.i
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Acceptor.cpp.i
@@ -207,6 +222,7 @@ Acceptor.s: Acceptor.cpp.s
 
 # target to generate assembly for a file
 Acceptor.cpp.s:
+	$(MAKE) -f CMakeFiles/NonBlockingTcpServer.dir/build.make CMakeFiles/NonBlockingTcpServer.dir/Acceptor.cpp.s
 	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Acceptor.cpp.s
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Acceptor.cpp.s
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Acceptor.cpp.s
@@ -220,6 +236,7 @@ Connector.o: Connector.cpp.o
 
 # target to build an object file
 Connector.cpp.o:
+	$(MAKE) -f CMakeFiles/NonBlockingTcpServer.dir/build.make CMakeFiles/NonBlockingTcpServer.dir/Connector.cpp.o
 	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Connector.cpp.o
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Connector.cpp.o
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Connector.cpp.o
@@ -233,6 +250,7 @@ Connector.i: Connector.cpp.i
 
 # target to preprocess a source file
 Connector.cpp.i:
+	$(MAKE) -f CMakeFiles/NonBlockingTcpServer.dir/build.make CMakeFiles/NonBlockingTcpServer.dir/Connector.cpp.i
 	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Connector.cpp.i
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Connector.cpp.i
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Connector.cpp.i
@@ -246,6 +264,7 @@ Connector.s: Connector.cpp.s
 
 # target to generate assembly for a file
 Connector.cpp.s:
+	$(MAKE) -f CMakeFiles/NonBlockingTcpServer.dir/build.make CMakeFiles/NonBlockingTcpServer.dir/Connector.cpp.s
 	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Connector.cpp.s
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Connector.cpp.s
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Connector.cpp.s
@@ -307,6 +326,33 @@ MultiThreadTcpServer.cpp.s:
 	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/MultiThreadTcpServer.cpp.s
 .PHONY : MultiThreadTcpServer.cpp.s
 
+NonBlockingTcpServer.o: NonBlockingTcpServer.cpp.o
+
+.PHONY : NonBlockingTcpServer.o
+
+# target to build an object file
+NonBlockingTcpServer.cpp.o:
+	$(MAKE) -f CMakeFiles/NonBlockingTcpServer.dir/build.make CMakeFiles/NonBlockingTcpServer.dir/NonBlockingTcpServer.cpp.o
+.PHONY : NonBlockingTcpServer.cpp.o
+
+NonBlockingTcpServer.i: NonBlockingTcpServer.cpp.i
+
+.PHONY : NonBlockingTcpServer.i
+
+# target to preprocess a source file
+NonBlockingTcpServer.cpp.i:
+	$(MAKE) -f CMakeFiles/NonBlockingTcpServer.dir/build.make CMakeFiles/NonBlockingTcpServer.dir/NonBlockingTcpServer.cpp.i
+.PHONY : NonBlockingTcpServer.cpp.i
+
+NonBlockingTcpServer.s: NonBlockingTcpServer.cpp.s
+
+.PHONY : NonBlockingTcpServer.s
+
+# target to generate assembly for a file
+NonBlockingTcpServer.cpp.s:
+	$(MAKE) -f CMakeFiles/NonBlockingTcpServer.dir/build.make CMakeFiles/NonBlockingTcpServer.dir/NonBlockingTcpServer.cpp.s
+.PHONY : NonBlockingTcpServer.cpp.s
+
 SingleStreamTcpClient.o: SingleStreamTcpClient.cpp.o
 
 .PHONY : SingleStreamTcpClient.o
@@ -367,6 +413,7 @@ Stream.o: Stream.cpp.o
 
 # target to build an object file
 Stream.cpp.o:
+	$(MAKE) -f CMakeFiles/NonBlockingTcpServer.dir/build.make CMakeFiles/NonBlockingTcpServer.dir/Stream.cpp.o
 	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Stream.cpp.o
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Stream.cpp.o
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Stream.cpp.o
@@ -380,6 +427,7 @@ Stream.i: Stream.cpp.i
 
 # target to preprocess a source file
 Stream.cpp.i:
+	$(MAKE) -f CMakeFiles/NonBlockingTcpServer.dir/build.make CMakeFiles/NonBlockingTcpServer.dir/Stream.cpp.i
 	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Stream.cpp.i
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Stream.cpp.i
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Stream.cpp.i
@@ -393,6 +441,7 @@ Stream.s: Stream.cpp.s
 
 # target to generate assembly for a file
 Stream.cpp.s:
+	$(MAKE) -f CMakeFiles/NonBlockingTcpServer.dir/build.make CMakeFiles/NonBlockingTcpServer.dir/Stream.cpp.s
 	$(MAKE) -f CMakeFiles/MultiThreadTcpServer.dir/build.make CMakeFiles/MultiThreadTcpServer.dir/Stream.cpp.s
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Stream.cpp.s
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Stream.cpp.s
@@ -435,6 +484,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... NonBlockingTcpServer"
 	@echo "... MultiThreadTcpServer"
 	@echo "... VaryingSizeTcpClient"
 	@echo "... MultiStreamTcpClient"
@@ -452,6 +502,9 @@ help:
 	@echo "... MultiThreadTcpServer.o"
 	@echo "... MultiThreadTcpServer.i"
 	@echo "... MultiThreadTcpServer.s"
+	@echo "... NonBlockingTcpServer.o"
+	@echo "... NonBlockingTcpServer.i"
+	@echo "... NonBlockingTcpServer.s"
 	@echo "... SingleStreamTcpClient.o"
 	@echo "... SingleStreamTcpClient.i"
 	@echo "... SingleStreamTcpClient.s"
