@@ -23,3 +23,7 @@ add_executable(VaryingSizeTcpClient ${VSTC})
 set(MTTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
     Acceptor.hpp MultiThreadTcpServer.cpp)
 add_executable(MultiThreadTcpServer ${MTTS})
+
+set(NBTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
+    Acceptor.hpp NonBlockingTcpServer.cpp)
+add_executable(NonBlockingTcpServer ${NBTS})
