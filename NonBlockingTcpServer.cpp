@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 	  if (stream != NULL) {
 		size_t len;
 		char line[256];
-		while ((len = stream->receive(line, sizeof(line), 5000)) > 0) {
+		while ((len = stream->receive(line, sizeof(line), 5000000)) > 0) {
 		  line[len] = NULL;
 		  printf("received - %s\n", line);
 		  stream->send(line, len);

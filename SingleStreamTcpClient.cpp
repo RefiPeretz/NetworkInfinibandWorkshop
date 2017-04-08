@@ -34,11 +34,12 @@ double measureAvgRTT(char* port,char* ip,int rttCount){
         stream->send(&message, sizeof(char));
         printf("sent - %c with sizeof %d\n", message, (int) sizeof(char));
         len = stream->receive(&ack, sizeof(char));
+        printf("received - %c\n", ack);
         if (gettimeofday(&end, NULL)) {
             printf("time failed\n");
             exit(1);
         }
-        printf("received - %c\n", ack);
+
     }
 
     t1 += start.tv_sec + (start.tv_usec / 1000000.0);
@@ -88,20 +89,21 @@ int main(int argc, char **argv) {
         delete stream;
     }
     double rtt = (t2 - t1) / 100;
-    printf("RTT = %g ms\n", rtt);
-    double rtt_d = 1000 / rtt;
-    printf("Packet Rate = 1 / %g = %g byte / ms \n", rtt, rtt_d);
-    auto patcketRate_str = std::to_string(rtt_d);
-    double rttAvg = measureAvgRTT(argv[1],argv[2],1000);
-    std::stringstream ss(stringstream::in | stringstream::out);
-    ss << setprecision(5) << rttAvg << endl;
-//    printf("str: %s\n", ss.str());
-//    printf("avg: %g , normal: %g", rttAvg, rtt);
-    ofstream myfile;
-    myfile.open("SingleStreamResults.csv");
-    myfile << "Results\n";
-    myfile << "RTT,"+ ss.str() +" ms\n";
-    myfile << "Packet Rate, " + patcketRate_str + " ms\n";
-    myfile.close();
+    printf("Total time: %g\n", rtt);
+//    printf("RTT = %g ms\n", rtt);
+//    double rtt_d = 1000 / rtt;
+//    printf("Packet Rate = 1 / %g = %g byte / ms \n", rtt, rtt_d);
+//    auto patcketRate_str = std::to_string(rtt_d);
+//    double rttAvg = measureAvgRTT(argv[1],argv[2],1000);
+//    std::stringstream ss(stringstream::in | stringstream::out);
+//    ss << setprecision(5) << rttAvg << endl;
+////    printf("str: %s\n", ss.str());
+////    printf("avg: %g , normal: %g", rttAvg, rtt);
+//    ofstream myfile;
+//    myfile.open("SingleStreamResults.csv");
+//    myfile << "Results\n";
+//    myfile << "RTT,"+ ss.str() +" ms\n";
+//    myfile << "Packet Rate, " + patcketRate_str + " ms\n";
+//    myfile.close();
     exit(0);
 }

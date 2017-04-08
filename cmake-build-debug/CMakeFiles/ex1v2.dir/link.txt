@@ -1,1 +1,0 @@
-/usr/bin/c++   -g   CMakeFiles/ex1v2.dir/Stream.cpp.o CMakeFiles/ex1v2.dir/Connector.cpp.o CMakeFiles/ex1v2.dir/Acceptor.cpp.o  -o ex1v2 
