@@ -23,17 +23,8 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="Added Varying size Tcp client - sends messages with varying size.&#10;">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ex1v2.dir/DependInfo.cmake" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ex1v2.dir/build.make" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ex1v2.dir/cmake_clean.cmake" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ex1v2.dir/depend.make" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ex1v2.dir/link.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ex1v2.dir/progress.make" afterPath="" />
+    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MultiStreamTcpClient.cpp" afterPath="$PROJECT_DIR$/MultiStreamTcpClient.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NonBlockingTcpServer.cpp" afterPath="$PROJECT_DIR$/NonBlockingTcpServer.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SingleStreamTcpClient.cpp" afterPath="$PROJECT_DIR$/SingleStreamTcpClient.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.6.3/CMakeSystem.cmake" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.6.3/CMakeSystem.cmake" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeDirectoryInformation.cmake" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeDirectoryInformation.cmake" />
@@ -505,7 +496,7 @@
       <workItem from="1490560026011" duration="504000" />
       <workItem from="1491560253090" duration="710000" />
       <workItem from="1491561017603" duration="666000" />
-      <workItem from="1491574301366" duration="9741000" />
+      <workItem from="1491574301366" duration="9765000" />
     </task>
     <task id="LOCAL-00001" summary="Added RTT evaluation">
       <created>1489742159010</created>
@@ -556,11 +547,18 @@
       <option name="project" value="LOCAL" />
       <updated>1491561476003</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Added Varying size Tcp client - sends messages with varying size.&#10;">
+      <created>1491644242207</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1491644242207</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="38498000" />
+    <option name="totallyTimeSpent" value="38522000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="24" width="1855" height="1176" extended-state="6" />
@@ -600,10 +598,10 @@
     <MESSAGE value="Added packetRate&#10; evaluation" />
     <MESSAGE value="Added support for MultiStream client" />
     <MESSAGE value="MultithreadTCP" />
-    <MESSAGE value="Added Varying size Tcp client - sends messages with varying size.&#10;" />
     <MESSAGE value="Added non blocking Tcp server" />
     <MESSAGE value="Updated non BLocking tcp server" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated non BLocking tcp server" />
+    <MESSAGE value="Added Varying size Tcp client - sends messages with varying size.&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Varying size Tcp client - sends messages with varying size.&#10;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
