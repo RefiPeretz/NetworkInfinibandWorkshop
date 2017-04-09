@@ -6,7 +6,11 @@
 #define EX1V2_METRICS_H
 
 #include <sstream>
-
+typedef struct{
+    int port;
+    char* word = "w";
+    char* server;
+}socketData;
 
 double timeDifference(timeval time1, timeval time2);
 

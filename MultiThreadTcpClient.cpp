@@ -28,6 +28,9 @@ int main(int argc, char **argv)
     unsigned int numMsgs = atoi(argv[1]);
     unsigned int counter = 0;
     pthread_t *socketThreads = new pthread_t[numMsgs];
+    socketData* data;
+    data->port = 8081;
+    data->server = "localhost";
     printf("=====Clock Start=====\n");
     if (gettimeofday(&start, NULL)) {
         printf("time failed\n");
@@ -35,7 +38,7 @@ int main(int argc, char **argv)
     }
     for (int j = 0; j < numMsgs; j++) {
 
-        if(pthread_create(&socketThreads[j], NULL, client, NULL))
+        if(pthread_create(&socketThreads[j], NULL, client, data))
         {
             printf("error create thread\n");
         }
@@ -66,7 +69,8 @@ void* client(void* data)
 {
     printf("In client\n");
     std::string serverAddress ="localhost";
-    int port = 8081;
+    socketData* handlerData = (socketData*)(data);
+    int port = handlerData->port;
     printf("usage: <server = %s> <port = %d>\n", serverAddress.c_str(), port);
 
     int len;
