@@ -267,6 +267,52 @@
 					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
+			<Target title="MultiThreadTcpClient">
+				<Option output="/home/raphael/H_CCW17/cmake-build-debug/MultiThreadTcpClient" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 MultiThreadTcpClient"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="MultiThreadTcpClient/fast">
+				<Option output="/home/raphael/H_CCW17/cmake-build-debug/MultiThreadTcpClient" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 MultiThreadTcpClient/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/raphael/H_CCW17/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
 			<Target title="SingleStreamTcpServer">
 				<Option output="/home/raphael/H_CCW17/cmake-build-debug/SingleStreamTcpServer" prefix_auto="0" extension_auto="0"/>
 				<Option working_dir="/home/raphael/H_CCW17/cmake-build-debug"/>
@@ -320,6 +366,7 @@
 			<Option target="VaryingSizeTcpClient"/>
 			<Option target="MultiStreamTcpClient"/>
 			<Option target="SingleStreamTcpClient"/>
+			<Option target="MultiThreadTcpClient"/>
 			<Option target="SingleStreamTcpServer"/>
 		</Unit>
 		<Unit filename="/home/raphael/H_CCW17/Acceptor.hpp">
@@ -328,6 +375,7 @@
 			<Option target="VaryingSizeTcpClient"/>
 			<Option target="MultiStreamTcpClient"/>
 			<Option target="SingleStreamTcpClient"/>
+			<Option target="MultiThreadTcpClient"/>
 			<Option target="SingleStreamTcpServer"/>
 		</Unit>
 		<Unit filename="/home/raphael/H_CCW17/Connector.cpp">
@@ -336,6 +384,7 @@
 			<Option target="VaryingSizeTcpClient"/>
 			<Option target="MultiStreamTcpClient"/>
 			<Option target="SingleStreamTcpClient"/>
+			<Option target="MultiThreadTcpClient"/>
 			<Option target="SingleStreamTcpServer"/>
 		</Unit>
 		<Unit filename="/home/raphael/H_CCW17/Connector.hpp">
@@ -344,10 +393,15 @@
 			<Option target="VaryingSizeTcpClient"/>
 			<Option target="MultiStreamTcpClient"/>
 			<Option target="SingleStreamTcpClient"/>
+			<Option target="MultiThreadTcpClient"/>
 			<Option target="SingleStreamTcpServer"/>
 		</Unit>
 		<Unit filename="/home/raphael/H_CCW17/MultiStreamTcpClient.cpp">
 			<Option target="MultiStreamTcpClient"/>
+		</Unit>
+		<Unit filename="/home/raphael/H_CCW17/MultiThreadTcpClient.cpp">
+			<Option target="MultiStreamTcpClient"/>
+			<Option target="MultiThreadTcpClient"/>
 		</Unit>
 		<Unit filename="/home/raphael/H_CCW17/MultiThreadTcpServer.cpp">
 			<Option target="MultiThreadTcpServer"/>
@@ -367,6 +421,7 @@
 			<Option target="VaryingSizeTcpClient"/>
 			<Option target="MultiStreamTcpClient"/>
 			<Option target="SingleStreamTcpClient"/>
+			<Option target="MultiThreadTcpClient"/>
 			<Option target="SingleStreamTcpServer"/>
 		</Unit>
 		<Unit filename="/home/raphael/H_CCW17/Stream.hpp">
@@ -375,6 +430,7 @@
 			<Option target="VaryingSizeTcpClient"/>
 			<Option target="MultiStreamTcpClient"/>
 			<Option target="SingleStreamTcpClient"/>
+			<Option target="MultiThreadTcpClient"/>
 			<Option target="SingleStreamTcpServer"/>
 		</Unit>
 		<Unit filename="/home/raphael/H_CCW17/VaryingSizeTcpClient.cpp">

@@ -176,6 +176,19 @@ SingleStreamTcpClient/fast:
 .PHONY : SingleStreamTcpClient/fast
 
 #=============================================================================
+# Target rules for targets named MultiThreadTcpClient
+
+# Build rule for target.
+MultiThreadTcpClient: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 MultiThreadTcpClient
+.PHONY : MultiThreadTcpClient
+
+# fast build rule for target.
+MultiThreadTcpClient/fast:
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/build
+.PHONY : MultiThreadTcpClient/fast
+
+#=============================================================================
 # Target rules for targets named SingleStreamTcpServer
 
 # Build rule for target.
@@ -199,6 +212,7 @@ Acceptor.cpp.o:
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Acceptor.cpp.o
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Acceptor.cpp.o
 	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Acceptor.cpp.o
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/Acceptor.cpp.o
 	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Acceptor.cpp.o
 .PHONY : Acceptor.cpp.o
 
@@ -213,6 +227,7 @@ Acceptor.cpp.i:
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Acceptor.cpp.i
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Acceptor.cpp.i
 	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Acceptor.cpp.i
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/Acceptor.cpp.i
 	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Acceptor.cpp.i
 .PHONY : Acceptor.cpp.i
 
@@ -227,6 +242,7 @@ Acceptor.cpp.s:
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Acceptor.cpp.s
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Acceptor.cpp.s
 	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Acceptor.cpp.s
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/Acceptor.cpp.s
 	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Acceptor.cpp.s
 .PHONY : Acceptor.cpp.s
 
@@ -241,6 +257,7 @@ Connector.cpp.o:
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Connector.cpp.o
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Connector.cpp.o
 	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Connector.cpp.o
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/Connector.cpp.o
 	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Connector.cpp.o
 .PHONY : Connector.cpp.o
 
@@ -255,6 +272,7 @@ Connector.cpp.i:
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Connector.cpp.i
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Connector.cpp.i
 	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Connector.cpp.i
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/Connector.cpp.i
 	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Connector.cpp.i
 .PHONY : Connector.cpp.i
 
@@ -269,6 +287,7 @@ Connector.cpp.s:
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Connector.cpp.s
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Connector.cpp.s
 	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Connector.cpp.s
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/Connector.cpp.s
 	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Connector.cpp.s
 .PHONY : Connector.cpp.s
 
@@ -298,6 +317,36 @@ MultiStreamTcpClient.s: MultiStreamTcpClient.cpp.s
 MultiStreamTcpClient.cpp.s:
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/MultiStreamTcpClient.cpp.s
 .PHONY : MultiStreamTcpClient.cpp.s
+
+MultiThreadTcpClient.o: MultiThreadTcpClient.cpp.o
+
+.PHONY : MultiThreadTcpClient.o
+
+# target to build an object file
+MultiThreadTcpClient.cpp.o:
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/MultiThreadTcpClient.cpp.o
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/MultiThreadTcpClient.cpp.o
+.PHONY : MultiThreadTcpClient.cpp.o
+
+MultiThreadTcpClient.i: MultiThreadTcpClient.cpp.i
+
+.PHONY : MultiThreadTcpClient.i
+
+# target to preprocess a source file
+MultiThreadTcpClient.cpp.i:
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/MultiThreadTcpClient.cpp.i
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/MultiThreadTcpClient.cpp.i
+.PHONY : MultiThreadTcpClient.cpp.i
+
+MultiThreadTcpClient.s: MultiThreadTcpClient.cpp.s
+
+.PHONY : MultiThreadTcpClient.s
+
+# target to generate assembly for a file
+MultiThreadTcpClient.cpp.s:
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/MultiThreadTcpClient.cpp.s
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/MultiThreadTcpClient.cpp.s
+.PHONY : MultiThreadTcpClient.cpp.s
 
 MultiThreadTcpServer.o: MultiThreadTcpServer.cpp.o
 
@@ -418,6 +467,7 @@ Stream.cpp.o:
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Stream.cpp.o
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Stream.cpp.o
 	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Stream.cpp.o
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/Stream.cpp.o
 	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Stream.cpp.o
 .PHONY : Stream.cpp.o
 
@@ -432,6 +482,7 @@ Stream.cpp.i:
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Stream.cpp.i
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Stream.cpp.i
 	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Stream.cpp.i
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/Stream.cpp.i
 	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Stream.cpp.i
 .PHONY : Stream.cpp.i
 
@@ -446,6 +497,7 @@ Stream.cpp.s:
 	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Stream.cpp.s
 	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Stream.cpp.s
 	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Stream.cpp.s
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/Stream.cpp.s
 	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Stream.cpp.s
 .PHONY : Stream.cpp.s
 
@@ -489,6 +541,7 @@ help:
 	@echo "... VaryingSizeTcpClient"
 	@echo "... MultiStreamTcpClient"
 	@echo "... SingleStreamTcpClient"
+	@echo "... MultiThreadTcpClient"
 	@echo "... SingleStreamTcpServer"
 	@echo "... Acceptor.o"
 	@echo "... Acceptor.i"
@@ -499,6 +552,9 @@ help:
 	@echo "... MultiStreamTcpClient.o"
 	@echo "... MultiStreamTcpClient.i"
 	@echo "... MultiStreamTcpClient.s"
+	@echo "... MultiThreadTcpClient.o"
+	@echo "... MultiThreadTcpClient.i"
+	@echo "... MultiThreadTcpClient.s"
 	@echo "... MultiThreadTcpServer.o"
 	@echo "... MultiThreadTcpServer.i"
 	@echo "... MultiThreadTcpServer.s"

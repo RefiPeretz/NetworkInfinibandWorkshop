@@ -13,12 +13,16 @@ set(SSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
 add_executable(SingleStreamTcpClient ${SSTC})
 
 set(MSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
-    Acceptor.hpp MultiStreamTcpClient.cpp)
+    Acceptor.hpp MultiStreamTcpClient.cpp MultiThreadTcpClient.cpp)
 add_executable(MultiStreamTcpClient ${MSTS})
 
 set(VSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
     Acceptor.hpp VaryingSizeTcpClient.cpp)
 add_executable(VaryingSizeTcpClient ${VSTC})
+
+set(MSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
+        Acceptor.hpp MultiThreadTcpClient.cpp MultiThreadTcpClient.cpp)
+add_executable(MultiThreadTcpClient ${MSTS})
 
 set(MTTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
     Acceptor.hpp MultiThreadTcpServer.cpp)

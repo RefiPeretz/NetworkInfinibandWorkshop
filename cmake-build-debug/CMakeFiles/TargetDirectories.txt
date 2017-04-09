@@ -5,4 +5,5 @@
 /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles/VaryingSizeTcpClient.dir
 /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles/MultiStreamTcpClient.dir
 /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles/SingleStreamTcpClient.dir
+/home/raphael/H_CCW17/cmake-build-debug/CMakeFiles/MultiThreadTcpClient.dir
 /home/raphael/H_CCW17/cmake-build-debug/CMakeFiles/SingleStreamTcpServer.dir
