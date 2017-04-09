@@ -291,6 +291,42 @@ Connector.cpp.s:
 	$(MAKE) -f CMakeFiles/SingleStreamTcpServer.dir/build.make CMakeFiles/SingleStreamTcpServer.dir/Connector.cpp.s
 .PHONY : Connector.cpp.s
 
+Metrics.o: Metrics.cpp.o
+
+.PHONY : Metrics.o
+
+# target to build an object file
+Metrics.cpp.o:
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Metrics.cpp.o
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Metrics.cpp.o
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Metrics.cpp.o
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/Metrics.cpp.o
+.PHONY : Metrics.cpp.o
+
+Metrics.i: Metrics.cpp.i
+
+.PHONY : Metrics.i
+
+# target to preprocess a source file
+Metrics.cpp.i:
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Metrics.cpp.i
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Metrics.cpp.i
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Metrics.cpp.i
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/Metrics.cpp.i
+.PHONY : Metrics.cpp.i
+
+Metrics.s: Metrics.cpp.s
+
+.PHONY : Metrics.s
+
+# target to generate assembly for a file
+Metrics.cpp.s:
+	$(MAKE) -f CMakeFiles/VaryingSizeTcpClient.dir/build.make CMakeFiles/VaryingSizeTcpClient.dir/Metrics.cpp.s
+	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/Metrics.cpp.s
+	$(MAKE) -f CMakeFiles/SingleStreamTcpClient.dir/build.make CMakeFiles/SingleStreamTcpClient.dir/Metrics.cpp.s
+	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/Metrics.cpp.s
+.PHONY : Metrics.cpp.s
+
 MultiStreamTcpClient.o: MultiStreamTcpClient.cpp.o
 
 .PHONY : MultiStreamTcpClient.o
@@ -549,6 +585,9 @@ help:
 	@echo "... Connector.o"
 	@echo "... Connector.i"
 	@echo "... Connector.s"
+	@echo "... Metrics.o"
+	@echo "... Metrics.i"
+	@echo "... Metrics.s"
 	@echo "... MultiStreamTcpClient.o"
 	@echo "... MultiStreamTcpClient.i"
 	@echo "... MultiStreamTcpClient.s"
