@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
          parallelClientNum++) {
         char ack;
 
-        streams[parallelClientNum]->receive(&ack, sizeof(char), 5000);
+        streams[parallelClientNum]->receive(&ack, sizeof(char), 5);
         printf("received - %c\n", ack);
         delete streams[parallelClientNum];
     }
