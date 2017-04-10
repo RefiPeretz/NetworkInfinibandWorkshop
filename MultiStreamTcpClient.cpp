@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
     for (int parallelClientNum = 0; parallelClientNum < clientNum;parallelClientNum++) {
 
         connects[parallelClientNum] = new Connector();
-        streams[parallelClientNum] = connects[parallelClientNum]->connect(serverAddress.c_str(), 8081);
+        streams[parallelClientNum] = connects[parallelClientNum]->connect(serverAddress.c_str(), 8081, 5000);
 
     }
     printf("Multiple sends\n");
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
          parallelClientNum++) {
         char ack;
 
-        streams[parallelClientNum]->receive(&ack, sizeof(char));
+        streams[parallelClientNum]->receive(&ack, sizeof(char), 5000);
         printf("received - %c\n", ack);
         delete streams[parallelClientNum];
     }

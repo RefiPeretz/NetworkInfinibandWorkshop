@@ -9,19 +9,19 @@ set(SSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp Acceptor
 add_executable(SingleStreamTcpServer ${SSTS})
 
 set(SSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
-    Acceptor.hpp SingleStreamTcpClient.cpp Metrics.cpp Metrics.h)
+    Acceptor.hpp SingleStreamTcpClient.cpp Metrics.cpp Metrics.hpp)
 add_executable(SingleStreamTcpClient ${SSTC})
 
 set(MSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
-    Acceptor.hpp MultiStreamTcpClient.cpp MultiThreadTcpClient.cpp Metrics.cpp Metrics.h)
+    Acceptor.hpp MultiStreamTcpClient.cpp Metrics.cpp Metrics.hpp)
 add_executable(MultiStreamTcpClient ${MSTS})
 
 set(VSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
-    Acceptor.hpp VaryingSizeTcpClient.cpp Metrics.cpp Metrics.h)
+    Acceptor.hpp VaryingSizeTcpClient.cpp Metrics.cpp Metrics.hpp)
 add_executable(VaryingSizeTcpClient ${VSTC})
 
 set(MSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
-        Acceptor.hpp MultiThreadTcpClient.cpp MultiThreadTcpClient.cpp Metrics.cpp Metrics.h)
+        Acceptor.hpp MultiThreadTcpClient.cpp MultiThreadTcpClient.cpp Metrics.cpp Metrics.hpp)
 add_executable(MultiThreadTcpClient ${MSTS})
 
 set(MTTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
