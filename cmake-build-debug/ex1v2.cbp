@@ -408,11 +408,16 @@
 			<Option target="SingleStreamTcpClient"/>
 			<Option target="MultiThreadTcpClient"/>
 		</Unit>
+		<Unit filename="/home/raphael/H_CCW17/Metrics.hpp">
+			<Option target="VaryingSizeTcpClient"/>
+			<Option target="MultiStreamTcpClient"/>
+			<Option target="SingleStreamTcpClient"/>
+			<Option target="MultiThreadTcpClient"/>
+		</Unit>
 		<Unit filename="/home/raphael/H_CCW17/MultiStreamTcpClient.cpp">
 			<Option target="MultiStreamTcpClient"/>
 		</Unit>
 		<Unit filename="/home/raphael/H_CCW17/MultiThreadTcpClient.cpp">
-			<Option target="MultiStreamTcpClient"/>
 			<Option target="MultiThreadTcpClient"/>
 		</Unit>
 		<Unit filename="/home/raphael/H_CCW17/MultiThreadTcpServer.cpp">

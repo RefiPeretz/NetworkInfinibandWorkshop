@@ -8,9 +8,15 @@
 #include <sstream>
 typedef struct{
     int port;
-    char* word = "w";
+    char baseWord = 'w';
     char* server;
+    char* msg;
+    int msgSize;
 }socketData;
+
+void warmUpServer(int port,int numOfMsgs = 1000, std::string server = "localhost");
+
+void createMsg(int sizeMsg, char baseChar, char** msg);
 
 double timeDifference(timeval time1, timeval time2);
 

@@ -360,7 +360,6 @@ MultiThreadTcpClient.o: MultiThreadTcpClient.cpp.o
 
 # target to build an object file
 MultiThreadTcpClient.cpp.o:
-	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/MultiThreadTcpClient.cpp.o
 	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/MultiThreadTcpClient.cpp.o
 .PHONY : MultiThreadTcpClient.cpp.o
 
@@ -370,7 +369,6 @@ MultiThreadTcpClient.i: MultiThreadTcpClient.cpp.i
 
 # target to preprocess a source file
 MultiThreadTcpClient.cpp.i:
-	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/MultiThreadTcpClient.cpp.i
 	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/MultiThreadTcpClient.cpp.i
 .PHONY : MultiThreadTcpClient.cpp.i
 
@@ -380,7 +378,6 @@ MultiThreadTcpClient.s: MultiThreadTcpClient.cpp.s
 
 # target to generate assembly for a file
 MultiThreadTcpClient.cpp.s:
-	$(MAKE) -f CMakeFiles/MultiStreamTcpClient.dir/build.make CMakeFiles/MultiStreamTcpClient.dir/MultiThreadTcpClient.cpp.s
 	$(MAKE) -f CMakeFiles/MultiThreadTcpClient.dir/build.make CMakeFiles/MultiThreadTcpClient.dir/MultiThreadTcpClient.cpp.s
 .PHONY : MultiThreadTcpClient.cpp.s
 
