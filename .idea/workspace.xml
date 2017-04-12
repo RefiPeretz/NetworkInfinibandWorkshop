@@ -26,10 +26,7 @@
   <component name="ChangeListManager">
     <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Metrics.cpp" afterPath="$PROJECT_DIR$/Metrics.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Metrics.hpp" afterPath="$PROJECT_DIR$/Metrics.hpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MultiStreamTcpClient.cpp" afterPath="$PROJECT_DIR$/MultiStreamTcpClient.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SingleStreamTcpClient.cpp" afterPath="$PROJECT_DIR$/SingleStreamTcpClient.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MultiThreadTcpClient.cpp" afterPath="$PROJECT_DIR$/MultiThreadTcpClient.cpp" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -67,13 +64,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MultiThreadTcpClient.cpp" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MultiThreadTcpClient.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MultiThreadTcpClient.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="43" column="43" lean-forward="false" selection-start-line="43" selection-start-column="43" selection-end-line="43" selection-end-column="43" />
+            <state relative-caret-position="354">
+              <caret line="46" column="0" lean-forward="true" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
               <folding>
                 <element signature="e#100#118#0" expanded="true" />
+                <marker date="1491998777542" expanded="true" signature="1414:1517" ph="..." />
               </folding>
             </state>
           </provider>
@@ -83,7 +81,7 @@
         <entry file="file://$PROJECT_DIR$/MultiStreamTcpClient.cpp">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="12">
-              <caret line="26" column="18" lean-forward="true" selection-start-line="26" selection-start-column="18" selection-end-line="26" selection-end-column="18" />
+              <caret line="26" column="18" lean-forward="false" selection-start-line="26" selection-start-column="18" selection-end-line="26" selection-end-column="18" />
               <folding>
                 <element signature="e#98#116#0" expanded="true" />
               </folding>
@@ -106,8 +104,8 @@
       <file leaf-file-name="SingleStreamTcpClient.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SingleStreamTcpClient.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="326">
-              <caret line="29" column="57" lean-forward="false" selection-start-line="29" selection-start-column="19" selection-end-line="29" selection-end-column="57" />
+            <state relative-caret-position="714">
+              <caret line="68" column="8" lean-forward="false" selection-start-line="68" selection-start-column="8" selection-end-line="68" selection-end-column="81" />
               <folding>
                 <element signature="e#40#58#0" expanded="true" />
               </folding>
@@ -115,11 +113,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Metrics.cpp" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Metrics.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Metrics.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="35" column="62" lean-forward="true" selection-start-line="35" selection-start-column="62" selection-end-line="35" selection-end-column="62" />
+            <state relative-caret-position="666">
+              <caret line="37" column="51" lean-forward="false" selection-start-line="36" selection-start-column="51" selection-end-line="37" selection-end-column="51" />
               <folding>
                 <element signature="e#41#62#0" expanded="true" />
               </folding>
@@ -185,11 +183,11 @@
         <option value="$PROJECT_DIR$/Acceptor.cpp" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/Metrics.h" />
-        <option value="$PROJECT_DIR$/MultiThreadTcpClient.cpp" />
         <option value="$PROJECT_DIR$/MultiStreamTcpClient.cpp" />
         <option value="$PROJECT_DIR$/SingleStreamTcpClient.cpp" />
         <option value="$PROJECT_DIR$/Metrics.hpp" />
         <option value="$PROJECT_DIR$/Metrics.cpp" />
+        <option value="$PROJECT_DIR$/MultiThreadTcpClient.cpp" />
       </list>
     </option>
   </component>
@@ -282,7 +280,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.SingleStreamTcpClient">
+  <component name="RunManager" selected="Application.MultiStreamTcpClient">
     <configuration default="true" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="ex1v2" CONFIG_NAME="Debug" TEST_MODE="SUITE_TEST">
       <envs />
       <method />
@@ -450,7 +448,7 @@
       <option name="USE_KEYWORD" value="false" />
       <method />
     </configuration>
-    <configuration default="false" name="SingleStreamTcpClient" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="8081 127.0.0.1 10" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="SingleStreamTcpClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="SingleStreamTcpClient">
+    <configuration default="false" name="SingleStreamTcpClient" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="8081 127.0.0.1 200" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="SingleStreamTcpClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="SingleStreamTcpClient">
       <envs />
       <method />
     </configuration>
@@ -458,7 +456,7 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="MultiStreamTcpClient" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="7" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="MultiStreamTcpClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="MultiStreamTcpClient">
+    <configuration default="false" name="MultiStreamTcpClient" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="100" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="MultiStreamTcpClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="MultiStreamTcpClient">
       <envs />
       <method />
     </configuration>
@@ -474,7 +472,7 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="MultiThreadTcpClient" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="10" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="MultiThreadTcpClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="MultiThreadTcpClient">
+    <configuration default="false" name="MultiThreadTcpClient" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="200" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="MultiThreadTcpClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="MultiThreadTcpClient">
       <envs />
       <method />
     </configuration>
@@ -515,7 +513,7 @@
       <workItem from="1491725269766" duration="7031000" />
       <workItem from="1491739707570" duration="3923000" />
       <workItem from="1491829122455" duration="14712000" />
-      <workItem from="1491983735400" duration="9347000" />
+      <workItem from="1491983735400" duration="12512000" />
     </task>
     <task id="LOCAL-00001" summary="Added RTT evaluation">
       <created>1489742159010</created>
@@ -608,11 +606,18 @@
       <option name="project" value="LOCAL" />
       <updated>1491904886843</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Add a save results function.&#10;Adjust singlestream client to the new save result function.">
+      <created>1491997419873</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1491997419873</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="80001000" />
+    <option name="totallyTimeSpent" value="83166000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="24" width="1855" height="1056" extended-state="6" />
@@ -680,7 +685,8 @@
     <MESSAGE value="Added timer to multiple threads.  Add metrics calculation functions" />
     <MESSAGE value="Fix data in thread handler" />
     <MESSAGE value="Adjust SingleStream to right structure. Small modifications in Metrics.&#10;MutliThreadClient  small modifications" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adjust SingleStream to right structure. Small modifications in Metrics.&#10;MutliThreadClient  small modifications" />
+    <MESSAGE value="Add a save results function.&#10;Adjust singlestream client to the new save result function." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add a save results function.&#10;Adjust singlestream client to the new save result function." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -697,13 +703,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/MultiThreadTcpClient.cpp</url>
-          <line>90</line>
+          <line>93</line>
           <option name="timeStamp" value="38" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/MultiThreadTcpClient.cpp</url>
-          <line>35</line>
-          <option name="timeStamp" value="39" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/SingleStreamTcpClient.cpp</url>
@@ -967,6 +968,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="317">
           <caret line="29" column="7" lean-forward="false" selection-start-line="29" selection-start-column="7" selection-end-line="29" selection-end-column="7" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1027,32 +1029,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MultiThreadTcpClient.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="43" column="43" lean-forward="false" selection-start-line="43" selection-start-column="43" selection-end-line="43" selection-end-column="43" />
-          <folding>
-            <element signature="e#100#118#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MultiStreamTcpClient.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="12">
-          <caret line="26" column="18" lean-forward="true" selection-start-line="26" selection-start-column="18" selection-end-line="26" selection-end-column="18" />
+          <caret line="26" column="18" lean-forward="false" selection-start-line="26" selection-start-column="18" selection-end-line="26" selection-end-column="18" />
           <folding>
             <element signature="e#98#116#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SingleStreamTcpClient.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="326">
-          <caret line="29" column="57" lean-forward="false" selection-start-line="29" selection-start-column="19" selection-end-line="29" selection-end-column="57" />
-          <folding>
-            <element signature="e#40#58#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1069,10 +1051,31 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Metrics.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="35" column="62" lean-forward="true" selection-start-line="35" selection-start-column="62" selection-end-line="35" selection-end-column="62" />
+        <state relative-caret-position="666">
+          <caret line="37" column="51" lean-forward="false" selection-start-line="36" selection-start-column="51" selection-end-line="37" selection-end-column="51" />
           <folding>
             <element signature="e#41#62#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SingleStreamTcpClient.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="714">
+          <caret line="68" column="8" lean-forward="false" selection-start-line="68" selection-start-column="8" selection-end-line="68" selection-end-column="81" />
+          <folding>
+            <element signature="e#40#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MultiThreadTcpClient.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="354">
+          <caret line="46" column="0" lean-forward="true" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
+          <folding>
+            <element signature="e#100#118#0" expanded="true" />
+            <marker date="1491998777542" expanded="true" signature="1414:1517" ph="..." />
           </folding>
         </state>
       </provider>

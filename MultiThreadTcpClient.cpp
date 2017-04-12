@@ -32,7 +32,9 @@ int main(int argc, char **argv)
     data->port = 8081;
     data->server = "localhost";
     data->baseWord = 'w';
-    for (int msgSize = 1; msgSize <= 1024; msgSize = msgSize * 2) {
+    double results[(int)((log2(MAX_PACKET_SIZE) + 1) * 3)] = {0.0};
+    int resultIndex = 0;
+    for (int msgSize = 1; msgSize <= MAX_PACKET_SIZE; msgSize = msgSize * 2) {
         data->msgSize = msgSize;
         createMsg(msgSize,data->baseWord,&data->msg);
         data->msg[msgSize] = '\0';
@@ -66,10 +68,11 @@ int main(int argc, char **argv)
         printf("avgRTT: %g\n", rtt);
         printf("avgPacketRate: %g\n", packetRate);
         printf("avgThroughput: %g\n", throughput);
+        resultIndex = saveResults(rtt,throughput,packetRate,resultIndex,results);
         free(data->msg);
     }
 
-
+    createResultFile(numMsgs,"MultiThreadResults.csv",results);
 
 }
 
