@@ -3,19 +3,65 @@
 //
 #include <sys/time.h>
 #include <cstdlib>
-#include <math.h>
+#include <string>
 #include <memory.h>
 #include "Connector.hpp"
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <sstream>
+#include <algorithm>
 
 #define SEC_TO_MICRO pow(10, 6)
+#define MAX_PACKET_SIZE 1024
+
 
 using namespace std;
+
+
+void createResultFile(int numOfMsgs,char* nameOfFile,double* results){
+    int rttIndex,throIndex, pktRate;
+    std::stringstream numOfMsgsSS(stringstream::in | stringstream::out);
+    numOfMsgsSS << setprecision(5) << numOfMsgs << endl;
+    ofstream myFile;
+    myFile.open(nameOfFile);
+    myFile << "Results\n";
+    myFile << "Number Of messages[Integer],RTT[ms],Throughput[ms],Packet Rate[ms],Packet Size[bytes]\n";
+    int packetSize = 1;
+    for(int i = 0 ; i < (int)((log2(MAX_PACKET_SIZE) + 1) * 3); i+=3) {
+        rttIndex = i;
+        throIndex = i + 1;
+        pktRate = i + 2;
+        std::stringstream rttSS(stringstream::in | stringstream::out);
+        rttSS << setprecision(5) << results[rttIndex] << endl;
+        std::stringstream throughputSS(stringstream::in | stringstream::out);
+        throughputSS << setprecision(5) << results[throIndex] << endl;
+        std::stringstream packetRateSS(stringstream::in | stringstream::out);
+        packetRateSS << setprecision(5) << results[pktRate] << endl;
+        std::stringstream packetSizeSS(stringstream::in | stringstream::out);
+        packetSizeSS << setprecision(1) << packetSize << endl;
+        std::string writeToFile = numOfMsgsSS.str()+","+rttSS.str() +","+throughputSS.str()+","+packetRateSS.str()+","+packetSizeSS.str();
+        writeToFile.erase(std::remove(writeToFile.begin(), writeToFile.end(), '\n'), writeToFile.end());
+        myFile << writeToFile+"\n";
+        packetSize *= 2;
+    }
+    myFile.close();
+}
 
 void createMsg(int sizeMsg, char baseChar, char** msg){
     *msg = (char *)malloc(sizeMsg * sizeof(char) + 1);
     memset(*msg, baseChar, sizeMsg);
 }
 
+int saveResults(double rtt,double throughput, double packetRate,int resultIndex,double *results){
+    results[resultIndex] = rtt;
+    resultIndex++;
+    results[resultIndex] = throughput;
+    resultIndex++;
+    results[resultIndex] = packetRate;
+    resultIndex++;
+    return resultIndex;
+}
 
 void warmUpServer(int port,int numOfMsgs = 1000,std::string server = "localhost"){
     int len;
@@ -64,4 +110,6 @@ double calcAveragePacketRate(size_t numOfMessages, double totalTime)
 {
     return (double) 2 * numOfMessages / totalTime; //messages per second
 }
+
+
 

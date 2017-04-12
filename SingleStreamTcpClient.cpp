@@ -5,31 +5,31 @@
 #include <cstdlib>
 #include <string>
 #include <sys/time.h>
-#include <iostream>
-#include <iomanip>
-#include <fstream>
 #include "Stream.hpp"
 #include "Connector.hpp"
-#include <sstream>
 #include "Metrics.hpp"
+
+
 
 using namespace std;
 
 
 int main(int argc, char **argv) {
-    if (argc != 3) {
-        printf("usage: %s <port> <ip>\n", argv[0]);
+    if (argc != 4) {
+        printf("usage: %s <port> <ip> <number of msgs>\n", argv[0]);
         exit(1);
     }
     warmUpServer(atoi(argv[1]));
 
-    int numMsgs = 10;
+    int numMsgs = atoi(argv[3]);
     int len;
     char* message;
     char ack;
     struct timeval start, end;
     double t1, t2;
-    for (int msgSize = 1; msgSize <= 1024; msgSize = msgSize * 2){
+    double results[(int)((log2(MAX_PACKET_SIZE) + 1) * 3)] = {0.0};
+    int resultIndex = 0;
+    for (int msgSize = 1; msgSize <= MAX_PACKET_SIZE; msgSize = msgSize * 2){
         t1 = 0.0;
         t2 = 0.0;
         createMsg(msgSize,'w',&message);
@@ -66,25 +66,11 @@ int main(int argc, char **argv) {
         printf("avgRTT: %g\n", rtt);
         printf("avgPacketRate: %g\n", packetRate);
         printf("avgThroughput: %g\n", throughput);
+        resultIndex = saveResults(rtt,throughput,packetRate,resultIndex,results);
         free(message);
 
     }
+    createResultFile(numMsgs,"SingleStreamResults.csv",results);
 
-    //printf("Total time: %g\n", rtt);
-//    printf("RTT = %g ms\n", rtt);
-//    double rtt_d = 1000 / rtt;
-//    printf("Packet Rate = 1 / %g = %g byte / ms \n", rtt, rtt_d);
-//    auto patcketRate_str = std::to_string(rtt_d);
-//    double rttAvg = measureAvgRTT(argv[1],argv[2],1000);
-//    std::stringstream ss(stringstream::in | stringstream::out);
-//    ss << setprecision(5) << rttAvg << endl;
-////    printf("str: %s\n", ss.str());
-////    printf("avg: %g , normal: %g", rttAvg, rtt);
-//    ofstream myfile;
-//    myfile.open("SingleStreamResults.csv");
-//    myfile << "Results\n";
-//    myfile << "RTT,"+ ss.str() +" ms\n";
-//    myfile << "Packet Rate, " + patcketRate_str + " ms\n";
-//    myfile.close();
-    exit(0);
+
 }
