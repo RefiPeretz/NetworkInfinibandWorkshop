@@ -34,30 +34,28 @@ int main(int argc, char **argv) {
         t2 = 0.0;
         createMsg(msgSize,'w',&message);
         message[msgSize] = '\0';
+        Connector *connector = new Connector();
+        Stream *stream = connector->connect(argv[2], atoi(argv[1]));
         if (gettimeofday(&start, NULL)) {
             printf("time failed\n");
             exit(1);
         }
         for(int i = 0 ; i < numMsgs; i++){
-            Connector *connector = new Connector();
-            Stream *stream = connector->connect(argv[2], atoi(argv[1]));
-            if (stream) {
 
+            if (stream) {
                 stream->send(message, msgSize);
                 printf("sent - %s with sizeof %d\n", message, msgSize);
                 len = stream->receive(&ack, sizeof(char));
                 printf("received - %c\n", ack);
                 //calculate and print mean rtt
-                delete stream;
 
             }
-
-
         }
         if (gettimeofday(&end, NULL)) {
             printf("time failed\n");
             exit(1);
         }
+        delete stream;
         t1 += start.tv_sec + (start.tv_usec / 1000000.0);
         t2 += end.tv_sec + (end.tv_usec / 1000000.0);
         double rtt = calcAverageRTT(numMsgs, (t2-t1) / 100);

@@ -78,12 +78,9 @@ int main(int argc, char **argv)
 
 void* client(void* data)
 {
-    printf("In client\n");
     std::string serverAddress ="localhost";
     socketData* handlerData = (socketData*)(data);
     int port = handlerData->port;
-    printf("usage: <server = %s> <port = %d>\n", serverAddress.c_str(), port);
-
     int len;
     char ack;
     Connector *connector = new Connector();
