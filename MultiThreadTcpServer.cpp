@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 
 void ConnectionHandler(Stream *stream)
 {
-  size_t len;
+  int len;
   char line[256];
   while ((len = stream->receive(line, sizeof(line))) > 0) {
 		  line[len] = NULL;

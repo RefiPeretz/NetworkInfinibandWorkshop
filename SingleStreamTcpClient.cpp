@@ -19,35 +19,37 @@ int main(int argc, char **argv) {
         printf("usage: %s <port> <ip> <number of msgs>\n", argv[0]);
         exit(1);
     }
-    warmUpServer(atoi(argv[1]));
+    //warmUpServer(atoi(argv[1]));
 
     int numMsgs = atoi(argv[3]);
     int len;
+    int bytesRead;
     char* message;
-    char ack;
+    char ack[MAX_PACKET_SIZE];
     struct timeval start, end;
     double t1, t2;
     double results[(int)((log2(MAX_PACKET_SIZE) + 1) * 3)] = {0.0};
     int resultIndex = 0;
     for (int msgSize = 1; msgSize <= MAX_PACKET_SIZE; msgSize = msgSize * 2){
+        Connector *connector = new Connector();
+        Stream *stream = connector->connect(argv[2], atoi(argv[1]));
         t1 = 0.0;
         t2 = 0.0;
         createMsg(msgSize,'w',&message);
         message[msgSize] = '\0';
-        Connector *connector = new Connector();
-        Stream *stream = connector->connect(argv[2], atoi(argv[1]));
         if (gettimeofday(&start, NULL)) {
             printf("time failed\n");
             exit(1);
         }
         for(int i = 0 ; i < numMsgs; i++){
-
+            bytesRead = 0;
             if (stream) {
                 stream->send(message, msgSize);
                 printf("sent - %s with sizeof %d\n", message, msgSize);
-                len = stream->receive(&ack, sizeof(char));
-                printf("received - %c\n", ack);
-                //calculate and print mean rtt
+                while(bytesRead < msgSize){
+                    bytesRead += stream->receive(ack, MAX_PACKET_SIZE);
+                }
+                printf("received - %d Bytes\n", bytesRead);
 
             }
         }
@@ -55,7 +57,6 @@ int main(int argc, char **argv) {
             printf("time failed\n");
             exit(1);
         }
-        delete stream;
         t1 += start.tv_sec + (start.tv_usec / 1000000.0);
         t2 += end.tv_sec + (end.tv_usec / 1000000.0);
         double rtt = calcAverageRTT(numMsgs, (t2-t1) / 100);
@@ -66,6 +67,7 @@ int main(int argc, char **argv) {
         printf("avgThroughput: %g\n", throughput);
         resultIndex = saveResults(rtt,throughput,packetRate,resultIndex,results);
         free(message);
+        delete stream;
 
     }
     createResultFile(numMsgs,"SingleStreamResults.csv",results);

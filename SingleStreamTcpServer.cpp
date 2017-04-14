@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 	while (1) {
 	  stream = acceptor->accept();
 	  if (stream != NULL) {
-		size_t len;
+		int len;
 		char line[256];
 		while ((len = stream->receive(line, sizeof(line),5000)) > 0) {
 		  line[len] = NULL;

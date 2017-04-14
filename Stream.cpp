@@ -19,12 +19,12 @@ Stream::~Stream()
   close(m_sd);
 }
 
-ssize_t Stream::send(const char* buffer, size_t len)
+ssize_t Stream::send(const char *buffer, int len)
 {
   return write(m_sd, buffer, len);
 }
 
-ssize_t Stream::receive(char* buffer, size_t len, int timeout)
+ssize_t Stream::receive(char *buffer, int len, int timeout)
 {
   if (timeout <= 0) return read(m_sd, buffer, len);
 
