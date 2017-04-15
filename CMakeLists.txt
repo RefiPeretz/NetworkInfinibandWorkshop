@@ -3,7 +3,7 @@ project(ex1v2)
 SET(LDFLAGS "-pthread")
 set(CMAKE_CXX_STANDARD 11)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -Wall -Wextra")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -libverbs -Wall -Wextra")
 
 set(SSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp Acceptor.hpp SingleStreamTcpServer.cpp)
 add_executable(SingleStreamTcpServer ${SSTS})

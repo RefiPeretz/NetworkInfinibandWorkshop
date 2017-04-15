@@ -11,6 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <cmath>
 
 #define SEC_TO_MICRO pow(10, 6)
 #define MAX_PACKET_SIZE 1024
@@ -28,7 +29,7 @@ void createResultFile(int numOfMsgs,char* nameOfFile,double* results){
     myFile << "Results\n";
     myFile << "Number Of messages[Integer],RTT[ms],Throughput[ms],Packet Rate[ms],Packet Size[bytes]\n";
     int packetSize = 1;
-    for(int i = 0 ; i < (int)((log2(MAX_PACKET_SIZE) + 1) * 3); i+=3) {
+    for(int i = 0 ; i < (int)((std::log2(MAX_PACKET_SIZE) + 1) * 3); i+=3) {
         rttIndex = i;
         throIndex = i + 1;
         pktRate = i + 2;
