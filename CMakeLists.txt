@@ -13,7 +13,7 @@ set(SSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
 add_executable(SingleStreamTcpClient ${SSTC})
 
 set(MSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
-    Acceptor.hpp MultiStreamTcpClient.cpp Metrics.cpp Metrics.hpp)
+    Acceptor.hpp MultiStreamTcpClient.cpp Metrics.cpp Metrics.hpp SingleInfiniBandServer.cpp)
 add_executable(MultiStreamTcpClient ${MSTS})
 
 set(VSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
@@ -31,3 +31,7 @@ add_executable(MultiThreadTcpServer ${MTTS})
 set(NBTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
     Acceptor.hpp NonBlockingTcpServer.cpp)
 add_executable(NonBlockingTcpServer ${NBTS})
+
+#Verbs versions
+set(tempVerbs temp.cpp pingpong.cpp pingpong.hpp)
+add_executable(tempVerbs ${tempVerbs})
