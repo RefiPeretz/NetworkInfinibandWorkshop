@@ -1,9 +1,13 @@
 cmake_minimum_required(VERSION 3.6)
 project(ex1v2)
-SET(LDFLAGS "-pthread")
+set(LDFLAGS "-pthread")
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 99)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -libverbs -Wall -Wextra")
+
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -Wall -Wextra")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LDFLAGS} -libverbs -Wall -Wextra")
+
 
 set(SSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp Acceptor.hpp SingleStreamTcpServer.cpp)
 add_executable(SingleStreamTcpServer ${SSTS})
@@ -33,5 +37,11 @@ set(NBTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
 add_executable(NonBlockingTcpServer ${NBTS})
 
 #Verbs versions
-set(tempVerbs temp.cpp pingpong.cpp pingpong.hpp)
-add_executable(tempVerbs ${tempVerbs})
+#set(tempVerbs temp.cpp pingpong.cpp pingpong.hpp)
+#add_executable(tempVerbs ${tempVerbs})
+#add_library(libverbs STATIC IMPORTED)
+#set(SIBC SingleInfiniBandClient.c LINK_PRIVATE ibverbs )
+#add_executable(SingleInfiniBandClient ${SIBC})
+#
+#set(SIBS SingleInfiniBandServer.cpp)
+#add_executable(SingleInfiniBandServer ${SIBS})
