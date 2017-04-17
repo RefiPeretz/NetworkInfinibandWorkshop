@@ -37,11 +37,16 @@ set(NBTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
 add_executable(NonBlockingTcpServer ${NBTS})
 
 #Verbs versions
+SET(GCC_COVERAGE_LINK_FLAGS "-lrdmacm -libverbs -lpthread")
+#
 #set(tempVerbs temp.cpp pingpong.cpp pingpong.hpp)
 #add_executable(tempVerbs ${tempVerbs})
-#add_library(libverbs STATIC IMPORTED)
-#set(SIBC SingleInfiniBandClient.c LINK_PRIVATE ibverbs )
-#add_executable(SingleInfiniBandClient ${SIBC})
+#target_link_libraries(tempVerbs "${GCC_COVERAGE_LINK_FLAGS}")
+
+set(SIBC SingleInfiniBandClient.c)
+add_executable(SingleInfiniBandClient ${SIBC})
+target_link_libraries(SingleInfiniBandClient "${GCC_COVERAGE_LINK_FLAGS}")
+#
 #
 #set(SIBS SingleInfiniBandServer.cpp)
 #add_executable(SingleInfiniBandServer ${SIBS})
