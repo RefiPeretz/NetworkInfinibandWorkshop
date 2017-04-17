@@ -1,5 +1,5 @@
-# H_CCW17
-Exercises from Hebrew U Workshop in communication networks
+#Workshop in communication networks in Hebrew university of jerusalem 2017
+EX1 - See ex1.pdf for ex. instructions.
 
 Files:
 Stream.cpp/.hpp - Socket wrapper class
@@ -19,10 +19,13 @@ Part 3 - MultiStreamTcpClient, VaryingSizeTcpClient || Missing support for Infin
 Part 4 -
 
 
-Important Links:
-Explains the structure and needed functions in comparison to TCP and PingPong example
-https://blog.zhaw.ch/icclab/infiniband-an-introduction-simple-ib-verbs-program-with-rdma-write/
-##Uses TCP out of band and not CM
+Important Links for InfiniBand support using Verbs API:
+- Explains the structure and needed functions in comparison to TCP and PingPong example
+  https://blog.zhaw.ch/icclab/infiniband-an-introduction-simple-ib-verbs-program-with-rdma-write/
+  Uses TCP out of band and not CM
 
+
+- Dissect of the pingpong example almost line by line: 
+https://arxiv.org/pdf/1105.1827.pdf
 
 
