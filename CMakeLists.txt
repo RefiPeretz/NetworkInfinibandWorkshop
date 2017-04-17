@@ -43,7 +43,7 @@ SET(GCC_COVERAGE_LINK_FLAGS "-lrdmacm -libverbs -lpthread")
 #add_executable(tempVerbs ${tempVerbs})
 #target_link_libraries(tempVerbs "${GCC_COVERAGE_LINK_FLAGS}")
 
-set(SIBC SingleInfiniBandClient.c)
+set(SIBC SingleInfiniBandClient.c pingpong.c pingpong.h)
 add_executable(SingleInfiniBandClient ${SIBC})
 target_link_libraries(SingleInfiniBandClient "${GCC_COVERAGE_LINK_FLAGS}")
 #

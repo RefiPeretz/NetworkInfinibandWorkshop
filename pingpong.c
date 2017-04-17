@@ -30,7 +30,8 @@
  * SOFTWARE.
  */
 
-#include "pingpong.hpp"
+#define _GNU_SOURCE
+#include "pingpong.h"
 #include <endian.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -57,7 +58,7 @@ int pp_get_port_info(struct ibv_context *context, int port,
 void wire_gid_to_gid(const char *wgid, union ibv_gid *gid)
 {
   char tmp[9];
-  __be32 v32;
+  unsigned int v32;
   int i;
   uint32_t tmp_gid[4];
 
