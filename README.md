@@ -20,7 +20,9 @@ Part 4 -
 
 
 Important Links:
-Explains the structure and needed functions in comperison to TCP and PingPong example
+Explains the structure and needed functions in comparison to TCP and PingPong example
 https://blog.zhaw.ch/icclab/infiniband-an-introduction-simple-ib-verbs-program-with-rdma-write/
 ##Uses TCP out of band and not CM
+
+
 

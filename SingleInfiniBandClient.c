@@ -386,6 +386,10 @@ int main(int argc, char *argv[])
 
   //get the device list on the clinet
   dev_list = ibv_get_device_list(NULL);
+  if (!dev_list) {
+	perror("Failed to get IB devices list");
+	return 1;
+  }
 
   //Get device from list.
   ib_dev = *dev_list;
