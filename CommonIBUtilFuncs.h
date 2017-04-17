@@ -40,10 +40,22 @@ enum ibv_mtu pp_mtu_to_enum(int mtu);
 int pp_get_port_info(struct ibv_context *context, int port, struct ibv_port_attr *attr);
 void wire_gid_to_gid(const char *wgid, union ibv_gid *gid);
 void gid_to_wire_gid(const union ibv_gid *gid, char wgid[]);
-struct net_context *
-pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use_event, int is_server);
 
-struct net_context{
+/*
+ * Holds information that identifies the machine and exchanged during the TCP or any other out of band first handshake
+ */
+typedef struct
+{
+  int lid; // Local identifier - unique port number (assigned when active)
+  int qpn; //Queue pair number - Q identifier on the HCA
+  int psn; //Packet seq. number - used by HCA to verify packet coming in order and no missing packets
+  union ibv_gid gid; // cast identifier - identifies an endpoint
+} remoteServerInfo;
+
+struct connection *
+init_connection(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use_event, int is_server);
+
+struct connection{
   struct ibv_context *context;
   struct ibv_comp_channel *channel;
   struct ibv_pd *pd;
@@ -61,44 +73,54 @@ void gid_to_wire_gid(const union ibv_gid *gid, char *wgid);
 
 enum
 {
-  PINGPONG_RECV_WRID = 1, PINGPONG_SEND_WRID = 2,
+  RECV_WRID = 1, SEND_WRID = 2,
 };
-
-struct pingpong_dest
-{
-  int lid;
-  int qpn;
-  int psn;
-  union ibv_gid gid;
-};
-
-int pp_post_recv(struct net_context *ctx, int n);
 
 /*
- * Exchange IB information with server - in order to create a new baby.
- * I.E. connection. real connection.
+ *  qp_change_state_rtr
+ * **********************
+ *  Changes Queue Pair status to RTR (Ready to receive)
  */
-struct pingpong_dest *pp_client_exch_dest(const char *servername, int port, const struct pingpong_dest *my_dest);
-
-
-int pp_connect_ctx(struct net_context *ctx,
+int setQPstateRTR(struct connection *ctx,
 	int port,
 	int my_psn,
 	enum ibv_mtu mtu,
 	int sl,
-	struct pingpong_dest *dest,
+	remoteServerInfo *dest,
 	int sgid_idx);
 
-int pp_post_send(struct net_context *ctx);
 
-int pp_close_ctx(struct net_context *ctx);
-
-struct pingpong_dest *pp_server_exch_dest(struct net_context *ctx,
-	int ib_port,
-	enum ibv_mtu mtu,
+/*
+ *  qp_change_state_rts
+ * **********************
+ *  Changes Queue Pair status to RTS (Ready to send)
+ *	QP status has to be RTR before changing it to RTS
+ */
+int setQPstateRTS(struct connection *ctx,
 	int port,
+	int my_psn,
+	enum ibv_mtu mtu,
 	int sl,
-	const struct pingpong_dest *my_dest,
+	remoteServerInfo *dest,
+	int sgid_idx)
+;
+
+int postRecvWorkReq(struct connection *ctx, int n);
+
+
+int prepIbDeviceToConnect(struct connection *ctx,
+	int port,
+	int my_psn,
+	enum ibv_mtu mtu,
+	int sl,
+	remoteServerInfo *dest,
 	int sgid_idx);
+
+int postSendWorkReq(struct connection *ctx);
+
+int closeConnection(struct connection *ctx);
+
+remoteServerInfo *pp_client_exch_dest(const char *servername, int port, const remoteServerInfo *my_dest);
+
 
 #endif /* IBV_PINGPONG_H */

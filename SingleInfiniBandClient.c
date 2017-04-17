@@ -20,9 +20,9 @@ int main(int argc, char *argv[])
 {
   struct ibv_device **dev_list;
   struct ibv_device *ib_dev;
-  struct net_context *ctx;
-  struct pingpong_dest my_dest;
-  struct pingpong_dest *rem_dest;
+  struct connection *ctx;
+   remoteServerInfo my_dest;
+   remoteServerInfo *rem_dest;
   struct timeval start, end;
   char *ib_devname = NULL;
   char *servername = NULL;
@@ -63,24 +63,55 @@ int main(int argc, char *argv[])
 
 
   //Init's all the needed structures for the connection and returns "ctx" Holds the whole connection data
-  ctx = pp_init_ctx(ib_dev, size, rx_depth, ib_port, use_event, !servername);
+  ctx = init_connection(ib_dev, size, rx_depth, ib_port, use_event, !servername);
   if (!ctx)
   {
 	return 1;
   }
 
-
-
-
   /*
    * prepares connection to get the given amount of packets
    */
-  routs = pp_post_recv(ctx, ctx->rx_depth);
+  routs = postRecvWorkReq(ctx, ctx->rx_depth);
   if (routs < ctx->rx_depth)
   {
 	fprintf(stderr, "Couldn't post receive (%d)\n", routs);
 	return 1;
   }
+
+  if (use_event)
+	if (ibv_req_notify_cq(ctx->cq, 0)) {
+	  fprintf(stderr, "Couldn't request CQ notification\n");
+	  return 1;
+	}
+
+
+  if (pp_get_port_info(ctx->context, ib_port, &ctx->portinfo)) {
+	fprintf(stderr, "Couldn't get port info\n");
+	return 1;
+  }
+
+  my_dest.lid = ctx->portinfo.lid;
+  if (ctx->portinfo.link_layer == IBV_LINK_LAYER_INFINIBAND && !my_dest.lid) {
+	fprintf(stderr, "Couldn't get local LID\n");
+	return 1;
+  }
+
+  if (gidx >= 0) {
+	if (ibv_query_gid(ctx->context, ib_port, gidx, &my_dest.gid)) {
+	  fprintf(stderr, "Could not get local gid for gid index %d\n", gidx);
+	  return 1;
+	}
+  } else
+	memset(&my_dest.gid, 0, sizeof my_dest.gid);
+
+  my_dest.qpn = ctx->qp->qp_num;
+  my_dest.psn = lrand48() & 0xffffff;
+  inet_ntop(AF_INET6, &my_dest.gid, gid, sizeof gid);
+  printf("  local address:  LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n",
+	  my_dest.lid, my_dest.qpn, my_dest.psn, gid);
+
+
 
   //Exchange information on target server
   rem_dest = pp_client_exch_dest(servername, port, &my_dest);
@@ -98,18 +129,18 @@ int main(int argc, char *argv[])
 	  gid);
 
 
-  if (pp_connect_ctx(ctx, ib_port, my_dest.psn, mtu, sl, rem_dest, gidx))
+  if (prepIbDeviceToConnect(ctx, ib_port, my_dest.psn, mtu, sl, rem_dest, gidx))
   {
 	return 1;
   }
 
-  if (pp_post_send(ctx))
+  if (postSendWorkReq(ctx))
   {
 	fprintf(stderr, "Couldn't post send\n");
 	return 1;
   }
 
-  ctx->pending |= PINGPONG_SEND_WRID;
+  ctx->pending |= SEND_WRID;
 
 
   if (gettimeofday(&start, NULL))
@@ -178,14 +209,14 @@ int main(int argc, char *argv[])
 
 		switch ((int) wc[i].wr_id)
 		{
-		  case PINGPONG_SEND_WRID:
+		  case SEND_WRID:
 			++scnt;
 			break;
 
-		  case PINGPONG_RECV_WRID:
+		  case RECV_WRID:
 			if (--routs <= 1)
 			{
-			  routs += pp_post_recv(ctx, ctx->rx_depth - routs);
+			  routs += postRecvWorkReq(ctx, ctx->rx_depth - routs);
 			  if (routs < ctx->rx_depth)
 			  {
 				fprintf(stderr, "Couldn't post receive (%d)\n", routs);
@@ -204,12 +235,12 @@ int main(int argc, char *argv[])
 		ctx->pending &= ~(int) wc[i].wr_id;
 		if (scnt < iters && !ctx->pending)
 		{
-		  if (pp_post_send(ctx))
+		  if (postSendWorkReq(ctx))
 		  {
 			fprintf(stderr, "Couldn't post send\n");
 			return 1;
 		  }
-		  ctx->pending = PINGPONG_RECV_WRID | PINGPONG_SEND_WRID;
+		  ctx->pending = RECV_WRID | SEND_WRID;
 		}
 	  }
 	}
@@ -233,7 +264,7 @@ int main(int argc, char *argv[])
 
   ibv_ack_cq_events(ctx->cq, num_cq_events);
 
-  if (pp_close_ctx(ctx))
+  if (closeConnection(ctx))
 	return 1;
 
   ibv_free_device_list(dev_list);

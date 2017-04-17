@@ -78,10 +78,11 @@ void wire_gid_to_gid(const char *wgid, union ibv_gid *gid)
 }
 
 void gid_to_wire_gid(const union ibv_gid *gid, char wgid[]);
-struct net_context *
-pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use_event, int is_server)
+
+struct connection *
+init_connection(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use_event, int is_server)
 {
-  struct net_context *ctx;
+  struct connection *ctx;
 
   ctx = calloc(1, sizeof *ctx);
   if (!ctx)
@@ -174,6 +175,7 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use
 
   return ctx;
 }
+
 void gid_to_wire_gid(const union ibv_gid *gid, char *wgid)
 {
   uint32_t tmp_gid[4];
@@ -183,131 +185,7 @@ void gid_to_wire_gid(const union ibv_gid *gid, char *wgid)
   for (i = 0; i < 4; ++i)
 	sprintf(&wgid[i * 8], "%08x", htobe32(tmp_gid[i]));
 }
-int pp_post_recv(struct net_context *ctx, int n)
-{
-  struct ibv_sge list = {
-	  .addr    = (uintptr_t) ctx->buf, .length = ctx->size, .lkey    = ctx->mr->lkey
-  };
-  struct ibv_recv_wr wr = {
-	  .wr_id        = PINGPONG_RECV_WRID, .sg_list    = &list, .num_sge    = 1,
-  };
-  struct ibv_recv_wr *bad_wr;
-  int i;
-
-  for (i = 0; i < n; ++i)
-  {
-	if (ibv_post_recv(ctx->qp, &wr, &bad_wr))
-	{
-	  break;
-	}
-  }
-
-  return i;
-}
-int pp_close_ctx(struct net_context *ctx)
-{
-  if (ibv_destroy_qp(ctx->qp)) {
-	fprintf(stderr, "Couldn't destroy QP\n");
-	return 1;
-  }
-
-  if (ibv_destroy_cq(ctx->cq)) {
-	fprintf(stderr, "Couldn't destroy CQ\n");
-	return 1;
-  }
-
-  if (ibv_dereg_mr(ctx->mr)) {
-	fprintf(stderr, "Couldn't deregister MR\n");
-	return 1;
-  }
-
-  if (ibv_dealloc_pd(ctx->pd)) {
-	fprintf(stderr, "Couldn't deallocate PD\n");
-	return 1;
-  }
-
-  if (ctx->channel) {
-	if (ibv_destroy_comp_channel(ctx->channel)) {
-	  fprintf(stderr, "Couldn't destroy completion channel\n");
-	  return 1;
-	}
-  }
-
-  if (ibv_close_device(ctx->context)) {
-	fprintf(stderr, "Couldn't release context\n");
-	return 1;
-  }
-
-  free(ctx->buf);
-  free(ctx);
-
-  return 0;
-}
-int pp_post_send(struct net_context *ctx)
-{
-  struct ibv_sge list = {
-	  .addr    = (uintptr_t) ctx->buf, .length = ctx->size, .lkey    = ctx->mr->lkey
-  };
-  struct ibv_send_wr wr = {
-	  .wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode     = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,
-  };
-  struct ibv_send_wr *bad_wr;
-
-  return ibv_post_send(ctx->qp, &wr, &bad_wr);
-}
-int pp_connect_ctx(struct net_context *ctx,
-	int port,
-	int my_psn,
-	enum ibv_mtu mtu,
-	int sl,
-	struct pingpong_dest *dest,
-	int sgid_idx)
-{
-  struct ibv_qp_attr attr = {
-	  .qp_state        = IBV_QPS_RTR, .path_mtu        = mtu, .dest_qp_num        = dest->qpn, .rq_psn            = dest
-		  ->psn, .max_dest_rd_atomic    = 1, .min_rnr_timer        = 12, .ah_attr        = {
-		  .is_global    = 0, .dlid        = dest->lid, .sl        = sl, .src_path_bits    = 0, .port_num    = port
-	  }};
-
-  if (dest->gid.global.interface_id)
-  {
-	attr.ah_attr.is_global = 1;
-	attr.ah_attr.grh.hop_limit = 1;
-	attr.ah_attr.grh.dgid = dest->gid;
-	attr.ah_attr.grh.sgid_index = sgid_idx;
-  }
-  if (ibv_modify_qp(ctx->qp,
-	  &attr,
-	  IBV_QP_STATE
-		  | IBV_QP_AV
-		  | IBV_QP_PATH_MTU
-		  | IBV_QP_DEST_QPN
-		  | IBV_QP_RQ_PSN
-		  | IBV_QP_MAX_DEST_RD_ATOMIC
-		  | IBV_QP_MIN_RNR_TIMER))
-  {
-	fprintf(stderr, "Failed to modify QP to RTR\n");
-	return 1;
-  }
-
-  attr.qp_state = IBV_QPS_RTS;
-  attr.timeout = 14;
-  attr.retry_cnt = 7;
-  attr.rnr_retry = 7;
-  attr.sq_psn = my_psn;
-  attr.max_rd_atomic = 1;
-  if (ibv_modify_qp(ctx->qp,
-	  &attr,
-	  IBV_QP_STATE | IBV_QP_TIMEOUT | IBV_QP_RETRY_CNT | IBV_QP_RNR_RETRY | IBV_QP_SQ_PSN | IBV_QP_MAX_QP_RD_ATOMIC))
-  {
-	fprintf(stderr, "Failed to modify QP to RTS\n");
-	return 1;
-  }
-
-  return 0;
-}
-struct pingpong_dest *pp_client_exch_dest(const char *servername, int port, const struct pingpong_dest *my_dest)
-
+remoteServerInfo *pp_client_exch_dest(const char *servername, int port, const remoteServerInfo *my_dest)
 {
   struct addrinfo *res, *t;
   struct addrinfo hints = {
@@ -317,7 +195,7 @@ struct pingpong_dest *pp_client_exch_dest(const char *servername, int port, cons
   char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
   int n;
   int sockfd = -1;
-  struct pingpong_dest *rem_dest = NULL;
+  remoteServerInfo *rem_dest = NULL;
   char gid[33];
 
   if (asprintf(&service, "%d", port) < 0)
@@ -374,7 +252,7 @@ struct pingpong_dest *pp_client_exch_dest(const char *servername, int port, cons
 
   write(sockfd, "done", sizeof "done");
 
-  rem_dest = (struct pingpong_dest *) malloc(sizeof *rem_dest);
+  rem_dest = (remoteServerInfo *) malloc(sizeof *rem_dest);
   if (!rem_dest)
   {
 	goto out;
@@ -387,12 +265,106 @@ struct pingpong_dest *pp_client_exch_dest(const char *servername, int port, cons
   close(sockfd);
   return rem_dest;
 }
-struct pingpong_dest *pp_server_exch_dest(struct net_context *ctx,
+int setQPstateRTR(struct connection *ctx,
+	int port,
+	int my_psn,
+	enum ibv_mtu mtu,
+	int sl,
+	remoteServerInfo *dest,
+	int sgid_idx)
+{
+  struct ibv_qp_attr attr = {
+	  .qp_state        = IBV_QPS_RTR,
+	  .path_mtu        = mtu,
+	  .dest_qp_num        = dest->qpn,
+	  .rq_psn            = dest->psn,
+	  .max_dest_rd_atomic    = 1,
+	  .min_rnr_timer        = 12,
+	  .ah_attr        = {
+		  .is_global    = 0,
+		  .dlid        = dest->lid,
+		  .sl        = sl,
+		  .src_path_bits= 0,
+		  .port_num    = port
+	  }};
+
+  if (dest->gid.global.interface_id)
+  {
+	attr.ah_attr.is_global = 1;
+	attr.ah_attr.grh.hop_limit = 1;
+	attr.ah_attr.grh.dgid = dest->gid;
+	attr.ah_attr.grh.sgid_index = sgid_idx;
+  }
+  if (ibv_modify_qp(ctx->qp,
+	  &attr,
+	  IBV_QP_STATE
+		  | IBV_QP_AV
+		  | IBV_QP_PATH_MTU
+		  | IBV_QP_DEST_QPN
+		  | IBV_QP_RQ_PSN
+		  | IBV_QP_MAX_DEST_RD_ATOMIC
+		  | IBV_QP_MIN_RNR_TIMER))
+  {
+	fprintf(stderr, "Failed to modify QP to RTR\n");
+	return 1;
+  }
+
+  return 0;
+}
+
+int setQPstateRTS(struct connection *ctx,
+	int port,
+	int my_psn,
+	enum ibv_mtu mtu,
+	int sl,
+	remoteServerInfo *dest,
+	int sgid_idx)
+{
+  // first the qp state has to be changed to rtr
+  setQPstateRTR(ctx,
+	  port,
+	  my_psn,
+	  mtu,
+	  sl,
+	  dest,
+	  sgid_idx);
+  struct ibv_qp_attr attr = {
+	  .qp_state        = IBV_QPS_RTR,
+	  .path_mtu        = mtu,
+	  .dest_qp_num        = dest->qpn,
+	  .rq_psn            = dest->psn,
+	  .max_dest_rd_atomic    = 1,
+	  .min_rnr_timer        = 12,
+	  .ah_attr        = {
+		  .is_global    = 0,
+		  .dlid        = dest->lid,
+		  .sl        = sl,
+		  .src_path_bits= 0,
+		  .port_num    = port
+	  }};
+  attr.qp_state = IBV_QPS_RTS;
+  attr.timeout = 14;
+  attr.retry_cnt = 7;
+  attr.rnr_retry = 7;
+  attr.sq_psn = my_psn;
+  attr.max_rd_atomic = 1;
+  if (ibv_modify_qp(ctx->qp,
+	  &attr,
+	  IBV_QP_STATE | IBV_QP_TIMEOUT | IBV_QP_RETRY_CNT | IBV_QP_RNR_RETRY | IBV_QP_SQ_PSN | IBV_QP_MAX_QP_RD_ATOMIC))
+  {
+	fprintf(stderr, "Failed to modify QP to RTS\n");
+	return 1;
+  }
+
+  return 0;
+}
+
+remoteServerInfo *pp_server_exch_dest(struct connection *ctx,
 	int ib_port,
 	enum ibv_mtu mtu,
 	int port,
 	int sl,
-	const struct pingpong_dest *my_dest,
+	const  remoteServerInfo *my_dest,
 	int sgid_idx)
 {
   struct addrinfo *res, *t;
@@ -405,7 +377,7 @@ struct pingpong_dest *pp_server_exch_dest(struct net_context *ctx,
   char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
   int n;
   int sockfd = -1, connfd;
-  struct pingpong_dest *rem_dest = NULL;
+  remoteServerInfo *rem_dest = NULL;
   char gid[33];
 
   if (asprintf(&service, "%d", port) < 0)
@@ -463,7 +435,7 @@ struct pingpong_dest *pp_server_exch_dest(struct net_context *ctx,
   sscanf(msg, "%x:%x:%x:%s", &rem_dest->lid, &rem_dest->qpn, &rem_dest->psn, gid);
   wire_gid_to_gid(gid, &rem_dest->gid);
 
-  if (pp_connect_ctx(ctx, ib_port, my_dest->psn, mtu, sl, rem_dest, sgid_idx)) {
+  if (prepIbDeviceToConnect(ctx, ib_port, my_dest->psn, mtu, sl, rem_dest, sgid_idx)) {
 	fprintf(stderr, "Couldn't connect to remote QP\n");
 	free(rem_dest);
 	rem_dest = NULL;
@@ -486,4 +458,104 @@ struct pingpong_dest *pp_server_exch_dest(struct net_context *ctx,
   close(connfd);
   return rem_dest;
 }
+
+/*
+ * program posts a receive work request to the QP
+ */
+int postRecvWorkReq(struct connection *ctx, int n)
+{
+  struct ibv_sge list = {
+	  .addr    = (uintptr_t) ctx->buf, .length = ctx->size, .lkey    = ctx->mr->lkey
+  };
+  struct ibv_recv_wr wr = {
+	  .wr_id        = RECV_WRID, .sg_list    = &list, .num_sge    = 1,
+  };
+  struct ibv_recv_wr *bad_wr;
+  int i;
+
+  for (i = 0; i < n; ++i)
+  {
+	if (ibv_post_recv(ctx->qp, &wr, &bad_wr))
+	{
+	  break;
+	}
+  }
+
+  return i;
+}
+
+int closeConnection(struct connection *ctx)
+{
+  if (ibv_destroy_qp(ctx->qp)) {
+	fprintf(stderr, "Couldn't destroy QP\n");
+	return 1;
+  }
+
+  if (ibv_destroy_cq(ctx->cq)) {
+	fprintf(stderr, "Couldn't destroy CQ\n");
+	return 1;
+  }
+
+  if (ibv_dereg_mr(ctx->mr)) {
+	fprintf(stderr, "Couldn't deregister MR\n");
+	return 1;
+  }
+
+  if (ibv_dealloc_pd(ctx->pd)) {
+	fprintf(stderr, "Couldn't deallocate PD\n");
+	return 1;
+  }
+
+  if (ctx->channel) {
+	if (ibv_destroy_comp_channel(ctx->channel)) {
+	  fprintf(stderr, "Couldn't destroy completion channel\n");
+	  return 1;
+	}
+  }
+
+  if (ibv_close_device(ctx->context)) {
+	fprintf(stderr, "Couldn't release context\n");
+	return 1;
+  }
+
+  free(ctx->buf);
+  free(ctx);
+
+  return 0;
+}
+
+/*
+ * program posts a send work request to the QP
+ */
+int postSendWorkReq(struct connection *ctx)
+{
+  struct ibv_sge list = {
+	  .addr    = (uintptr_t) ctx->buf, .length = ctx->size, .lkey    = ctx->mr->lkey
+  };
+  struct ibv_send_wr wr = {
+	  .wr_id        = SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode     = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,
+  };
+  struct ibv_send_wr *bad_wr;
+
+  return ibv_post_send(ctx->qp, &wr, &bad_wr);
+}
+
+
+int prepIbDeviceToConnect(struct connection *ctx,
+	int port,
+	int my_psn,
+	enum ibv_mtu mtu,
+	int sl,
+	remoteServerInfo *dest,
+	int sgid_idx)
+{
+  setQPstateRTR(ctx, port, my_psn, mtu, sl, dest, sgid_idx);
+  setQPstateRTS(ctx, port, my_psn, mtu, sl, dest, sgid_idx);
+
+  return 0;
+}
+
+
+remoteServerInfo *pp_client_exch_dest(const char *servername, int port, const remoteServerInfo
+*my_dest);
 
