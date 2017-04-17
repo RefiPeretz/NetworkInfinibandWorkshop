@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
   printf("  local address:  LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n", my_dest.lid, my_dest.qpn, my_dest.psn, gid);
 
 
-  rem_dest = pp_server_exch_dest(ctx, ib_port, mtu, port, sl, &my_dest, gidx);
+  rem_dest = connectRemoteToClient(ctx, ib_port, mtu, port, sl, &my_dest, gidx);
 
   if (!rem_dest)
   {

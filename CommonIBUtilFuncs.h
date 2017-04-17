@@ -120,7 +120,20 @@ int postSendWorkReq(struct connection *ctx);
 
 int closeConnection(struct connection *ctx);
 
-remoteServerInfo *pp_client_exch_dest(const char *servername, int port, const remoteServerInfo *my_dest);
+/*
+ * Connect client to remote and exchange QP address information
+ */
+remoteServerInfo *connectClientToRemote(const char *servername, int port, const remoteServerInfo *my_dest);
 
+/*
+ * Connect remote to client and exchange QP address information
+ */
+remoteServerInfo *connectRemoteToClient(struct connection *ctx,
+	int ib_port,
+	enum ibv_mtu mtu,
+	int port,
+	int sl,
+	const remoteServerInfo *my_dest,
+	int sgid_idx);
 
 #endif /* IBV_PINGPONG_H */

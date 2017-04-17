@@ -13,39 +13,32 @@
 #include "CommonIBUtilFuncs.h"
 
 
+struct ibv_device **dev_list;
+struct ibv_device *ib_dev;
+struct connection *ctx;
+remoteServerInfo my_dest;
+remoteServerInfo *rem_dest;
+struct timeval start, end;
+char *ib_devname = NULL;
+char *servername = NULL;
+int port = 18515;
+int ib_port = 1;
+int size = 4096;
+enum ibv_mtu mtu = IBV_MTU_1024;
+int rx_depth = 500;
+int iters = 1000;
+int use_event = 0;
+int routs;
+int rcnt, scnt;
+int num_cq_events = 0;
+int sl = 0;
+int gidx = -1;
+char gid[33];
 
 
 
-int main(int argc, char *argv[])
+int setupIB(struct ibv_device **dev_list, struct ibv_device *ib_dev)
 {
-  struct ibv_device **dev_list;
-  struct ibv_device *ib_dev;
-  struct connection *ctx;
-   remoteServerInfo my_dest;
-   remoteServerInfo *rem_dest;
-  struct timeval start, end;
-  char *ib_devname = NULL;
-  char *servername = NULL;
-  int port = 18515;
-  int ib_port = 1;
-  int size = 4096;
-  enum ibv_mtu mtu = IBV_MTU_1024;
-  int rx_depth = 500;
-  int iters = 1000;
-  int use_event = 0;
-  int routs;
-  int rcnt, scnt;
-  int num_cq_events = 0;
-  int sl = 0;
-  int gidx = -1;
-  char gid[33];
-
-
-  //TODO: read device server ip from user
-
-  srand48(getpid() * time(NULL));
-
-
   //get the device list on the client
   dev_list = ibv_get_device_list(NULL);
   if (!dev_list) {
@@ -61,17 +54,15 @@ int main(int argc, char *argv[])
 	return 1;
   }
 
-
   //Init's all the needed structures for the connection and returns "ctx" Holds the whole connection data
   ctx = init_connection(ib_dev, size, rx_depth, ib_port, use_event, !servername);
   if (!ctx)
   {
 	return 1;
   }
-
   /*
-   * prepares connection to get the given amount of packets
-   */
+	* prepares connection to get the given amount of packets
+	*/
   routs = postRecvWorkReq(ctx, ctx->rx_depth);
   if (routs < ctx->rx_depth)
   {
@@ -114,7 +105,7 @@ int main(int argc, char *argv[])
 
 
   //Exchange information on target server
-  rem_dest = pp_client_exch_dest(servername, port, &my_dest);
+  rem_dest = connectClientToRemote(servername, port, &my_dest);
 
   if (!rem_dest)
   {
@@ -133,6 +124,22 @@ int main(int argc, char *argv[])
   {
 	return 1;
   }
+};
+
+
+int main(int argc, char *argv[])
+{
+
+
+  //TODO: read device server ip from user
+
+  srand48(getpid() * time(NULL));
+
+
+  if(setupIB(dev_list, ib_dev)){
+	return 1;
+  };
+
 
   if (postSendWorkReq(ctx))
   {
