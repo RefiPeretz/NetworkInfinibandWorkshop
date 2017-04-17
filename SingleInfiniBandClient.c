@@ -20,7 +20,7 @@ static int page_size;
   int                      use_event = 0;
   char                    *servername = NULL;
 
-  struct pingpong_context {
+  struct net_context {
 	struct ibv_context	*context;
 	struct ibv_comp_channel *channel;
 	struct ibv_pd		*pd;
@@ -34,11 +34,11 @@ static int page_size;
 	struct ibv_port_attr     portinfo;
   };
 
-  static struct pingpong_context *pp_init_ctx(struct ibv_device *ib_dev, int size,
+  static struct net_context *pp_init_ctx(struct ibv_device *ib_dev, int size,
 	  int rx_depth, int port,
 	  int use_event, int is_server)
   {
-	struct pingpong_context *ctx;
+	struct net_context *ctx;
 
 	ctx =calloc(1, sizeof *ctx);
 	if (!ctx)
@@ -103,6 +103,7 @@ static int page_size;
 		  .qp_type = IBV_QPT_RC
 	  };
 
+	  //Create our QP's
 	  ctx->qp = ibv_create_qp(ctx->pd, &attr);
 	  if (!ctx->qp)  {
 		fprintf(stderr, "Couldn't create QP\n");
@@ -118,6 +119,7 @@ static int page_size;
 		  .qp_access_flags = 0
 	  };
 
+	  //INIT state of QP's
 	  if (ibv_modify_qp(ctx->qp, &attr,
 		  IBV_QP_STATE              |
 			  IBV_QP_PKEY_INDEX         |
@@ -143,11 +145,10 @@ static int page_size;
 	  fprintf(stderr, "No IB devices found\n");
 	  return 1;
 	}
-	/*
-	 * creates connection
-	 */
-	//"ctx" Holds the whole connection data
-	struct pingpong_context *ctx = pp_init_ctx(ib_dev, size, rx_depth, ib_port, use_event, !servername);
+
+
+	//Init's all the needed structures for the connection and returns "ctx" Holds the whole connection data
+	struct net_context *ctx = pp_init_ctx(ib_dev, size, rx_depth, ib_port, use_event, !servername);
 	if (!ctx)
 	{
 	  return 1;

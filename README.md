@@ -16,4 +16,11 @@ General - Missing support for InfiniBand (QP) and measure throughput.
 Part 1 - SingleStreamTcpClient / SingleStreamTcpServer
 Part 2 - 
 Part 3 - MultiStreamTcpClient, VaryingSizeTcpClient || Missing support for InfiniBand
-Part 4 - 
+Part 4 -
+
+
+Important Links:
+Explains the structure and needed functions in comperison to TCP and PingPong example
+https://blog.zhaw.ch/icclab/infiniband-an-introduction-simple-ib-verbs-program-with-rdma-write/
+
+
