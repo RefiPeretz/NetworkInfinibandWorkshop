@@ -11,7 +11,7 @@
 #include <zconf.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
-#include "CommonIBUtilFuncs.h"
+#include "CommonIBUtilFuncs.hpp"
 
 int main(int argc, char *argv[])
 {

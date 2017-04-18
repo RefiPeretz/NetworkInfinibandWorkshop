@@ -10,12 +10,11 @@
 #include <zconf.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
-#include "CommonIBUtilFuncs.h"
+#include "CommonIBUtilFuncs.hpp"
 
 
 struct ibv_device **dev_list;
 struct ibv_device *ib_dev;
-struct connection *ctx;
 remoteServerInfo my_dest;
 remoteServerInfo *rem_dest;
 struct timeval start, end;
@@ -36,6 +35,8 @@ int gidx = -1;
 char gid[33];
 
 
+int peerNum = 1;
+char messageChar = 'w'; //Classic 'w'. The famous w.
 
 int setupIB(struct ibv_device **dev_list, struct ibv_device *ib_dev)
 {

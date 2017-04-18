@@ -34,6 +34,7 @@
 #define IBV_PINGPONG_H
 
 #include <infiniband/verbs.h>
+#include <vector>
 static int page_size;
 
 enum ibv_mtu pp_mtu_to_enum(int mtu);
@@ -52,8 +53,7 @@ typedef struct
   union ibv_gid gid; // cast identifier - identifies an endpoint
 } remoteServerInfo;
 
-struct connection *
-init_connection(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use_event, int is_server);
+
 
 struct connection{
   struct ibv_context *context;
@@ -61,7 +61,8 @@ struct connection{
   struct ibv_pd *pd;
   struct ibv_mr *mr;
   struct ibv_cq *cq;
-  struct ibv_qp *qp;
+  std::vector<ibv_qp> qp;
+  int peerNum;
   void *buf;
   int size;
   int rx_depth;
@@ -69,6 +70,12 @@ struct connection{
   struct ibv_port_attr portinfo;
 };
 
+extern struct connection ctx;
+
+struct connection *init_connection(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use_event, int
+is_server,
+	int
+	peerNum, int messageChar);
 void gid_to_wire_gid(const union ibv_gid *gid, char *wgid);
 
 enum

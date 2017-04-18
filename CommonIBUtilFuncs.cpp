@@ -40,7 +40,9 @@
 #include <zconf.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
-#include "CommonIBUtilFuncs.h"
+#include <iostream>
+#include <algorithm>
+#include "CommonIBUtilFuncs.hpp"
 
 
 
@@ -79,102 +81,6 @@ void wire_gid_to_gid(const char *wgid, union ibv_gid *gid)
 
 void gid_to_wire_gid(const union ibv_gid *gid, char wgid[]);
 
-struct connection *
-init_connection(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use_event, int is_server)
-{
-  struct connection *ctx;
-
-  ctx = calloc(1, sizeof *ctx);
-  if (!ctx)
-  {
-	return NULL;
-  }
-
-  ctx->size = size;
-  ctx->rx_depth = rx_depth;
-
-  ctx->buf = malloc(roundup(size, page_size));
-  if (!ctx->buf)
-  {
-	fprintf(stderr, "Couldn't allocate work buf.\n");
-	return NULL;
-  }
-
-  memset(ctx->buf, 0x7b + is_server, size);
-
-  ctx->context = ibv_open_device(ib_dev);
-  if (!ctx->context)
-  {
-	fprintf(stderr, "Couldn't get context for %s\n", ibv_get_device_name(ib_dev));
-	return NULL;
-  }
-
-  if (use_event)
-  {
-	ctx->channel = ibv_create_comp_channel(ctx->context);
-	if (!ctx->channel)
-	{
-	  fprintf(stderr, "Couldn't create completion channel\n");
-	  return NULL;
-	}
-  }
-  else
-  {
-	ctx->channel = NULL;
-  }
-
-  ctx->pd = ibv_alloc_pd(ctx->context);
-  if (!ctx->pd)
-  {
-	fprintf(stderr, "Couldn't allocate PD\n");
-	return NULL;
-  }
-
-  ctx->mr = ibv_reg_mr(ctx->pd, ctx->buf, size, IBV_ACCESS_LOCAL_WRITE);
-  if (!ctx->mr)
-  {
-	fprintf(stderr, "Couldn't register MR\n");
-	return NULL;
-  }
-
-  ctx->cq = ibv_create_cq(ctx->context, rx_depth + 1, NULL, ctx->channel, 0);
-  if (!ctx->cq)
-  {
-	fprintf(stderr, "Couldn't create CQ\n");
-	return NULL;
-  }
-
-  {
-	struct ibv_qp_init_attr attr = {
-		.send_cq = ctx->cq, .recv_cq = ctx->cq, .cap     = {
-			.max_send_wr  = 1, .max_recv_wr  = rx_depth, .max_send_sge = 1, .max_recv_sge = 1
-		}, .qp_type = IBV_QPT_RC
-	};
-
-	//Create our QP's
-	ctx->qp = ibv_create_qp(ctx->pd, &attr);
-	if (!ctx->qp)
-	{
-	  fprintf(stderr, "Couldn't create QP\n");
-	  return NULL;
-	}
-  }
-
-  {
-	struct ibv_qp_attr attr = {
-		.qp_state        = IBV_QPS_INIT, .pkey_index      = 0, .port_num        = (uint8_t) port, .qp_access_flags = 0
-	};
-
-	//INIT state of QP's
-	if (ibv_modify_qp(ctx->qp, &attr, IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS))
-	{
-	  fprintf(stderr, "Failed to modify QP to INIT\n");
-	  return NULL;
-	}
-  }
-
-  return ctx;
-}
 
 void gid_to_wire_gid(const union ibv_gid *gid, char *wgid)
 {
@@ -267,6 +173,108 @@ remoteServerInfo *connectClientToRemote(const char *servername, int port, const 
   out:
   close(sockfd);
   return rem_dest;
+}
+
+struct connection *init_connection(struct ibv_device *ib_dev,
+	int size,
+	int rx_depth,
+	int port,
+	int use_event,
+	int is_server,
+	int peerNum,
+	int messageChar)
+{
+
+  ctx.context = ibv_open_device(ib_dev);
+  if (!ctx.context)
+  {
+	fprintf(stderr, "Couldn't get context for %s\n", ibv_get_device_name(ib_dev));
+	return NULL;
+  }
+
+  if (use_event)
+  {
+	ctx.channel = ibv_create_comp_channel(ctx.context);
+	if (!ctx.channel)
+	{
+	  fprintf(stderr, "Couldn't create completion channel\n");
+	  return NULL;
+	}
+  }
+  else
+  {
+	ctx.channel = NULL;
+  }
+
+  ctx.pd = ibv_alloc_pd(ctx.context);
+  if (!ctx.pd)
+  {
+	fprintf(stderr, "Couldn't allocate PD\n");
+	return NULL;
+  }
+
+  ctx.size = sizeof(char) + 1;
+  ctx.rx_depth = rx_depth;
+
+  ctx.buf = malloc(roundup(size, page_size));
+  if (!ctx.buf)
+  {
+	fprintf(stderr, "Couldn't allocate work buf.\n");
+	return NULL;
+  }
+
+  memset(ctx.buf, messageChar, ctx.size);
+
+
+
+  ctx.mr = ibv_reg_mr(ctx.pd, ctx.buf, ctx.size, IBV_ACCESS_LOCAL_WRITE);
+  if (!ctx.mr)
+  {
+	fprintf(stderr, "Couldn't register MR\n");
+	return NULL;
+  }
+
+  ctx.cq = ibv_create_cq(ctx.context, rx_depth + 1, NULL, ctx.channel, 0);
+  if (!ctx.cq)
+  {
+	fprintf(stderr, "Couldn't create CQ\n");
+	return NULL;
+  }
+
+  {
+	struct ibv_qp_init_attr attr = {
+		.send_cq = ctx.cq, .recv_cq = ctx.cq, .cap     = {
+			.max_send_wr  = 1, .max_recv_wr  = rx_depth, .max_send_sge = 1, .max_recv_sge = 1
+		}, .qp_type = IBV_QPT_RC
+	};
+
+	//Create our QP's
+	ctx.qp = std::vector<ibv_qp>(ctx.peerNum);
+	std::for_each(ctx.qp.begin(), ctx.qp.end(),[](ibv_qp& _qp){
+	  _qp = *ibv_create_qp(ctx.pd, &attr);
+
+	});
+
+  }
+
+  {
+	struct ibv_qp_attr attr = {
+		.qp_state        = IBV_QPS_INIT, .pkey_index      = 0, .port_num        = (uint8_t) port, .qp_access_flags = 0
+	};
+
+	std::for_each(ctx.qp.begin(), ctx.qp.end(),[](ibv_qp& _qp){
+	  //INIT state of QP's
+	  if (ibv_modify_qp(&_qp, &attr, IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS))
+	  {
+		fprintf(stderr, "Failed to modify QP to INIT\n");
+		return NULL;
+	  }
+
+	});
+
+  }
+
+  return &ctx;
 }
 
 remoteServerInfo *connectRemoteToClient(struct connection *ctx,

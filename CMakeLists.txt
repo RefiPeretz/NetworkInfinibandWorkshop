@@ -17,7 +17,7 @@ set(SSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
 add_executable(SingleStreamTcpClient ${SSTC})
 
 set(MSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
-    Acceptor.hpp MultiStreamTcpClient.cpp Metrics.cpp Metrics.hpp SingleInfiniBandServer.c)
+    Acceptor.hpp MultiStreamTcpClient.cpp Metrics.cpp Metrics.hpp SingleInfiniBandServer.c SimpleIBClient.hpp)
 add_executable(MultiStreamTcpClient ${MSTS})
 
 set(VSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
@@ -39,10 +39,14 @@ add_executable(NonBlockingTcpServer ${NBTS})
 #Verbs Api versions
 SET(GCC_COVERAGE_LINK_FLAGS "-lrdmacm -libverbs")
 
-set(SIBC SingleInfiniBandClient.c CommonIBUtilFuncs.c CommonIBUtilFuncs.h)
+set(SIBC SingleInfiniBandClient.c CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
 add_executable(SingleInfiniBandClient ${SIBC})
 target_link_libraries(SingleInfiniBandClient "${GCC_COVERAGE_LINK_FLAGS}")
 
-set(SIBS SingleInfiniBandServer.c CommonIBUtilFuncs.c CommonIBUtilFuncs.h)
+set(SIBS SingleInfiniBandServer.c CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
 add_executable(SingleInfiniBandServer ${SIBS})
 target_link_libraries(SingleInfiniBandServer "${GCC_COVERAGE_LINK_FLAGS}")
+
+set(IBSC SimpleIBClient.cpp CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
+add_executable(SimpleIBClient ${IBSC})
+target_link_libraries(SimpleIBClient "-libverbs")
