@@ -17,9 +17,9 @@ int main(int argc, char *argv[])
 {
   struct ibv_device **dev_list;
   struct ibv_device *ib_dev;
-  struct connection *ctx;
-  remoteServerInfo my_dest;
-  remoteServerInfo *rem_dest;
+  struct Connection *ctx;
+  serverInfo my_dest;
+  serverInfo *rem_dest;
   struct timeval start, end;
   char *ib_devname = NULL;
   char *servername = NULL;

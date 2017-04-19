@@ -7,7 +7,7 @@ Connector.cpp/.hpp - Socket Tcp connect wrapper
 Acceptor.cpp/.hpp - Socket Tcp Accept wrapper
 
 MultiStreamTcpClient.cpp 	- Spawn multiple clients and simple messages to the server.
-SingleStreamTcpClient.cpp - Simple tcp client with one connection.
+SingleStreamTcpClient.cpp - Simple tcp client with one Connection.
 SingleStreamTcpServer.cpp - Simple tcp server that can support once socket.
 VaryingSizeTcpClient.cpp - Enables to send messages with varying increasing size.
 

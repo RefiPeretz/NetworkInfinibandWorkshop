@@ -94,7 +94,7 @@ void gid_to_wire_gid(const union ibv_gid *gid, char *wgid)
 
 
 //TODO: clean this and replace with methods from Stream, Connector and Acceptor
-remoteServerInfo *connectClientToRemote(const char *servername, int port, const remoteServerInfo *my_dest)
+serverInfo *connectClientToRemote(const char *servername, int port, const serverInfo *my_dest)
 {
   struct addrinfo *res, *t;
   struct addrinfo hints = {
@@ -104,7 +104,7 @@ remoteServerInfo *connectClientToRemote(const char *servername, int port, const 
   char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
   int n;
   int sockfd = -1;
-  remoteServerInfo *rem_dest = NULL;
+  serverInfo *rem_dest = NULL;
   char gid[33];
 
   if (asprintf(&service, "%d", port) < 0)
@@ -161,7 +161,7 @@ remoteServerInfo *connectClientToRemote(const char *servername, int port, const 
 
   write(sockfd, "done", sizeof "done");
 
-  rem_dest = (remoteServerInfo *) malloc(sizeof *rem_dest);
+  rem_dest = (serverInfo *) malloc(sizeof *rem_dest);
   if (!rem_dest)
   {
 	goto out;
@@ -175,7 +175,8 @@ remoteServerInfo *connectClientToRemote(const char *servername, int port, const 
   return rem_dest;
 }
 
-struct connection *init_connection(struct ibv_device *ib_dev,
+void InitQPs(int port);
+struct Connection *init_connection(struct ibv_device *ib_dev,
 	int size,
 	int rx_depth,
 	int port,
@@ -184,6 +185,8 @@ struct connection *init_connection(struct ibv_device *ib_dev,
 	int peerNum,
 	int messageChar)
 {
+
+  ctx.peerNum = peerNum;
 
   ctx.context = ibv_open_device(ib_dev);
   if (!ctx.context)
@@ -198,7 +201,7 @@ struct connection *init_connection(struct ibv_device *ib_dev,
 	if (!ctx.channel)
 	{
 	  fprintf(stderr, "Couldn't create completion channel\n");
-	  return NULL;
+	  return nullptr;
 	}
   }
   else
@@ -249,20 +252,29 @@ struct connection *init_connection(struct ibv_device *ib_dev,
 	};
 
 	//Create our QP's
-	ctx.qp = std::vector<ibv_qp>(ctx.peerNum);
+	ctx.qp = std::vector<ibv_qp>(peerNum);
 	std::for_each(ctx.qp.begin(), ctx.qp.end(),[](ibv_qp& _qp){
 	  _qp = *ibv_create_qp(ctx.pd, &attr);
 
 	});
-
   }
 
   {
-	struct ibv_qp_attr attr = {
+	InitQPs(port);
+  }
+
+  //Init our connection structs that will hold information on our and our destination QP addresses
+
+
+  return &ctx;
+}
+void InitQPs(int port)
+{
+  struct ibv_qp_attr attr = {
 		.qp_state        = IBV_QPS_INIT, .pkey_index      = 0, .port_num        = (uint8_t) port, .qp_access_flags = 0
 	};
 
-	std::for_each(ctx.qp.begin(), ctx.qp.end(),[](ibv_qp& _qp){
+  for_each(ctx.qp.begin(), ctx.qp.end(),[](ibv_qp& _qp){
 	  //INIT state of QP's
 	  if (ibv_modify_qp(&_qp, &attr, IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS))
 	  {
@@ -271,18 +283,14 @@ struct connection *init_connection(struct ibv_device *ib_dev,
 	  }
 
 	});
-
-  }
-
-  return &ctx;
 }
 
-remoteServerInfo *connectRemoteToClient(struct connection *ctx,
+serverInfo *connectRemoteToClient(struct Connection *ctx,
 	int ib_port,
 	enum ibv_mtu mtu,
 	int port,
 	int sl,
-	const remoteServerInfo *my_dest,
+	const serverInfo *my_dest,
 	int sgid_idx)
 {
   struct addrinfo *res, *t;
@@ -295,7 +303,7 @@ remoteServerInfo *connectRemoteToClient(struct connection *ctx,
   char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
   int n;
   int sockfd = -1, connfd;
-  remoteServerInfo *rem_dest = NULL;
+  serverInfo *rem_dest = NULL;
   char gid[33];
 
   if (asprintf(&service, "%d", port) < 0)
@@ -376,12 +384,12 @@ remoteServerInfo *connectRemoteToClient(struct connection *ctx,
   close(connfd);
   return rem_dest;
 }
-int setQPstateRTR(struct connection *ctx,
+int setQPstateRTR(struct Connection *ctx,
 	int port,
 	int my_psn,
 	enum ibv_mtu mtu,
 	int sl,
-	remoteServerInfo *dest,
+	serverInfo *dest,
 	int sgid_idx)
 {
   struct ibv_qp_attr attr = {
@@ -423,12 +431,12 @@ int setQPstateRTR(struct connection *ctx,
   return 0;
 }
 
-int setQPstateRTS(struct connection *ctx,
+int setQPstateRTS(struct Connection *ctx,
 	int port,
 	int my_psn,
 	enum ibv_mtu mtu,
 	int sl,
-	remoteServerInfo *dest,
+	serverInfo *dest,
 	int sgid_idx)
 {
   // first the qp state has to be changed to rtr
@@ -475,7 +483,7 @@ int setQPstateRTS(struct connection *ctx,
 /*
  * program posts a receive work request to the QP
  */
-int postRecvWorkReq(struct connection *ctx, int n)
+int postRecvWorkReq(struct Connection *ctx, int n)
 {
   struct ibv_sge list = {
 	  .addr    = (uintptr_t) ctx->buf, .length = ctx->size, .lkey    = ctx->mr->lkey
@@ -497,7 +505,7 @@ int postRecvWorkReq(struct connection *ctx, int n)
   return i;
 }
 
-int closeConnection(struct connection *ctx)
+int closeConnection(struct Connection *ctx)
 {
   if (ibv_destroy_qp(ctx->qp)) {
 	fprintf(stderr, "Couldn't destroy QP\n");
@@ -540,7 +548,7 @@ int closeConnection(struct connection *ctx)
 /*
  * program posts a send work request to the QP
  */
-int postSendWorkReq(struct connection *ctx)
+int postSendWorkReq(struct Connection *ctx)
 {
   struct ibv_sge list = {
 	  .addr    = (uintptr_t) ctx->buf, .length = ctx->size, .lkey    = ctx->mr->lkey
@@ -554,12 +562,12 @@ int postSendWorkReq(struct connection *ctx)
 }
 
 
-int prepIbDeviceToConnect(struct connection *ctx,
+int prepIbDeviceToConnect(struct Connection *ctx,
 	int port,
 	int my_psn,
 	enum ibv_mtu mtu,
 	int sl,
-	remoteServerInfo *dest,
+	serverInfo *dest,
 	int sgid_idx)
 {
   setQPstateRTR(ctx, port, my_psn, mtu, sl, dest, sgid_idx);
@@ -569,5 +577,5 @@ int prepIbDeviceToConnect(struct connection *ctx,
 }
 
 
-remoteServerInfo *connectClientToRemote(const char *servername, int port, const remoteServerInfo *my_dest);
+serverInfo *connectClientToRemote(const char *servername, int port, const serverInfo *my_dest);
 

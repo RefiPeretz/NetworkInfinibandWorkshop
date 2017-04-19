@@ -13,6 +13,7 @@
 #include <infiniband/verbs.h>
 #include <netinet/in.h>
 #include <sys/time.h>
+#include <arpa/inet.h>
 #include "CommonIBUtilFuncs.hpp"
 
 
@@ -27,7 +28,8 @@ int ib_port = 1;
 
 int rx_depth = 500; //Used to note minimum number of enteries for CQ
 int use_event = 0;
-
+int gidx = -1;
+char gid[33];
 
 
 
@@ -35,6 +37,12 @@ char *servername = NULL;
 int peerNum = 1;
 char messageChar = 'w'; //Classic 'w'. The famous w.
 
+
+std::vector<serverInfo> _localQPinfo;
+std::vector<serverInfo> _remoteQPinfo;
+
+
+Connection *connection;
 int setupIB()
 {
   //get the device list on the client
@@ -52,54 +60,74 @@ int setupIB()
 	return 1;
   }
 
-  //Init's all the needed structures for the connection and returns "ctx" Holds the whole connection data
-  ctx = *init_connection(ib_dev, size, rx_depth, ib_port, use_event, !servername, peerNum, messageChar);
-  //if (!ctx)
-  //{
-	//return 1;
-  //}//TODO: Find way to check for null!!
+  //Init's all the needed structures for the Connection and returns "ctx" Holds the whole Connection data
+  //Hold locally in connection and globally under "ctx" - pay attantion when making changes and using.
+  connection = init_connection(ib_dev, size, rx_depth, ib_port, use_event, !servername, peerNum, messageChar);
+  if (connection == nullptr)
+  {
+	return 1;
+  }
+
+	//Init our vectors that hold information on local and remote QP's
+  std::vector<serverInfo> _localQPinfo = std::vector<serverInfo>(peerNum);
+  std::vector<serverInfo> _remoteQPinfo = std::vector<serverInfo>(peerNum);
+
+
+
+  if (ctx.portinfo.link_layer == IBV_LINK_LAYER_INFINIBAND && !ctx.portinfo.lid) {
+	fprintf(stderr, "Couldn't get local LID\n");
+	return 1;
+  }
+
 
   /*
-	* prepares connection to get the given amount of packets
-	*/
-  int routs = postRecvWorkReq(ctx, ctx->rx_depth);
-  if (routs < ctx->rx_depth)
+   * prepares Connection to get the given amount of packets
+   */
+  int routs = postRecvWorkReq(connection, (*connection).rx_depth);
+  if (routs < (*connection).rx_depth)
   {
 	fprintf(stderr, "Couldn't post receive (%d)\n", routs);
 	return 1;
   }
 
   if (use_event)
-	if (ibv_req_notify_cq(ctx->cq, 0)) {
+	if (ibv_req_notify_cq(ctx.cq, 0)) {
 	  fprintf(stderr, "Couldn't request CQ notification\n");
 	  return 1;
 	}
 
 
-  if (pp_get_port_info(ctx->context, ib_port, &ctx->portinfo)) {
+  if (pp_get_port_info((*connection).context, ib_port, &(*connection).portinfo)) {
 	fprintf(stderr, "Couldn't get port info\n");
 	return 1;
   }
 
-  my_dest.lid = ctx->portinfo.lid;
-  if (ctx->portinfo.link_layer == IBV_LINK_LAYER_INFINIBAND && !my_dest.lid) {
-	fprintf(stderr, "Couldn't get local LID\n");
-	return 1;
-  }
 
-  if (gidx >= 0) {
-	if (ibv_query_gid(ctx->context, ib_port, gidx, &my_dest.gid)) {
-	  fprintf(stderr, "Could not get local gid for gid index %d\n", gidx);
-	  return 1;
+
+
+  // Init local QP queue holder with information
+  unsigned int j = 0;
+  std::for_each(_localQPinfo.begin(), _localQPinfo.end(), [](serverInfo &localQP){
+	localQP.lid = ctx.portinfo.lid;
+	localQP.qpn = connection->qp.at(j).qp_num;
+	localQP.psn = lrand48() & 0xffffff;
+	if (gidx >= 0) {
+	  if (ibv_query_gid(connection->context, ib_port, gidx, &localQP.gid)) {
+		fprintf(stderr, "Could not get local gid for gid index %d\n", gidx);
+		return 1;
+	  }
+	} else{
+	  memset(&localQP.gid, 0, sizeof localQP.gid);
 	}
-  } else
-	memset(&my_dest.gid, 0, sizeof my_dest.gid);
 
-  my_dest.qpn = ctx->qp->qp_num;
-  my_dest.psn = lrand48() & 0xffffff;
-  inet_ntop(AF_INET6, &my_dest.gid, gid, sizeof gid);
-  printf("  local address:  LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n",
-	  my_dest.lid, my_dest.qpn, my_dest.psn, gid);
+
+	inet_ntop(AF_INET6, &localQP.gid, gid, sizeof gid);
+	printf("  local address:  LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n",
+		localQP.lid, localQP.qpn, localQP.psn, gid);
+	j++;
+  });
+
+
 
 
 

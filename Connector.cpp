@@ -88,7 +88,7 @@ Stream *Connector::connect(const char* server, int port, int timeout)
 		if (valopt) {
 		  fprintf(stderr, "connect() error %d - %s\n", valopt, strerror(valopt));
 		}
-		  // connection established
+		  // Connection established
 		else result = 0;
 	  }
 	  else fprintf(stderr, "connect() timed out\n");

@@ -15,8 +15,8 @@
 
 struct ibv_device **dev_list;
 struct ibv_device *ib_dev;
-remoteServerInfo my_dest;
-remoteServerInfo *rem_dest;
+serverInfo my_dest;
+serverInfo *rem_dest;
 struct timeval start, end;
 char *ib_devname = NULL;
 char *servername = NULL;
@@ -55,14 +55,14 @@ int setupIB(struct ibv_device **dev_list, struct ibv_device *ib_dev)
 	return 1;
   }
 
-  //Init's all the needed structures for the connection and returns "ctx" Holds the whole connection data
+  //Init's all the needed structures for the Connection and returns "ctx" Holds the whole Connection data
   ctx = init_connection(ib_dev, size, rx_depth, ib_port, use_event, !servername);
   if (!ctx)
   {
 	return 1;
   }
   /*
-	* prepares connection to get the given amount of packets
+	* prepares Connection to get the given amount of packets
 	*/
   routs = postRecvWorkReq(ctx, ctx->rx_depth);
   if (routs < ctx->rx_depth)

@@ -51,7 +51,7 @@
 #include <arpa/inet.h>
 #include <time.h>
 
-#include "CommonIBUtilFuncs.h"
+#include "CommonIBUtilFuncs.hpp"
 
 enum {
   PINGPONG_RECV_WRID = 1,

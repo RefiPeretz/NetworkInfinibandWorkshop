@@ -45,17 +45,17 @@ void gid_to_wire_gid(const union ibv_gid *gid, char wgid[]);
 /*
  * Holds information that identifies the machine and exchanged during the TCP or any other out of band first handshake
  */
-typedef struct
+typedef struct serverInfo
 {
   int lid; // Local identifier - unique port number (assigned when active)
   int qpn; //Queue pair number - Q identifier on the HCA
   int psn; //Packet seq. number - used by HCA to verify packet coming in order and no missing packets
   union ibv_gid gid; // cast identifier - identifies an endpoint
-} remoteServerInfo;
+};
 
 
 
-struct connection{
+struct Connection{
   struct ibv_context *context;
   struct ibv_comp_channel *channel;
   struct ibv_pd *pd;
@@ -70,9 +70,9 @@ struct connection{
   struct ibv_port_attr portinfo;
 };
 
-extern struct connection ctx;
+extern struct Connection ctx;
 
-struct connection *init_connection(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use_event, int
+struct Connection *init_connection(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use_event, int
 is_server,
 	int
 	peerNum, int messageChar);
@@ -88,12 +88,12 @@ enum
  * **********************
  *  Changes Queue Pair status to RTR (Ready to receive)
  */
-int setQPstateRTR(struct connection *ctx,
+int setQPstateRTR(struct Connection *ctx,
 	int port,
 	int my_psn,
 	enum ibv_mtu mtu,
 	int sl,
-	remoteServerInfo *dest,
+	serverInfo *dest,
 	int sgid_idx);
 
 
@@ -103,44 +103,44 @@ int setQPstateRTR(struct connection *ctx,
  *  Changes Queue Pair status to RTS (Ready to send)
  *	QP status has to be RTR before changing it to RTS
  */
-int setQPstateRTS(struct connection *ctx,
+int setQPstateRTS(struct Connection *ctx,
 	int port,
 	int my_psn,
 	enum ibv_mtu mtu,
 	int sl,
-	remoteServerInfo *dest,
+	serverInfo *dest,
 	int sgid_idx)
 ;
 
-int postRecvWorkReq(struct connection *ctx, int n);
+int postRecvWorkReq(struct Connection *ctx, int n);
 
 
-int prepIbDeviceToConnect(struct connection *ctx,
+int prepIbDeviceToConnect(struct Connection *ctx,
 	int port,
 	int my_psn,
 	enum ibv_mtu mtu,
 	int sl,
-	remoteServerInfo *dest,
+	serverInfo *dest,
 	int sgid_idx);
 
-int postSendWorkReq(struct connection *ctx);
+int postSendWorkReq(struct Connection *ctx);
 
-int closeConnection(struct connection *ctx);
+int closeConnection(struct Connection *ctx);
 
 /*
  * Connect client to remote and exchange QP address information
  */
-remoteServerInfo *connectClientToRemote(const char *servername, int port, const remoteServerInfo *my_dest);
+serverInfo *connectClientToRemote(const char *servername, int port, const serverInfo *my_dest);
 
 /*
  * Connect remote to client and exchange QP address information
  */
-remoteServerInfo *connectRemoteToClient(struct connection *ctx,
+serverInfo *connectRemoteToClient(struct Connection *ctx,
 	int ib_port,
 	enum ibv_mtu mtu,
 	int port,
 	int sl,
-	const remoteServerInfo *my_dest,
+	const serverInfo *my_dest,
 	int sgid_idx);
 
 #endif /* IBV_PINGPONG_H */
