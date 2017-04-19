@@ -25,6 +25,7 @@ struct ibv_device **dev_list;
 struct ibv_device *ib_dev;
 int size = 4096;
 int ib_port = 1;
+int port = 18515;
 
 int rx_depth = 500; //Used to note minimum number of enteries for CQ
 int use_event = 0;
@@ -96,14 +97,10 @@ int setupIB()
 	  return 1;
 	}
 
-
   if (pp_get_port_info((*connection).context, ib_port, &(*connection).portinfo)) {
 	fprintf(stderr, "Couldn't get port info\n");
 	return 1;
   }
-
-
-
 
   // Init local QP queue holder with information
   unsigned int j = 0;
@@ -111,15 +108,15 @@ int setupIB()
 	localQP.lid = ctx.portinfo.lid;
 	localQP.qpn = connection->qp.at(j).qp_num;
 	localQP.psn = lrand48() & 0xffffff;
+
 	if (gidx >= 0) {
 	  if (ibv_query_gid(connection->context, ib_port, gidx, &localQP.gid)) {
 		fprintf(stderr, "Could not get local gid for gid index %d\n", gidx);
 		return 1;
 	  }
 	} else{
-	  memset(&localQP.gid, 0, sizeof localQP.gid);
+	  	memset(&localQP.gid, 0, sizeof localQP.gid);
 	}
-
 
 	inet_ntop(AF_INET6, &localQP.gid, gid, sizeof gid);
 	printf("  local address:  LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n",
@@ -128,14 +125,16 @@ int setupIB()
   });
 
 
+  // Init remote QP queue holder with information
+
+
 
 
 
   //Exchange information on target server
-  rem_dest = connectClientToRemote(servername, port, &my_dest);
-
-  if (!rem_dest)
+  if(connectClientToRemote(servername, port, _localQPinfo, _remoteQPinfo))
   {
+	std::cerr << "cannot init connection to remote server and retreive remote QP" << std::endl;
 	return 1;
   }
 

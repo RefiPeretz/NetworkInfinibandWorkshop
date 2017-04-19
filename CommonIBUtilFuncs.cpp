@@ -94,7 +94,7 @@ void gid_to_wire_gid(const union ibv_gid *gid, char *wgid)
 
 
 //TODO: clean this and replace with methods from Stream, Connector and Acceptor
-serverInfo *connectClientToRemote(const char *servername, int port, const serverInfo *my_dest)
+serverInfo *connectClientToRemote(const char *servername, int port, const std::vector<serverInfo> &localQPserverInfo)
 {
   struct addrinfo *res, *t;
   struct addrinfo hints = {

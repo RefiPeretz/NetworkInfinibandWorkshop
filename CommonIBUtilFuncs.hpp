@@ -130,7 +130,7 @@ int closeConnection(struct Connection *ctx);
 /*
  * Connect client to remote and exchange QP address information
  */
-serverInfo *connectClientToRemote(const char *servername, int port, const serverInfo *my_dest);
+serverInfo *connectClientToRemote(const char *, int , const std::vector<serverInfo> &, const std::vector<serverInfo> &);
 
 /*
  * Connect remote to client and exchange QP address information
