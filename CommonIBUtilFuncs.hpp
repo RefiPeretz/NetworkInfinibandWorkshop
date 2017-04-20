@@ -39,8 +39,8 @@ static int page_size;
 
 enum ibv_mtu pp_mtu_to_enum(int mtu);
 int pp_get_port_info(struct ibv_context *context, int port, struct ibv_port_attr *attr);
-void wire_gid_to_gid(const char *wgid, union ibv_gid *gid);
-void gid_to_wire_gid(const union ibv_gid *gid, char wgid[]);
+void wire_gid_to_gid(char *wgid, union ibv_gid *gid);
+void (union ibv_gid *gid, char wgid[]);
 
 /*
  * Holds information that identifies the machine and exchanged during the TCP or any other out of band first handshake
@@ -130,7 +130,8 @@ int closeConnection(struct Connection *ctx);
 /*
  * Connect client to remote and exchange QP address information
  */
-serverInfo *connectClientToRemote(const char *, int , const std::vector<serverInfo> &, const std::vector<serverInfo> &);
+int connectClientToRemote(const char *, int , const std::vector<serverInfo> &,
+						 const std::vector<serverInfo> &);
 
 /*
  * Connect remote to client and exchange QP address information
