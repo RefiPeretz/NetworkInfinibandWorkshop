@@ -11,28 +11,28 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include <cmath>
 
 #define SEC_TO_MICRO pow(10, 6)
-#define MAX_PACKET_SIZE 1024
+#define MAX_MSG_SIZE 1024
 
 
 using namespace std;
 
 
-void createResultFile(int numOfMsgs,char* nameOfFile,double* results){
-    int rttIndex,throIndex, pktRate;
-    std::stringstream numOfMsgsSS(stringstream::in | stringstream::out);
-    numOfMsgsSS << setprecision(5) << numOfMsgs << endl;
+void createResultFile(int resultLength,char* nameOfFile,double* results){
+    int rttIndex,throIndex, pktRate,numOfSockets,packetSize,totalNumOfMsgs;
+
     ofstream myFile;
     myFile.open(nameOfFile);
     myFile << "Results\n";
-    myFile << "Number Of messages[Integer],RTT[ms],Throughput[ms],Packet Rate[ms],Packet Size[bytes]\n";
-    int packetSize = 1;
-    for(int i = 0 ; i < (int)((std::log2(MAX_PACKET_SIZE) + 1) * 3); i+=3) {
+    myFile << "Number of Threads/Sockets[Integer],Number Of messages[Integer],Size per message[Bytes],RTT[ms],Throughput[ms],Packet Rate[ms],Packet Size[bytes]\n";
+    for(int i = 0 ; i < resultLength; i+=6) {
         rttIndex = i;
         throIndex = i + 1;
         pktRate = i + 2;
+        numOfSockets = i+3;
+        packetSize = i + 4;
+        totalNumOfMsgs = i+5;
         std::stringstream rttSS(stringstream::in | stringstream::out);
         rttSS << setprecision(5) << results[rttIndex] << endl;
         std::stringstream throughputSS(stringstream::in | stringstream::out);
@@ -40,11 +40,16 @@ void createResultFile(int numOfMsgs,char* nameOfFile,double* results){
         std::stringstream packetRateSS(stringstream::in | stringstream::out);
         packetRateSS << setprecision(5) << results[pktRate] << endl;
         std::stringstream packetSizeSS(stringstream::in | stringstream::out);
-        packetSizeSS << setprecision(1) << packetSize << endl;
-        std::string writeToFile = numOfMsgsSS.str()+","+rttSS.str() +","+throughputSS.str()+","+packetRateSS.str()+","+packetSizeSS.str();
+        packetSizeSS << setprecision(6) << results[packetSize] << endl;
+        std::stringstream numOfSocketsSS(stringstream::in | stringstream::out);
+        numOfSocketsSS << setprecision(1) << results[numOfSockets] << endl;
+        std::stringstream totalNumOfMsgsSS(stringstream::in | stringstream::out);
+        totalNumOfMsgsSS << setprecision(5) <<  results[totalNumOfMsgs] << endl;
+        std::stringstream msgSizeSS(stringstream::in | stringstream::out);
+        msgSizeSS << setprecision(5) <<  results[packetSize]/results[numOfSockets] << endl;
+        std::string writeToFile = numOfSocketsSS.str()+","+totalNumOfMsgsSS.str()+","+msgSizeSS.str()+","+rttSS.str() +","+throughputSS.str()+","+packetRateSS.str()+","+packetSizeSS.str();
         writeToFile.erase(std::remove(writeToFile.begin(), writeToFile.end(), '\n'), writeToFile.end());
         myFile << writeToFile+"\n";
-        packetSize *= 2;
     }
     myFile.close();
 }
@@ -54,12 +59,18 @@ void createMsg(int sizeMsg, char baseChar, char** msg){
     memset(*msg, baseChar, sizeMsg);
 }
 
-int saveResults(double rtt,double throughput, double packetRate,int resultIndex,double *results){
+int saveResults(double rtt,double throughput, double packetRate,int resultIndex,double *results,int numOfSockets,int msgSize, int totalNumOfMsg){
     results[resultIndex] = rtt;
     resultIndex++;
     results[resultIndex] = throughput;
     resultIndex++;
     results[resultIndex] = packetRate;
+    resultIndex++;
+    results[resultIndex] = numOfSockets;
+    resultIndex++;
+    results[resultIndex] = msgSize;
+    resultIndex++;
+    results[resultIndex] = totalNumOfMsg;
     resultIndex++;
     return resultIndex;
 }
@@ -97,9 +108,9 @@ double timeDifference(timeval time1, timeval time2)
 }
 
 
-double calcAverageRTT(size_t numOfMessages, double totalTime)
+double calcAverageRTT(int numOfSockets,size_t numOfMessages, double totalTime)
 {
-    return totalTime / (double)numOfMessages;
+    return (totalTime / (double)numOfMessages)/numOfSockets;
 }
 
 double calcAverageThroughput(size_t numOfMessages, size_t messageSize, double totalTime)

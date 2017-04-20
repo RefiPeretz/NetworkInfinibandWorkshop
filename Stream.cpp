@@ -21,6 +21,7 @@ Stream::~Stream()
 
 ssize_t Stream::send(const char *buffer, int len)
 {
+    //printf("send: %s , in size: %d\n",buffer,len);
   return write(m_sd, buffer, len);
 }
 
@@ -50,6 +51,7 @@ int Stream::getPeerPort()
 
 bool Stream::waitForReadEvent(int timeout)
 {
+  int result = 0;
   fd_set sdset;
   struct timeval tv;
 
@@ -57,9 +59,10 @@ bool Stream::waitForReadEvent(int timeout)
   tv.tv_usec = 0;
   FD_ZERO(&sdset);
   FD_SET(m_sd, &sdset);
-  if (select(m_sd+1, &sdset, NULL, NULL, &tv) > 0)
+  if (result = select(m_sd+1, &sdset, NULL, NULL, &tv) > 0)
   {
 	return true;
   }
+  printf("False: %d\n",result);
   return false;
 }

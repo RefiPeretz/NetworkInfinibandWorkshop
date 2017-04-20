@@ -20,80 +20,110 @@ int main(int argc, char **argv)
         printf("usage: %s <number of max parallel clients>\n", argv[1]);
         exit(1);
     }
-    warmUpServer(8081);
+    warmUpServer(SERVER_PORT);
     struct timeval start, end;
     double t1, t2;
-    t1 = 0.0;
-    t2 = 0.0;
-    unsigned int numMsgs = atoi(argv[1]);
     unsigned int counter = 0;
-    pthread_t *socketThreads = new pthread_t[numMsgs];
     socketData* data = new socketData;
-    data->port = 8081;
-    data->server = "localhost";
+    int msgNum = atoi(argv[1]);
+    data->msgNum = msgNum;
+    std::string server = "localhost";
     data->baseWord = 'w';
-    double results[(int)((log2(MAX_PACKET_SIZE) + 1) * 3)] = {0.0};
+    int resultSize = ((int)((log2(MAX_MSG_SIZE/MIN_MSG_SIZE) + 1) * 6))*4;
+    double results[resultSize] = {0.0};
     int resultIndex = 0;
-    for (int msgSize = 1; msgSize <= MAX_PACKET_SIZE; msgSize = msgSize * 2) {
-        data->msgSize = msgSize;
-        createMsg(msgSize,data->baseWord,&data->msg);
-        data->msg[msgSize] = '\0';
-        printf("=====Clock Start=====\n");
-        if (gettimeofday(&start, NULL)) {
-            printf("time failed\n");
-            exit(1);
-        }
-        for (int j = 0; j < numMsgs; j++) {
-
-            if(pthread_create(&socketThreads[j], NULL, client, data))
-            {
-                printf("error create thread\n");
+    int curMsgSize;
+    for (int msgSize = MIN_MSG_SIZE; msgSize <= MAX_MSG_SIZE; msgSize = msgSize * 2) {
+        for(int coreCount = 1; coreCount <= MAX_CORE; coreCount*=2){
+            curMsgSize = msgSize/coreCount;
+            data->msgSize = curMsgSize;
+            createMsg(curMsgSize,data->baseWord,&data->msg);
+            data->msg[curMsgSize] = '\0';
+            printf("=====Running on %d threads total size: %d size per thread: %d \n",coreCount,msgSize,curMsgSize);
+//            Connector *connectors[coreCount] = {new Connector()};
+//            Stream *streams[coreCount];
+//            for(int stream = 0; stream < coreCount;stream++){
+//                streams[stream] = connectors[stream]->connect(server.c_str(), 8081);
+//            }
+            pthread_t *socketThreads = new pthread_t[coreCount];
+            t1 = 0.0;
+            t2 = 0.0;
+            printf("=====Clock Start=====\n");
+            if (gettimeofday(&start, NULL)) {
+                printf("time failed\n");
+                exit(1);
             }
-        }
-        for (int j = 0; j < numMsgs; j++) {
+            for (int j = 0; j < coreCount; j++) {
+                //TODO delete
+                data->thread_num = j;
+//                data->stream = streams[j];
+                if(pthread_create(&socketThreads[j], NULL, client, data))
+                {
+                    printf("error create thread\n");
+                }
+            }
+            for (int j = 0; j < coreCount; j++) {
 
-            pthread_join(socketThreads[j],NULL);
-        }
-        if (gettimeofday(&end, NULL)) {
-            printf("time failed\n");
-            exit(1);
+                pthread_join(socketThreads[j],NULL);
+            }
+            if (gettimeofday(&end, NULL)) {
+                printf("time failed\n");
+                exit(1);
+
+            }
+//            for(int i = 0; i < coreCount;i++){
+//                delete(streams[i]);
+//                delete(connectors[i]);
+//            }
+            printf("=====Clock Stop=====\n");
+            t1 += start.tv_sec + (start.tv_usec / 1000000.0);
+            t2 += end.tv_sec + (end.tv_usec / 1000000.0);
+            double rtt = (calcAverageRTT(1,data->msgNum*coreCount, (t2-t1) / 100));
+            double packetRate = calcAveragePacketRate(data->msgNum*coreCount,(t2-t1) / 100);
+            double throughput = calcAverageThroughput(data->msgNum*coreCount,msgSize,(t2-t1) / 100);
+            double numOfSockets = coreCount;
+            printf("avgRTT: %g\n", rtt);
+            printf("avgPacketRate: %g\n", packetRate);
+            printf("avgThroughput: %g\n", throughput);
+            resultIndex = saveResults(rtt,throughput,packetRate,resultIndex,results,coreCount,msgSize,data->msgNum*coreCount);
 
         }
-        printf("=====Clock Stop=====\n");
-        t1 += start.tv_sec + (start.tv_usec / 1000000.0);
-        t2 += end.tv_sec + (end.tv_usec / 1000000.0);
-        double rtt = calcAverageRTT(numMsgs, (t2-t1) / 100);
-        double packetRate = calcAveragePacketRate(numMsgs,(t2-t1) / 100);
-        double throughput = calcAverageThroughput(numMsgs,msgSize,(t2-t1) / 100);
-        printf("avgRTT: %g\n", rtt);
-        printf("avgPacketRate: %g\n", packetRate);
-        printf("avgThroughput: %g\n", throughput);
-        resultIndex = saveResults(rtt,throughput,packetRate,resultIndex,results);
         free(data->msg);
+
     }
 
-    createResultFile(numMsgs,"MultiThreadResults.csv",results);
+    createResultFile(resultSize,"MultiThreadResults.csv",results);
 
 }
 
 void* client(void* data)
 {
-    std::string serverAddress ="localhost";
     socketData* handlerData = (socketData*)(data);
-    int port = handlerData->port;
+    int msgNum = handlerData->msgNum;
+    int msgSize = handlerData->msgSize;
+    int thread_num = handlerData->thread_num;
+    printf("====Start thread %d on msgSize %d====\n",thread_num,msgSize);
     int len;
-    char ack;
+    char ack[256];
+    int bytesRead = 0;
     Connector *connector = new Connector();
-    Stream *stream = connector->connect(serverAddress.c_str(), port);
-    if (stream)
-    {
+    Stream *stream = connector->connect(SERVER_ADDRESS, SERVER_PORT);
+    for(int i = 0;i < msgNum; i++){
+        bytesRead = 0;
+        if (stream)
+        {
+            stream->send(handlerData->msg, handlerData->msgSize);
+            printf("sent - %s with sizeof %d, thread: %d\n", handlerData->msg, msgSize,thread_num);
+            bytesRead += stream->receive(ack, 256);
+            while(bytesRead < msgSize){
+                //printf("papo: %d,%d, thread: %d\n",bytesRead,msgSize, thread_num);
+                bytesRead += stream->receive(ack, 256);
+               // printf("papo: now is: %d,%d, thread: %d, msg: %s\n",bytesRead,msgSize, thread_num, handlerData->msg);
+            }
+            //printf("len : %d thread: %d\n", bytesRead);
+            printf("received - %d Bytes thread: %d\n", bytesRead,thread_num);
+        }
 
-        stream->send(handlerData->msg, handlerData->msgSize);
-        printf("sent - %s with sizeof %d\n", handlerData->msg, handlerData->msgSize);
-        len = stream->receive(&ack, sizeof(char));
-        printf("received - %c\n", ack);
-        delete stream;
     }
-
     return nullptr;
 }
