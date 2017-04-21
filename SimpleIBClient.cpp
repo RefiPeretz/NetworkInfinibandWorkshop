@@ -15,6 +15,7 @@
 #include <sys/time.h>
 #include <arpa/inet.h>
 #include <cstdlib>
+#include <stdlib.h>
 #include "CommonIBUtilFuncs.hpp"
 
 
@@ -45,6 +46,8 @@ std::vector<serverInfo> _remoteQPinfo;
 
 Connection *connection;
 
+int setThreadAffinity(int threadId);
+
 int setupIB()
 {
     //get the device list on the client
@@ -65,44 +68,46 @@ int setupIB()
 
     //Init's all the needed structures for the Connection and returns "ctx" Holds the whole Connection data
     //Hold locally in connection and globally under "ctx" - pay attantion when making changes and using.
-    connection = init_connection(ib_dev, size, rx_depth, ib_port, use_event,
+     connection = init_connection(ib_dev, size, rx_depth, ib_port,
+                                      use_event,
                                  !servername, peerNum, messageChar);
     if (connection == nullptr)
     {
         return 1;
     }
 
+
     //Init our vectors that hold information on local and remote QP's
     std::vector<serverInfo> _localQPinfo = std::vector<serverInfo>(peerNum);
     std::vector<serverInfo> _remoteQPinfo = std::vector<serverInfo>(peerNum);
 
 
-    if (ctx.portinfo.link_layer == IBV_LINK_LAYER_INFINIBAND &&
-        !ctx.portinfo.lid)
+    if (connection->portinfo.link_layer == IBV_LINK_LAYER_INFINIBAND &&
+        !connection->portinfo.lid)
     {
         fprintf(stderr, "Couldn't get local LID\n");
         return 1;
     }
 
 
-    /*
-     * prepares Connection to get the given amount of packets
-     */
-    int routs = postRecvWorkReq(connection, (*connection).rx_depth);
-    if (routs < (*connection).rx_depth)
-    {
-        fprintf(stderr, "Couldn't post receive (%d)\n", routs);
-        return 1;
-    }
-
-    if (use_event)
-    {
-        if (ibv_req_notify_cq(ctx.cq, 0))
-        {
-            fprintf(stderr, "Couldn't request CQ notification\n");
-            return 1;
-        }
-    }
+//    /*
+//     * prepares Connection to get the given amount of packets
+//     */
+//    int routs = postRecvWorkReq(connection, (*connection).rx_depth);
+//    if (routs < (*connection).rx_depth)
+//    {
+//        fprintf(stderr, "Couldn't post receive (%d)\n", routs);
+//        return 1;
+//    }
+//
+//    if (use_event)
+//    {
+//        if (ibv_req_notify_cq(ctx.cq, 0))
+//        {
+//            fprintf(stderr, "Couldn't request CQ notification\n");
+//            return 1;
+//        }
+//    }
 
     if (pp_get_port_info((*connection).context, ib_port,
                          &(*connection).portinfo))
@@ -116,7 +121,7 @@ int setupIB()
     std::for_each(_localQPinfo.begin(), _localQPinfo.end(),
                   [&](serverInfo &localQP)
                   {
-                      localQP.lid = ctx.portinfo.lid;
+                      localQP.lid = connection->portinfo.lid;
                       localQP.qpn = connection->qp.at(j).qp_num;
                       localQP.psn = lrand48() & 0xffffff;
 
@@ -155,7 +160,7 @@ int setupIB()
 
     // Init remote QP queue holder with information
     unsigned int k = 0;
-    std::for_each(_remoteQPinfo.begin(), _remoteQPinfo.end(), [](serverInfo
+    std::for_each(_remoteQPinfo.begin(), _remoteQPinfo.end(), [&](serverInfo
                                                                  &remoteQP){
 
         inet_ntop(AF_INET6, &remoteQP.gid, gid, sizeof gid);
@@ -163,7 +168,8 @@ int setupIB()
                remoteQP.lid, remoteQP.qpn, remoteQP.psn, remoteQP.gid);
 
 
-        if (prepIbDeviceToConnect(&ctx, ib_port, _localQPinfo[k].psn, mtu, sl,
+        if (prepIbDeviceToConnect(connection, ib_port, _localQPinfo[k].psn, mtu,
+                                  sl,
                                   &remoteQP,
                                   gidx))
         {
@@ -175,6 +181,7 @@ int setupIB()
     });
 
 };
+void threadFunc(int threadId);
 
 int main(int argc, char *argv[])
 {
@@ -190,9 +197,13 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+
+
     servername = argv[1];
     peerNum = *argv[3];
     messageChar = *argv[2];
+    //TODO: Test peerNum isn't bigger than max ThreadNum which is the
+    // logical CPU count
 
     if (setupIB())
     {
@@ -215,25 +226,28 @@ int main(int argc, char *argv[])
 }
 
 
+
 void threadFunc(int threadId)
 {
+    std::cout<<"running thread " << threadId << std::endl;
     int ret = 0, i = 0, n = 0;
-    int num_concurr_msgs = 1;//config_info.num_concurr_msgs;
-    int msg_size = 4096;//config_info.msg_size;
+    int num_concurr_msgs = 1;
+    int msg_size = 4096;
     int num_wc = 20;
     bool start_sending = false;
     bool stop = false;
+    int                      routs;
 
     pthread_t self;
     cpu_set_t cpuset;
 
-    struct ibv_qp *qp = ib_res.qp;
-    struct ibv_cq *cq = ib_res.cq;
+    struct ibv_qp *qp = &connection->qp[threadId];
+    struct ibv_cq *cq = connection->cq;
     struct ibv_wc *wc = NULL;
-    uint32_t lkey = ib_res.mr->lkey;
-    char *buf_ptr = ib_res.ib_buf;
+    uint32_t lkey = connection->mr->lkey;
+    char *buf_ptr = (char *) connection->buf;
     int buf_offset = 0;
-    size_t buf_size = ib_res.ib_buf_size;
+    size_t buf_size = connection->size;
 
     struct timeval start, end;
     long ops_count = 0;
@@ -246,13 +260,14 @@ void threadFunc(int threadId)
         return;
     }
 
-    if (postSendWorkReq(&ctx))
+    if (postSendWorkReq(connection, threadId)) //Check if it was
+        // appended
     {
-        std::cerr << stderr, "Couldn't post send\n";
+        std::cerr << "Couldn't post send"<<std::endl;
         return;
     }
 
-    ctx.pending |= SEND_WRID;
+    connection->pending |= SEND_WRID;
 
     if (gettimeofday(&start, NULL))
     {
@@ -260,7 +275,10 @@ void threadFunc(int threadId)
         return;
     }
 
-    rcnt = scnt = 0;
+    int iters = 1000;
+    int rcnt, scnt = 0;
+    int                      num_cq_events = 0;
+
     while (rcnt < iters || scnt < iters)
     {
         if (use_event)
@@ -268,24 +286,24 @@ void threadFunc(int threadId)
             struct ibv_cq *ev_cq;
             void *ev_ctx;
 
-            if (ibv_get_cq_event(ctx->channel, &ev_cq, &ev_ctx))
+            if (ibv_get_cq_event(connection->channel, &ev_cq, &ev_ctx))
             {
                 fprintf(stderr, "Failed to get cq_event\n");
-                return 1;
+                std::terminate(); //TODO crash thread
             }
 
             ++num_cq_events;
 
-            if (ev_cq != ctx->cq)
+            if (ev_cq != connection->cq)
             {
                 fprintf(stderr, "CQ event for unknown CQ %p\n", ev_cq);
-                return 1;
+                std::terminate(); //TODO crash thread
             }
 
-            if (ibv_req_notify_cq(ctx->cq, 0))
+            if (ibv_req_notify_cq(connection->cq, 0))
             {
                 fprintf(stderr, "Couldn't request CQ notification\n");
-                return 1;
+                std::terminate(); //TODO crash thread
             }
         }
 
@@ -295,11 +313,11 @@ void threadFunc(int threadId)
 
             do
             {
-                ne = ibv_poll_cq(ctx->cq, 2, wc);
+                ne = ibv_poll_cq(connection->cq, 2, wc);
                 if (ne < 0)
                 {
                     fprintf(stderr, "poll CQ failed %d\n", ne);
-                    return 1;
+                    std::terminate(); //TODO crash thread
                 }
 
             } while (!use_event && ne < 1);
@@ -311,7 +329,7 @@ void threadFunc(int threadId)
                     fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
                             ibv_wc_status_str(wc[i].status), wc[i].status,
                             (int) wc[i].wr_id);
-                    return 1;
+                    std::terminate(); //TODO crash thread
                 }
 
                 switch ((int) wc[i].wr_id)
@@ -321,15 +339,16 @@ void threadFunc(int threadId)
                         break;
 
                     case RECV_WRID:
-                        if (--routs <= 1)
+                        if (--routs <= 1) //TODO: not sure it was init
                         {
                             routs +=
-                                    postRecvWorkReq(ctx, ctx->rx_depth - routs);
-                            if (routs < ctx->rx_depth)
+                                    postRecvWorkReq(connection, connection->rx_depth -
+                                                         routs, threadId);
+                            if (routs < connection->rx_depth)
                             {
                                 fprintf(stderr, "Couldn't post receive (%d)\n",
                                         routs);
-                                return 1;
+                                std::terminate(); //TODO crash thread
                             }
                         }
 
@@ -339,18 +358,20 @@ void threadFunc(int threadId)
                     default:
                         fprintf(stderr, "Completion for unknown wr_id %d\n",
                                 (int) wc[i].wr_id);
-                        return 1;
+                        std::terminate(); //TODO crash thread
                 }
 
-                ctx->pending &= ~(int) wc[i].wr_id;
-                if (scnt < iters && !ctx->pending)
+                connection->pending &= ~(int) wc[i].wr_id; //check if we
+                // shouldnt
+                // vecotrize pending
+                if (scnt < iters && !connection->pending)
                 {
-                    if (postSendWorkReq(ctx))
+                    if (postSendWorkReq(connection, threadId))
                     {
                         fprintf(stderr, "Couldn't post send\n");
-                        return 1;
+                        std::terminate(); //TODO crash thread
                     }
-                    ctx->pending = RECV_WRID | SEND_WRID;
+                    connection->pending = RECV_WRID | SEND_WRID;
                 }
             }
         }
@@ -359,7 +380,7 @@ void threadFunc(int threadId)
     if (gettimeofday(&end, NULL))
     {
         perror("gettimeofday");
-        return 1;
+        std::terminate(); //TODO crash thread
     }
 
     {
@@ -373,12 +394,13 @@ void threadFunc(int threadId)
                usec / 1000000., usec / iters);
     }
 
-    ibv_ack_cq_events(ctx->cq, num_cq_events);
+    ibv_ack_cq_events(connection->cq, num_cq_events);
 
 
 }
 
-int setThreadAffinity(int threadId) const
+
+int setThreadAffinity(int threadId)
 {
     cpu_set_t cpuset;
     CPU_ZERO(&cpuset);
@@ -400,5 +422,4 @@ int initThreads()
     return 0;
 }
 
-};
 #endif //EX1V2_SIMPLEIBCLIENT_HPP

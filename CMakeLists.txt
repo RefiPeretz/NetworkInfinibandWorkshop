@@ -39,13 +39,13 @@ add_executable(NonBlockingTcpServer ${NBTS})
 #Verbs Api versions
 SET(GCC_COVERAGE_LINK_FLAGS "-lrdmacm -libverbs")
 
-set(SIBC SingleInfiniBandClient.c CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
-add_executable(SingleInfiniBandClient ${SIBC})
-target_link_libraries(SingleInfiniBandClient "${GCC_COVERAGE_LINK_FLAGS}")
-
-set(SIBS SingleInfiniBandServer.c CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
-add_executable(SingleInfiniBandServer ${SIBS})
-target_link_libraries(SingleInfiniBandServer "${GCC_COVERAGE_LINK_FLAGS}")
+#set(SIBC SingleInfiniBandClient.c CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
+#add_executable(SingleInfiniBandClient ${SIBC})
+#target_link_libraries(SingleInfiniBandClient "${GCC_COVERAGE_LINK_FLAGS}")
+#
+#set(SIBS SingleInfiniBandServer.c CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
+#add_executable(SingleInfiniBandServer ${SIBS})
+#target_link_libraries(SingleInfiniBandServer "${GCC_COVERAGE_LINK_FLAGS}")
 
 set(IBSC SimpleIBClient.cpp CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
 add_executable(SimpleIBClient ${IBSC})

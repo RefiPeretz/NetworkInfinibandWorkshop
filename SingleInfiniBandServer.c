@@ -220,7 +220,7 @@ int main(int argc, char *argv[])
 		ctx->pending &= ~(int) wc[i].wr_id;
 		if (scnt < iters && !ctx->pending)
 		{
-		  if (postSendWorkReq(ctx))
+		  if (postSendWorkReq(ctx, 0))
 		  {
 			fprintf(stderr, "Couldn't post send\n");
 			return 1;
