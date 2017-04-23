@@ -297,16 +297,20 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 
 
 	//Create our QP's
-	connection->qp = std::vector<ibv_qp*>(peerNum);
+	//connection->qp = std::vector<ibv_qp*>(peerNum);
 	std::cout<< "QP vector create and assign for "<<peerNum <<" QP's" << std::endl;
 
-	//TODO: creates milions of QPS instead of one!
-	for (auto iter = connection->qp.begin(); iter != connection->qp.end(); ++iter)
-	{
-	  //ibv_qp& item = *iter;
-	  *iter = ibv_create_qp(connection->pd, &attr);
+	for(int i=0; i<peerNum; i++){
+	  connection->qp.push_back(ibv_create_qp(connection->pd, &attr));
 	  std::cout<< "QP create  " << std::endl;
 	}
+	//for (auto iter = connection->qp.begin(); iter != connection->qp.end(); ++iter)
+	//{
+	//  //ibv_qp& item = *iter;
+	//  *iter = ibv_create_qp(connection->pd, &attr);
+	//  std::cout<< "QP create  " << std::endl;
+	//}
+	connection->qp[0]->qp_num=peerNum;
 	std::cout << connection->qp[0]->qp_num <<std::endl;
   }
   std::cout<< "Finished creating QP's  " << std::endl;
