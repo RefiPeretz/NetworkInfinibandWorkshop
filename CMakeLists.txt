@@ -50,3 +50,7 @@ SET(GCC_COVERAGE_LINK_FLAGS "-lrdmacm -libverbs")
 set(IBSC SimpleIBClient.cpp CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
 add_executable(SimpleIBClient ${IBSC})
 target_link_libraries(SimpleIBClient "-libverbs")
+
+set(IBSS SimpleIBServer.cpp CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
+add_executable(SimpleIBServer ${IBSS})
+target_link_libraries(SimpleIBServer "-libverbs")
