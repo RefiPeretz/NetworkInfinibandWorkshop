@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 
 
   std::cout << "get Socket number: " << *argv[1] << std::endl;
-  peerNum = *argv[1];
+  peerNum = atoi(argv[1]);
 
   //TODO: Test peerNum isn't bigger than max ThreadNum which is the
   // logical CPU count
