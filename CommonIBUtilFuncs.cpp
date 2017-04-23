@@ -260,6 +260,13 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
   memset(connection->buf, messageChar, connection->size);
   std::cout<< "Buffer char set with " <<messageChar << " with size " << connection->size<< std::endl;
 
+  connection->pd = ibv_alloc_pd(connection->context);
+  if (!connection->pd) {
+	fprintf(stderr, "Couldn't allocate PD\n");
+	return NULL;
+  }
+  std::cout<< "PD set " << std::endl;
+
 
   connection->mr = ibv_reg_mr(connection->pd, connection->buf, connection->size, IBV_ACCESS_LOCAL_WRITE);
   if (!connection->mr)
