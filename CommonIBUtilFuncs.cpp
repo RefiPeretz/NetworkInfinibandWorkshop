@@ -302,11 +302,10 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 
 	for (auto iter = connection->qp.begin(); iter != connection->qp.end(); ++iter)
 	{
-	  *iter = *ibv_create_qp(connection->pd, &attr);
-	  std::cout<< "QP create  " << std::endl;	}
-
-
-
+	  //*iter = *ibv_create_qp(connection->pd, &attr);
+	  *ibv_create_qp(connection->pd, &attr);
+	  std::cout<< "QP create  " << std::endl;
+	}
   }
   std::cout<< "Finished creating QP's  " << std::endl;
 
