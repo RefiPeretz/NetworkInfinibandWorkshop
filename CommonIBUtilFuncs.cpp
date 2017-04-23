@@ -296,9 +296,10 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	std::for_each(connection->qp.begin(), connection->qp.end(), [&](ibv_qp &_qp)
 	{
 	  _qp = *ibv_create_qp(connection->pd, &attr);
-	  std::cout<< "QP create  " << _qp.qp_num << std::endl;
+	  std::cout<< "QP create  " << std::endl;
 	});
   }
+  std::cout<< "Finished creating QP's  " << std::endl;
 
   {
 	InitQPs(port);
