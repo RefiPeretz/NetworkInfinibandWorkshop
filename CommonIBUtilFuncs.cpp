@@ -333,11 +333,16 @@ int InitQPs(int port)
   attr.pkey_index = 0;
   attr.port_num = (uint8_t) port;
   attr.qp_access_flags = 0;
+
   for (auto iter = connection->qp.begin(); iter != connection->qp.end(); ++iter)
   {
 	//INIT state of QP's
+	//ibv_qp* temp = iter;
 	std::cout<< "Modifying QP to init" << std::endl;
-	if (ibv_modify_qp(*iter, &attr, IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS))
+	if((*iter) == nullptr){
+	  std::cout<< "QP is null " << (*iter)->qp_num<< std::endl;
+	}
+	if (ibv_modify_qp((*iter), &attr, IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS))
 	{
 	  fprintf(stderr, "Failed to modify QP to INIT\n");
 	  return 1;
