@@ -81,7 +81,7 @@ int setQPstateRTR(struct Connection *ctx,
 	serverInfo *dest,
 	int sgid_idx);
 
-void InitQPs(int port);
+int InitQPs(int port);
 
 
 /*

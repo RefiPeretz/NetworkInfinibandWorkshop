@@ -311,7 +311,9 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
   std::cout<< "Finished creating QP's  " << std::endl;
 
   {
-	InitQPs(port);
+	if(InitQPs(port)){
+	  return nullptr;
+	}
   }
 
   //Init our connection structs that will hold information on our and our destination QP addresses
@@ -321,7 +323,7 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
   return connection;
 }
 
-void InitQPs(int port)
+int InitQPs(int port)
 {
 
   std::cout<< "Modifying QP's to init" << std::endl;
@@ -331,17 +333,16 @@ void InitQPs(int port)
   attr.pkey_index = 0;
   attr.port_num = (uint8_t) port;
   attr.qp_access_flags = 0;
-
-  for_each(connection->qp.begin(), connection->qp.end(), [&](ibv_qp *_qp)
+  for (auto iter = connection->qp.begin(); iter != connection->qp.end(); ++iter)
   {
 	//INIT state of QP's
-	if (ibv_modify_qp(_qp, &attr, IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS))
+	std::cout<< "Modifying QP to init" << std::endl;
+	if (ibv_modify_qp(*iter, &attr, IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS))
 	{
 	  fprintf(stderr, "Failed to modify QP to INIT\n");
-	  return NULL;
+	  return 1;
 	}
-
-  });
+  }
 }
 
 int connectRemoteToClient(struct Connection *ctx,
