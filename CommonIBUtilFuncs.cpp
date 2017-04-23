@@ -298,7 +298,7 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 
 	//Create our QP's
 	connection->qp = std::vector<ibv_qp*>(peerNum);
-	std::cout<< "QP vector create and assign " << std::endl;
+	std::cout<< "QP vector create and assign for "<<peerNum <<" QP's" << std::endl;
 
 	//TODO: creates milions of QPS instead of one!
 	for (auto iter = connection->qp.begin(); iter != connection->qp.end(); ++iter)
