@@ -50,7 +50,9 @@ int setThreadAffinity(int threadId);
 
 int setupIB()
 {
-    //get the device list on the client
+
+  std::cout<<"get device list"<<std::endl;
+  //get the device list on the client
     dev_list = ibv_get_device_list(NULL);
     if (!dev_list)
     {
@@ -65,6 +67,7 @@ int setupIB()
         fprintf(stderr, "No IB devices found\n");
         return 1;
     }
+  std::cout<<"got device from list "<< ib_dev->dev_name<<std::endl;
 
     //Init's all the needed structures for the Connection and returns "ctx" Holds the whole Connection data
     //Hold locally in connection and globally under "ctx" - pay attantion when making changes and using.
@@ -198,9 +201,9 @@ int main(int argc, char *argv[])
     }
 
 
-  std::cout << "get server name" << argv[1] << std::endl;
-  std::cout << "get peerNum name" << argv[3] << std::endl;
-  std::cout << "get Messagechar" << argv[2] << std::endl;
+  std::cout << "get server name: " << argv[1] << std::endl;
+  std::cout << "get peerNum name: " << argv[3] << std::endl;
+  std::cout << "get Messagechar: " << argv[2] << std::endl;
 
     servername = argv[1];
     peerNum = *argv[3];

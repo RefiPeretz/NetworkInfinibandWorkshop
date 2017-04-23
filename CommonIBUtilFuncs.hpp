@@ -52,13 +52,14 @@ int connectRemoteToClient(struct Connection *ctx,
 
 
 extern Connection *connection;
-
-
-struct Connection *init_connection(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use_event, int
-is_server,
-	int
-	peerNum, int messageChar);
-void gid_to_wire_gid(const union ibv_gid *gid, char *wgid);
+struct Connection *init_connection(struct ibv_device *ib_dev,
+	int size,
+	int rx_depth,
+	int port,
+	int use_event,
+	int is_server,
+	int peerNum,
+	int messageChar);
 
 enum
 {
