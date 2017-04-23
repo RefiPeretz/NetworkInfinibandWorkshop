@@ -310,8 +310,8 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	//  *iter = ibv_create_qp(connection->pd, &attr);
 	//  std::cout<< "QP create  " << std::endl;
 	//}
-	connection->qp[0]->qp_num=peerNum;
-	std::cout << connection->qp[0]->qp_num <<std::endl;
+	//connection->qp[0]->qp_num=peerNum;
+	std::cout << connection->qp[0]->qp_type <<std::endl;
   }
   std::cout<< "Finished creating QP's  " << std::endl;
 
