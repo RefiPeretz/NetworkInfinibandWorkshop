@@ -27,7 +27,7 @@ int size = 4096;
 int ib_port = 1;
 int port = 18515;
 
-int rx_depth = 500; //Used to note minimum number of enteries for CQ
+int rx_depth = 500; //Used to note minimum number of entries for CQ
 int use_event = 0;
 int gidx = -1;
 char gid[33];
@@ -175,10 +175,9 @@ int main(int argc, char *argv[])
   }
 
 
+  std::cout << "get Socket number" << *argv[1] << std::endl;
+  peerNum = *argv[1];
 
-  servername = argv[1];
-  peerNum = *argv[3];
-  messageChar = *argv[2];
   //TODO: Test peerNum isn't bigger than max ThreadNum which is the
   // logical CPU count
 

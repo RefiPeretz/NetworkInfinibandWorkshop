@@ -198,6 +198,9 @@ int main(int argc, char *argv[])
     }
 
 
+  std::cout << "get server name" << argv[1] << std::endl;
+  std::cout << "get peerNum name" << argv[3] << std::endl;
+  std::cout << "get Messagechar" << argv[2] << std::endl;
 
     servername = argv[1];
     peerNum = *argv[3];
