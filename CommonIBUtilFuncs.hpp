@@ -37,6 +37,7 @@ typedef struct Connection{
   int pending;
   struct ibv_port_attr portinfo;
 };
+static Connection *connection;
 
 /*
  * Connect remote to client and exchange QP address information
@@ -51,7 +52,6 @@ int connectRemoteToClient(struct Connection *ctx,
 	std::vector<serverInfo> &remoteQPserverInfo);
 
 
-extern Connection *connection;
 struct Connection *init_connection(struct ibv_device *ib_dev,
 	int size,
 	int rx_depth,
@@ -60,6 +60,8 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	int is_server,
 	int peerNum,
 	int messageChar);
+
+
 
 enum
 {

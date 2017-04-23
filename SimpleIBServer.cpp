@@ -43,7 +43,6 @@ std::vector<serverInfo> _localQPinfo;
 std::vector<serverInfo> _remoteQPinfo;
 
 
-Connection *connection;
 
 int setThreadAffinity(int threadId);
 

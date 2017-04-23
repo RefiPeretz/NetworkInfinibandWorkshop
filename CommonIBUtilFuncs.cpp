@@ -41,7 +41,6 @@
 #include <malloc.h>
 #include "CommonIBUtilFuncs.hpp"
 
-
 enum ibv_mtu pp_mtu_to_enum(int mtu)
 {
   switch (mtu)
@@ -205,6 +204,13 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	int peerNum,
 	int messageChar)
 {
+  //struct Connection *ctx;
+
+
+  connection = (Connection *) calloc(1, sizeof *connection);
+  if (!connection)
+	return NULL;
+
   std::cout<< "Init connection " << std::endl;
   connection->peerNum = peerNum;
 
