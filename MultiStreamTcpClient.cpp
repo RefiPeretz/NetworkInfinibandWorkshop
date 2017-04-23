@@ -1,6 +1,5 @@
 //
 // Created by fimka on 13/03/17.
-// This imitiates multiple clients connecting in parallel
 //
 
 #include <cstdlib>
@@ -10,79 +9,85 @@
 #include "Connector.hpp"
 #include "Metrics.hpp"
 
+
+
 using namespace std;
 
 
 int main(int argc, char **argv) {
-    if (argc != 2) {
-        printf("usage: %s <number of max parallel clients>\n", argv[1]);
+    if (argc != 4) {
+        printf("usage: %s <port> <ip> <number of msgs>\n", argv[0]);
         exit(1);
     }
-    unsigned int clientNum = atoi(argv[1]);
-    unsigned int counter = 0;
-    std::string serverAddress = "localhost";
-    Connector *connects[clientNum];
-    Stream *streams[clientNum];
+//    warmUpServer(atoi(argv[1]));
+
+    int numMsgs = atoi(argv[3]);
+    int len;
+    int bytesRead;
+    char* message;
+    char ack[MAX_MSG_SIZE];
     struct timeval start, end;
     double t1, t2;
-    char* msg;
-    warmUpServer(8081);
-    printf("=====Multi Stream Connection=====\n");
-    for(int msgSize = 1; msgSize <= 1024;msgSize = msgSize * 2){
-        t1 = 0.0;
-        t2 = 0.0;
-        createMsg(msgSize,'w',&msg);
-        msg[msgSize] = '\0';
-        if (gettimeofday(&start, NULL)) {
-            printf("time failed\n");
-            exit(1);
+   // int resultSize = (int)((log2(MAX_MSG_SIZE) + 1) * 6);
+    //double results[resultSize] = {0.0};
+    int resultIndex = 0;
+    int curMsgSize;
+    for (int msgSize = MIN_MSG_SIZE; msgSize <= MAX_MSG_SIZE; msgSize = msgSize * 2){
+        for(int socketNum = 1;socketNum < MAX_CORE;socketNum*=2){
+            t1 = 0.0;
+            t2 = 0.0;
+            curMsgSize = msgSize/socketNum;
+            createMsg(curMsgSize,'w',&message);
+            message[curMsgSize] = '\0';
+//            Connector *connectors[socketNum] = {new Connector()};
+            Connector connector;
+            Stream *streams[socketNum];
+            if (gettimeofday(&start, NULL)) {
+                printf("time failed\n");
+                exit(1);
+            }
+            for(int stream = 0; stream < socketNum;stream++){
+//                streams[stream] = connectors[stream]->connect(SERVER_ADDRESS, SERVER_PORT, 5);
+                streams[stream] = connector.connect(SERVER_ADDRESS, SERVER_PORT);
+                for(int i = 0 ; i < numMsgs; i++){
+                    bytesRead = 0;
+                    if ( streams[stream]) {
+                        streams[stream]->send(message, curMsgSize);
+                        printf("sent - %s with sizeof %d\n", message, curMsgSize);
+                        while(bytesRead < curMsgSize){
+                            bytesRead +=  streams[stream]->receive(ack, MAX_MSG_SIZE,1);
+                        }
+                        printf("received - %d Bytes\n", bytesRead);
+
+                    }
+                }
+               delete(streams[stream]);
+            }
+
+            if (gettimeofday(&end, NULL)) {
+                printf("time failed\n");
+                exit(1);
+            }
+            t1 += start.tv_sec + (start.tv_usec / 1000000.0);
+            t2 += end.tv_sec + (end.tv_usec / 1000000.0);
+            double rtt = calcAverageRTT(1,numMsgs, (t2-t1) / 100);
+            double packetRate = calcAveragePacketRate(numMsgs,(t2-t1) / 100);
+            double throughput = calcAverageThroughput(numMsgs,msgSize,(t2-t1) / 100);
+            double numOfSockets = 1;
+            printf("avgRTT: %g\n", rtt);
+            printf("avgPacketRate: %g\n", packetRate);
+            printf("avgThroughput: %g\n", throughput);
+            //resultIndex = saveResults(rtt,throughput,packetRate,resultIndex,results,numOfSockets,msgSize,numMsgs);
+            free(message);
+//            for(int stream = 0; stream < socketNum;stream++){
+//                delete(streams);
+//            }
+
         }
-        for (int parallelClientNum = 0; parallelClientNum < clientNum;parallelClientNum++) {
-
-            connects[parallelClientNum] = new Connector();
-            streams[parallelClientNum] = connects[parallelClientNum]->connect(serverAddress.c_str(), 8081, 5000);
-
-        }
-        printf("Multiple sends\n");
-        for (int parallelClientNum = 0; parallelClientNum < clientNum;
-             parallelClientNum++) {
-            char message = 'w';
 
 
-            streams[parallelClientNum]->send(msg, msgSize);
-            printf("sent - %c with sizeof %d\n", message, (int) sizeof(char));
-
-
-        }
-        printf("Multiple rcv\n");
-        for (int parallelClientNum = 0; parallelClientNum < clientNum;
-             parallelClientNum++) {
-            char ack;
-
-            streams[parallelClientNum]->receive(&ack, sizeof(char), 5);
-            printf("received - %c\n", ack);
-            delete streams[parallelClientNum];
-        }
-        if (gettimeofday(&end, NULL)) {
-            printf("time failed\n");
-            exit(1);
-        }
-        t1 += start.tv_sec + (start.tv_usec / 1000000.0);
-        t2 += end.tv_sec + (end.tv_usec / 1000000.0);
-        double rtt = calcAverageRTT(clientNum, (t2-t1) / 100);
-        double packetRate = calcAveragePacketRate(clientNum,(t2-t1) / 100);
-        double throughput = calcAverageThroughput(clientNum,msgSize,(t2-t1) / 100);
-        printf("avgRTT: %g\n", rtt);
-        printf("avgPacketRate: %g\n", packetRate);
-        printf("avgThroughput: %g\n", throughput);
-
-        //calculate and print mean rtt
-        free(msg);
     }
+    //createResultFile(resultSize,"SingleStreamResults.csv",results);
 
 
-
-    exit(0);
 }
-
-

@@ -17,7 +17,7 @@ set(SSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
 add_executable(SingleStreamTcpClient ${SSTC})
 
 set(MSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
-    Acceptor.hpp MultiStreamTcpClient.cpp Metrics.cpp Metrics.hpp SingleInfiniBandServer.c SimpleIBClient.hpp)
+    Acceptor.hpp MultiStreamTcpClient.cpp Metrics.cpp Metrics.hpp SimpleIBClient.hpp)
 add_executable(MultiStreamTcpClient ${MSTS})
 
 set(VSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp

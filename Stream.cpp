@@ -21,11 +21,11 @@ Stream::~Stream()
 
 ssize_t Stream::send(const char *buffer, int len)
 {
-    //printf("send: %s , in size: %d\n",buffer,len);
+    printf("send: %s , in size: %d\n",buffer,len);
   return write(m_sd, buffer, len);
 }
 
-ssize_t Stream::receive(char *buffer, int len, int timeout)
+ssize_t Stream::receive(char *buffer, size_t len, int timeout)
 {
   if (timeout <= 0) return read(m_sd, buffer, len);
 
