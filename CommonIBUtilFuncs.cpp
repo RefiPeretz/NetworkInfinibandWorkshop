@@ -300,11 +300,13 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	connection->qp = std::vector<ibv_qp>(peerNum);
 	std::cout<< "QP vector create and assign " << std::endl;
 
-	std::for_each(connection->qp.begin(), connection->qp.end(), [&](ibv_qp &_qp)
+	for (auto iter = connection->qp.begin(); iter != connection->qp.end(); ++iter)
 	{
-	  _qp = *ibv_create_qp(connection->pd, &attr);
-	  std::cout<< "QP create  " << std::endl;
-	});
+	  *iter = *ibv_create_qp(connection->pd, &attr);
+	  std::cout<< "QP create  " << std::endl;	}
+
+
+
   }
   std::cout<< "Finished creating QP's  " << std::endl;
 
