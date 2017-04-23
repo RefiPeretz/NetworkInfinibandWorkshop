@@ -307,6 +307,7 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	  *iter = ibv_create_qp(connection->pd, &attr);
 	  std::cout<< "QP create  " << std::endl;
 	}
+	std::cout << connection->qp[0]->qp_num <<std::endl;
   }
   std::cout<< "Finished creating QP's  " << std::endl;
 
@@ -348,7 +349,7 @@ int InitQPs(int port)
 	std::cout<< (*iter)->pd << std::endl;
 
 	if((*iter) == nullptr){
-	  std::cout<< "QP is null " << (*iter)->qp_num<< std::endl;
+	  std::cout<< "QP is null "<< std::endl;
 	}
 	if (ibv_modify_qp((*iter), &attr, IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS))
 	{
