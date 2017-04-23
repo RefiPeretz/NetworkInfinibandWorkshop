@@ -302,13 +302,11 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 
 	for(int i = 0; i < peerNum; i++){
 
-	  ibv_qp *it = (struct ibv_qp *) calloc (1,
-		  sizeof(struct ibv_qp *));
+	  ibv_qp *it = (ibv_qp*) malloc(sizeof(ibv_qp*));
 	  if(it == NULL){
 		std::cout<< "Failed to allocate qp" <<std::endl;
 		return nullptr;
 	  }
-
 	  it =  ibv_create_qp(connection->pd, &attr);
 	  if(!(it)){
 		std::cerr << "Couldn't create QP";
