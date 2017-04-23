@@ -263,7 +263,7 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
   connection->pd = ibv_alloc_pd(connection->context);
   if (!connection->pd) {
 	fprintf(stderr, "Couldn't allocate PD\n");
-	return NULL;
+	return nullptr;
   }
   std::cout<< "PD set " << std::endl;
 
@@ -272,7 +272,7 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
   if (!connection->mr)
   {
 	fprintf(stderr, "Couldn't register MR\n");
-	return NULL;
+	return nullptr;
   }
   std::cout<< "MR set " << std::endl;
 
@@ -280,7 +280,7 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
   if (!connection->cq)
   {
 	fprintf(stderr, "Couldn't create CQ\n");
-	return NULL;
+	return nullptr;
   }
   std::cout<< "CQ set " << std::endl;
 
@@ -300,9 +300,21 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	//connection->qp = std::vector<ibv_qp*>(peerNum);
 	std::cout<< "QP vector create and assign for "<<peerNum <<" QP's" << std::endl;
 
-	for(int i=0; i<peerNum; i++){
-	  connection->qp.push_back(ibv_create_qp(connection->pd, &attr));
-	  std::cout<< "QP create  " << std::endl;
+	for(int i = 0; i < peerNum; i++){
+
+	  ibv_qp *it = (struct ibv_qp *) calloc (1,
+		  sizeof(struct ibv_qp *));
+	  if(it != NULL){
+		std::cout<< "Failed to allocate qp" <<std::endl;
+	  }
+
+	  it =  ibv_create_qp(connection->pd, &attr);
+	  if(!(it)){
+		std::cerr << "Couldn't create QP";
+		return nullptr;
+	  }
+	  connection->qp.push_back(it);
+	  std::cout<< "QP created  " << std::endl;
 	}
 	//for (auto iter = connection->qp.begin(); iter != connection->qp.end(); ++iter)
 	//{
@@ -311,7 +323,7 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	//  std::cout<< "QP create  " << std::endl;
 	//}
 	//connection->qp[0]->qp_num=peerNum;
-	std::cout << connection->qp[0]->qp_type <<std::endl;
+	//std::cout << connection->qp[0]->qp_type <<std::endl;
   }
   std::cout<< "Finished creating QP's  " << std::endl;
 
@@ -345,12 +357,7 @@ int InitQPs(int port)
 	//ibv_qp* temp = iter;
 
 	std::cout<< "Modifying QP to init" << std::endl;
-	std::cout<< (*iter)->qp_num << std::endl;
-	std::cout<< (*iter)->context << std::endl;
-	std::cout<< (*iter)->cond.__size << std::endl;
-	std::cout<< (*iter)->events_completed << std::endl;
-	std::cout<< (*iter)->state << std::endl;
-	std::cout<< (*iter)->pd << std::endl;
+
 
 	if((*iter) == nullptr){
 	  std::cout<< "QP is null "<< std::endl;
