@@ -166,10 +166,10 @@ int main(int argc, char *argv[])
 
   //TODO: check args
 
-  if (argc < 4)
+  if (argc < 2)
   {
 	std::cerr
-		<< "Usage: <server address> <Char to send> <client threads num, Default is 1>"
+		<< "Usage: <client threads num, Default is 1>"
 		<< std::endl;
 	return 1;
   }
