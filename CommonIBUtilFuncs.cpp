@@ -304,8 +304,9 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 
 	  ibv_qp *it = (struct ibv_qp *) calloc (1,
 		  sizeof(struct ibv_qp *));
-	  if(it != NULL){
+	  if(it == NULL){
 		std::cout<< "Failed to allocate qp" <<std::endl;
+		return nullptr;
 	  }
 
 	  it =  ibv_create_qp(connection->pd, &attr);
