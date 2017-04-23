@@ -49,7 +49,6 @@ int setThreadAffinity(int threadId);
 
 int setupIB()
 {
-  page_size = sysconf(_SC_PAGESIZE);
 
   //get the device list on the client
   std::cout<<"get device list"<<std::endl;
