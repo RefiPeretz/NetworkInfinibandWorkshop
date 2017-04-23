@@ -33,7 +33,6 @@ int gidx = -1;
 char gid[33];
 
 
-char *servername = NULL;
 int peerNum = 1;
 char messageChar = 'w'; //Classic 'w'. The famous w.
 int                      sl = 0;
@@ -50,6 +49,8 @@ int setThreadAffinity(int threadId);
 
 int setupIB()
 {
+  page_size = sysconf(_SC_PAGESIZE);
+
   //get the device list on the client
   std::cout<<"get device list"<<std::endl;
   dev_list = ibv_get_device_list(NULL);
@@ -72,7 +73,7 @@ int setupIB()
   //Hold locally in connection and globally under "ctx" - pay attantion when making changes and using.
   connection = init_connection(ib_dev, size, rx_depth, ib_port,
 	  use_event,
-	  !servername, peerNum, messageChar);
+	  1, peerNum, messageChar);
   if (connection == nullptr)
   {
 	return 1;

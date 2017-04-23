@@ -205,9 +205,10 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	int peerNum,
 	int messageChar)
 {
-
+  std::cout<< "Init connection " << std::endl;
   connection->peerNum = peerNum;
 
+  std::cout<< "Open device "<<ib_dev->dev_name << std::endl;
   connection->context = ibv_open_device(ib_dev);
   if (!connection->context)
   {
@@ -229,6 +230,7 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	connection->channel = NULL;
   }
 
+  std::cout<< "Init connection " << std::endl;
   connection->pd = ibv_alloc_pd(connection->context);
   if (!connection->pd)
   {
@@ -236,8 +238,11 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	return NULL;
   }
 
+  std::cout<< "Init connection size" << std::endl;
+
   connection->size = sizeof(char) + 1;
   connection->rx_depth = rx_depth;
+  page_size = sysconf(_SC_PAGESIZE);
 
   connection->buf = malloc(roundup(size, page_size));
   if (!connection->buf)
@@ -245,8 +250,10 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	fprintf(stderr, "Couldn't allocate work buf.\n");
 	return NULL;
   }
+  std::cout<< "Set buffer char " << std::endl;
 
   memset(connection->buf, messageChar, connection->size);
+  std::cout<< "Buffer char set with " <<messageChar << " with size " << connection->size<< std::endl;
 
 
   connection->mr = ibv_reg_mr(connection->pd, connection->buf, connection->size, IBV_ACCESS_LOCAL_WRITE);
@@ -255,6 +262,7 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	fprintf(stderr, "Couldn't register MR\n");
 	return NULL;
   }
+  std::cout<< "MR set " << std::endl;
 
   connection->cq = ibv_create_cq(connection->context, rx_depth + 1, NULL, connection->channel, 0);
   if (!connection->cq)
@@ -262,6 +270,7 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	fprintf(stderr, "Couldn't create CQ\n");
 	return NULL;
   }
+  std::cout<< "CQ set " << std::endl;
 
   {
 	struct ibv_qp_init_attr attr;

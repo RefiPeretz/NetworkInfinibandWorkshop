@@ -50,6 +50,7 @@ int setThreadAffinity(int threadId);
 
 int setupIB()
 {
+  page_size = sysconf(_SC_PAGESIZE);
 
   std::cout<<"get device list"<<std::endl;
   //get the device list on the client
@@ -73,7 +74,7 @@ int setupIB()
     //Hold locally in connection and globally under "ctx" - pay attantion when making changes and using.
      connection = init_connection(ib_dev, size, rx_depth, ib_port,
                                       use_event,
-                                 !servername, peerNum, messageChar);
+                                 0, peerNum, messageChar);
     if (connection == nullptr)
     {
         return 1;
