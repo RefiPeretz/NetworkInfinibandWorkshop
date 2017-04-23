@@ -193,7 +193,6 @@ int connectClientToRemote(const char *servername,
   return 0;
 }
 
-void InitQPs(int port);
 
 struct Connection *init_connection(struct ibv_device *ib_dev,
 	int size,
@@ -287,14 +286,17 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	};
 	attr.qp_type = IBV_QPT_RC;
 
+	std::cout<< "QP BASE attr set " << std::endl;
 
 
 	//Create our QP's
 	connection->qp = std::vector<ibv_qp>(peerNum);
+	std::cout<< "QP vector create and assign " << std::endl;
+
 	std::for_each(connection->qp.begin(), connection->qp.end(), [&](ibv_qp &_qp)
 	{
 	  _qp = *ibv_create_qp(connection->pd, &attr);
-
+	  std::cout<< "QP create  " << _qp.qp_num << std::endl;
 	});
   }
 
