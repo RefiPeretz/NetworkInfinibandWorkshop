@@ -297,14 +297,14 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 
 
 	//Create our QP's
-	connection->qp = std::vector<ibv_qp>(peerNum);
+	connection->qp = std::vector<ibv_qp*>(peerNum);
 	std::cout<< "QP vector create and assign " << std::endl;
 
 	//TODO: creates milions of QPS instead of one!
 	for (auto iter = connection->qp.begin(); iter != connection->qp.end(); ++iter)
 	{
-	  ibv_qp& item = *iter;
-	  item = *ibv_create_qp(connection->pd, &attr);
+	  //ibv_qp& item = *iter;
+	  *iter = ibv_create_qp(connection->pd, &attr);
 	  std::cout<< "QP create  " << std::endl;
 	}
   }
@@ -328,10 +328,10 @@ void InitQPs(int port)
   attr.port_num = (uint8_t) port;
   attr.qp_access_flags = 0;
 
-  for_each(connection->qp.begin(), connection->qp.end(), [&](ibv_qp &_qp)
+  for_each(connection->qp.begin(), connection->qp.end(), [&](ibv_qp *_qp)
   {
 	//INIT state of QP's
-	if (ibv_modify_qp(&_qp, &attr, IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS))
+	if (ibv_modify_qp(_qp, &attr, IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS))
 	{
 	  fprintf(stderr, "Failed to modify QP to INIT\n");
 	  return NULL;
@@ -479,7 +479,7 @@ setQPstateRTR(struct Connection *ctx, int port, int my_psn, enum ibv_mtu mtu, in
 	attr.ah_attr.grh.sgid_index = sgid_idx;
   }
 
-  std::vector<ibv_qp> &_qpVector = ctx->qp;
+  std::vector<ibv_qp*> &_qpVector = ctx->qp;
   std::for_each(_qpVector.
 
 		  begin(), _qpVector
@@ -488,9 +488,9 @@ setQPstateRTR(struct Connection *ctx, int port, int my_psn, enum ibv_mtu mtu, in
 
 			  end(),
 
-	  [&](ibv_qp &qp)
+	  [&](ibv_qp *qp)
 	  {
-		if (ibv_modify_qp(&qp,
+		if (ibv_modify_qp(qp,
 			&attr,
 			IBV_QP_STATE
 				| IBV_QP_AV
@@ -536,10 +536,10 @@ setQPstateRTS(struct Connection *ctx, int port, int my_psn, enum ibv_mtu mtu, in
   attr.sq_psn = my_psn;
   attr.max_rd_atomic = 1;
 
-  std::vector<ibv_qp> &_qpVector = ctx->qp;
-  std::for_each(_qpVector.begin(), _qpVector.end(), [&](ibv_qp &qp)
+  std::vector<ibv_qp*> &_qpVector = ctx->qp;
+  std::for_each(_qpVector.begin(), _qpVector.end(), [&](ibv_qp *qp)
   {
-	if (ibv_modify_qp(&qp,
+	if (ibv_modify_qp(qp,
 		&attr,
 		IBV_QP_STATE | IBV_QP_TIMEOUT | IBV_QP_RETRY_CNT | IBV_QP_RNR_RETRY | IBV_QP_SQ_PSN | IBV_QP_MAX_QP_RD_ATOMIC))
 	{
@@ -568,7 +568,7 @@ int postRecvWorkReq(struct Connection *ctx, int n, int tid)
 
   for (i = 0; i < n; ++i)
   {
-	if (ibv_post_recv(&ctx->qp[tid], &wr, &bad_wr))
+	if (ibv_post_recv(ctx->qp[tid], &wr, &bad_wr))
 	{
 	  break;
 	}
@@ -579,7 +579,7 @@ int postRecvWorkReq(struct Connection *ctx, int n, int tid)
 
 int closeConnection(struct Connection *ctx, int tid)
 {
-  if (ibv_destroy_qp(&ctx->qp[tid]))
+  if (ibv_destroy_qp(ctx->qp[tid]))
   {
 	fprintf(stderr, "Couldn't destroy QP\n");
 	return 1;
@@ -642,7 +642,7 @@ int postSendWorkReq(Connection *ctx, int &threadId)
   wr.send_flags = IBV_SEND_SIGNALED;
   struct ibv_send_wr *bad_wr;
 
-  return ibv_post_send(&ctx->qp[threadId], &wr, &bad_wr);
+  return ibv_post_send(ctx->qp[threadId], &wr, &bad_wr);
 }
 
 

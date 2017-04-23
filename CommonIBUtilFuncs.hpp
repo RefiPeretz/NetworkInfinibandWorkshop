@@ -29,7 +29,7 @@ typedef struct Connection{
   struct ibv_pd *pd;
   struct ibv_mr *mr;
   struct ibv_cq *cq;
-  std::vector<ibv_qp> qp;
+  std::vector<ibv_qp*> qp;
   int peerNum;
   void *buf;
   int size;

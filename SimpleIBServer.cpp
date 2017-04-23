@@ -123,7 +123,7 @@ int setupIB()
 	  [&](serverInfo &localQP)
 	  {
 		localQP.lid = connection->portinfo.lid;
-		localQP.qpn = connection->qp.at(j).qp_num;
+		localQP.qpn = (*connection->qp.at(j)).qp_num;
 		localQP.psn = lrand48() & 0xffffff;
 
 		if (gidx >= 0)
@@ -218,7 +218,7 @@ void threadFunc(int threadId)
   pthread_t self;
   cpu_set_t cpuset;
 
-  struct ibv_qp *qp = &connection->qp[threadId];
+  struct ibv_qp *qp = connection->qp[threadId];
   struct ibv_cq *cq = connection->cq;
   struct ibv_wc *wc = NULL;
   uint32_t lkey = connection->mr->lkey;
