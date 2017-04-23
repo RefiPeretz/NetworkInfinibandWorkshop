@@ -338,7 +338,15 @@ int InitQPs(int port)
   {
 	//INIT state of QP's
 	//ibv_qp* temp = iter;
+
 	std::cout<< "Modifying QP to init" << std::endl;
+	std::cout<< (*iter)->qp_num << std::endl;
+	std::cout<< (*iter)->context << std::endl;
+	std::cout<< (*iter)->cond.__size << std::endl;
+	std::cout<< (*iter)->events_completed << std::endl;
+	std::cout<< (*iter)->state << std::endl;
+	std::cout<< (*iter)->pd << std::endl;
+
 	if((*iter) == nullptr){
 	  std::cout<< "QP is null " << (*iter)->qp_num<< std::endl;
 	}
