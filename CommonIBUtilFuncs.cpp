@@ -316,12 +316,16 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 
   //Init our connection structs that will hold information on our and our destination QP addresses
 
+  std::cout<< "Finished creating connection  " << std::endl;
 
   return connection;
 }
 
 void InitQPs(int port)
 {
+
+  std::cout<< "Modifying QP's to init" << std::endl;
+
   struct ibv_qp_attr attr;
   attr.qp_state = IBV_QPS_INIT;
   attr.pkey_index = 0;
