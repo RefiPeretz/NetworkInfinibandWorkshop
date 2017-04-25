@@ -12,7 +12,7 @@
 #include <sstream>
 #include <algorithm>
 
-#define SEC_TO_MICRO pow(10, 6)
+//#define SEC_TO_MICRO pow(10, 6)
 #define MAX_MSG_SIZE 1024
 
 
@@ -101,10 +101,11 @@ void warmUpServer(int port,int numOfMsgs = 1000,std::string server = "localhost"
 
 double timeDifference(timeval time1, timeval time2)
 {
-    double res =  ((time2.tv_sec - time1.tv_sec) * SEC_TO_MICRO)
-                  + ((time2.tv_usec - time1.tv_usec)); //TODO change to seconds
-    // return abs of difference
-    return res < 0 ? (-1)*res : res;
+//    double res =  ((time2.tv_sec - time1.tv_sec) * SEC_TO_MICRO)
+//                  + ((time2.tv_usec - time1.tv_usec)); //TODO change to seconds
+//    // return abs of difference
+//    return res < 0 ? (-1)*res : res;
+    return 0;
 }
 
 
