@@ -117,7 +117,7 @@ int connectClientToRemote(const char *servername,
     if (n < 0) {
         fprintf(stderr, "%s for %s:%d\n", gai_strerror(n), servername, port);
         free(service);
-        return NULL;
+        return 1;
     }
 
     for (t = res; t; t = t->ai_next) {
@@ -137,7 +137,7 @@ int connectClientToRemote(const char *servername,
     if (sockfd < 0) {
         printf("Sokcetfd is Null\n");
         fprintf(stderr, "Couldn't connect to %s:%d\n", servername, port);
-        return NULL;
+        return 1;
     }
 
     unsigned int k = 0;

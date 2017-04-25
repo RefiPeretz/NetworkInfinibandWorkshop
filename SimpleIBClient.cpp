@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
 
     for (unsigned int i = 0; i < _numThreads; i++)
     {
-        _threadsVec[i] = std::thread(&threadFunc, i);
+        _threadsVec.push_back(std::thread(&threadFunc, i));
     }
 
 
@@ -255,7 +255,7 @@ void threadFunc(int threadId)
     int num_wc = 20;
     bool start_sending = false;
     bool stop = false;
-
+    std::cout<<"init premitives" << threadId << std::endl;
     pthread_t self;
     cpu_set_t cpuset;
 
@@ -266,6 +266,7 @@ void threadFunc(int threadId)
     char *buf_ptr = (char *) connection->buf;
     int buf_offset = 0;
     size_t buf_size = connection->size;
+    std::cout<<"Done assign all before timer " << threadId << std::endl;
 
     struct timeval start, end;
     long ops_count = 0;
