@@ -109,7 +109,7 @@ int connectClientToRemote(const char *servername,
 
 
     if (asprintf(&service, "%d", port) < 0) {
-        return NULL;
+        return 1;
     }
 
     n = getaddrinfo(servername, service, &hints, &res);
