@@ -25,7 +25,7 @@ struct ibv_device **dev_list;
 struct ibv_device *ib_dev;
 int size = 4096;
 int ib_port = 1;
-int port = 18900;
+int port = 18967;
 
 int rx_depth = 500; //Used to note minimum number of enteries for CQ
 int use_event = 0;
@@ -194,6 +194,7 @@ int setupIB()
         k++;
 
     });
+
 
 };
 void threadFunc(int threadId);

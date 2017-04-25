@@ -97,6 +97,7 @@ int connectClientToRemote(const char *servername,
                           std::vector<serverInfo> &remoteQPserverInfo) {
     struct addrinfo *res, *t;
     struct addrinfo hints;
+    hints = {};
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
 
@@ -104,6 +105,7 @@ int connectClientToRemote(const char *servername,
     char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
     int n;
     int sockfd = -1;
+    char gid[33];
 
 
     if (asprintf(&service, "%d", port) < 0) {
@@ -140,7 +142,6 @@ int connectClientToRemote(const char *servername,
 
     unsigned int k = 0;
     std::for_each(localQPserverInfo.begin(), localQPserverInfo.end(), [&](serverInfo &localQP) {
-        char gid[33];
         gid_to_wire_gid(&localQP.gid, gid);//TODO check with pingpong
         std::cout<<"Sending hello this is my cool qp address - so call me maybe" <<std::endl;
         sprintf(msg, "%04x:%06x:%06x:%s", localQP.lid, localQP.qpn, localQP.psn, gid);
@@ -151,24 +152,27 @@ int connectClientToRemote(const char *servername,
             close(sockfd);
             return 1;
         }
-
+        std::cout<<"Read from server" <<std::endl;
         if (read(sockfd, msg, sizeof msg) != sizeof msg) {
             perror("client read");
             fprintf(stderr, "Couldn't read remote address\n");
             close(sockfd);
             return 1;
         }
-        printf("Read remote QP info - %s", msg);
+        std::cout << "Read remote QP info " << msg<<std::endl;
 
         write(sockfd, "done", sizeof "done");
+        std::cout << "Write to remote is done " <<std::endl;
 
         sscanf(msg,
                "%x:%x:%x:%s",
-               remoteQPserverInfo[k].lid,
-               remoteQPserverInfo[k].qpn,
-               remoteQPserverInfo[k].psn,
-               remoteQPserverInfo[k].gid);
+               &remoteQPserverInfo[k].lid,
+               &remoteQPserverInfo[k].qpn,
+               &remoteQPserverInfo[k].psn,
+               gid);
+        std::cout << "Parsed response from remote " <<std::endl;
         wire_gid_to_gid(gid, &remoteQPserverInfo[k].gid);//TODO maybe crash
+        std::cout << "Done write to gid " <<std::endl;
 
 
         k++;
