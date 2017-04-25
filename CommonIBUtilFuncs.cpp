@@ -645,7 +645,7 @@ int postSendWorkReq(Connection *ctx, int &threadId)
   };
 
   struct ibv_send_wr wr;
-
+    wr = {};
   wr.wr_id = SEND_WRID;
   wr.sg_list = &list;
   wr.num_sge = 1;

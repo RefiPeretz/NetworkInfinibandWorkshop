@@ -299,7 +299,7 @@ void threadFunc(int threadId)
                     std::terminate(); //TODO crash thread
                 }
 
-            } while (!use_event && ne < 1);
+             } while (!use_event && ne < 1);
 
             for (i = 0; i < ne; ++i)
             {
@@ -345,11 +345,11 @@ void threadFunc(int threadId)
                 // vecotrize pending
                 if (scnt < iters && !connection->pending)
                 {
-                    if (postSendWorkReq(connection, threadId))
-                    {
-                        fprintf(stderr, "Couldn't post send\n");
-                        std::terminate(); //TODO crash thread
-                    }
+//                    if (postSendWorkReq(connection, threadId))
+//                    {
+//                        fprintf(stderr, "Couldn't post send\n");
+//                        std::terminate(); //TODO crash thread
+//                    }
                     connection->pending = RECV_WRID | SEND_WRID;
                 }
             }
