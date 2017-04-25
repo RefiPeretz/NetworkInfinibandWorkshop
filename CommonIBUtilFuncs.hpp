@@ -36,6 +36,7 @@ typedef struct Connection{
   int rx_depth;
   int pending;
   struct ibv_port_attr portinfo;
+	int routs;
 };
 static Connection *connection;
 

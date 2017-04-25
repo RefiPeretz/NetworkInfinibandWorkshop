@@ -26,7 +26,7 @@ struct ibv_device **dev_list;
 struct ibv_device *ib_dev;
 int size = 4096;
 int ib_port = 1;
-int port = 18900;
+int port = 18967;
 
 int rx_depth = 500; //Used to note minimum number of entries for CQ
 int use_event = 0;
@@ -90,6 +90,8 @@ int setupIB()
 	fprintf(stderr, "Couldn't get local LID\n");
 	return 1;
   }
+
+
 
 
       /*
@@ -158,9 +160,9 @@ int setupIB()
 		<< std::endl;
 	return 1;
   }
-
-
+    return 0;
 };
+
 void threadFunc(int threadId);
 
 int main(int argc, char *argv[])
@@ -216,11 +218,9 @@ void threadFunc(int threadId)
   int num_wc = 20;
   bool start_sending = false;
   bool stop = false;
-  int                      routs;
-
+	int routs = connection->routs;
   pthread_t self;
   cpu_set_t cpuset;
-
   struct ibv_qp *qp = connection->qp[threadId];
   struct ibv_cq *cq = connection->cq;
   struct ibv_wc *wc = NULL;
