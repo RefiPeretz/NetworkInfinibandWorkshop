@@ -450,10 +450,10 @@ int connectRemoteToClient(struct Connection *ctx,
 	  close(connfd);
 	  return 1;
 	}
+      printf("Read client QP address %s \n", msg);
 
 	sscanf(msg, "%x:%x:%x:%s", &remoteQP.lid, &remoteQP.qpn, &remoteQP.psn, gid);
 	wire_gid_to_gid(gid, &remoteQP.gid);
-	printf("Read client QP address %s \n", msg);
 	if (prepIbDeviceToConnect(ctx, ib_port, localQPserverInfo[l].psn, mtu, sl, &remoteQP, sgid_idx))
 	{
 	  fprintf(stderr, "Couldn't connect to remote QP\n");
@@ -463,8 +463,9 @@ int connectRemoteToClient(struct Connection *ctx,
 	}
 
 	gid_to_wire_gid(&localQPserverInfo[l].gid, gid);
-	sprintf(msg, "%04x:%06x:%06x:%s", localQPserverInfo[l].lid, localQPserverInfo[l].qpn, localQPserverInfo[l].psn, gid);
-	printf("Read Server QP address %s \n", msg);
+      printf("Read Server QP address %s \n", msg);
+
+      sprintf(msg, "%04x:%06x:%06x:%s", localQPserverInfo[l].lid, localQPserverInfo[l].qpn, localQPserverInfo[l].psn, gid);
 	if (write(connfd, msg, sizeof msg) != sizeof msg)
 	{
 	  fprintf(stderr, "Couldn't send local address\n");
@@ -472,7 +473,9 @@ int connectRemoteToClient(struct Connection *ctx,
 	  return 1;
 	}
 	read(connfd, msg, sizeof msg);
-	l++;
+      printf("Read client answer to local address %s \n", msg);
+
+      l++;
 
   });
 
@@ -488,6 +491,7 @@ int
 setQPstateRTR(struct Connection *ctx, int port, int my_psn, enum ibv_mtu mtu, int sl, serverInfo *dest, int sgid_idx)
 {
   struct ibv_qp_attr attr;
+    attr ={};
   attr.qp_state = IBV_QPS_RTR;
   attr.path_mtu = mtu;
   attr.dest_qp_num = dest->qpn;
@@ -545,6 +549,7 @@ setQPstateRTS(struct Connection *ctx, int port, int my_psn, enum ibv_mtu mtu, in
   // first the qp state has to be changed to rtr
   setQPstateRTR(ctx, port, my_psn, mtu, sl, dest, sgid_idx);
   struct ibv_qp_attr attr;
+    attr={};
 
   attr.ah_attr.is_global = 0;
   attr.ah_attr.dlid = dest->lid;

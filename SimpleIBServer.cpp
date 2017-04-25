@@ -16,6 +16,7 @@
 #include <arpa/inet.h>
 #include <cstdlib>
 #include <stdlib.h>
+#include <zconf.h>
 #include "CommonIBUtilFuncs.hpp"
 
 
@@ -25,7 +26,7 @@ struct ibv_device **dev_list;
 struct ibv_device *ib_dev;
 int size = 4096;
 int ib_port = 1;
-int port = 18515;
+int port = 18900;
 
 int rx_depth = 500; //Used to note minimum number of entries for CQ
 int use_event = 0;
@@ -79,8 +80,8 @@ int setupIB()
 
 
   //Init our vectors that hold information on local and remote QP's
-  std::vector<serverInfo> _localQPinfo = std::vector<serverInfo>(peerNum);
-  std::vector<serverInfo> _remoteQPinfo = std::vector<serverInfo>(peerNum);
+  std::vector<serverInfo> _localQPinfo(peerNum);
+  std::vector<serverInfo> _remoteQPinfo(peerNum);;
 
 
   if (connection->portinfo.link_layer == IBV_LINK_LAYER_INFINIBAND &&
@@ -91,15 +92,15 @@ int setupIB()
   }
 
 
-  //    /*
-  //     * prepares Connection to get the given amount of packets
-  //     */
-  //    int routs = postRecvWorkReq(connection, (*connection).rx_depth);
-  //    if (routs < (*connection).rx_depth)
-  //    {
-  //        fprintf(stderr, "Couldn't post receive (%d)\n", routs);
-  //        return 1;
-  //    }
+      /*
+       * prepares Connection to get the given amount of packets
+       */
+//      int routs = postRecvWorkReq(connection, (*connection).rx_depth,);
+//      if (routs < (*connection).rx_depth)
+//      {
+//          fprintf(stderr, "Couldn't post receive (%d)\n", routs);
+//          return 1;
+//      }
   //
   //    if (use_event)
   //    {
@@ -165,6 +166,7 @@ void threadFunc(int threadId);
 int main(int argc, char *argv[])
 {
   int ret = 0;
+	srand48(getpid() * time(NULL));
 
   //TODO: check args
 
