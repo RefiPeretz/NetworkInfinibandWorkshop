@@ -41,431 +41,392 @@
 #include <malloc.h>
 #include "CommonIBUtilFuncs.hpp"
 
-enum ibv_mtu pp_mtu_to_enum(int mtu)
-{
-  switch (mtu)
-  {
-	case 256:
-	  return IBV_MTU_256;
-	case 512:
-	  return IBV_MTU_512;
-	case 1024:
-	  return IBV_MTU_1024;
-	case 2048:
-	  return IBV_MTU_2048;
-	case 4096:
-	  return IBV_MTU_4096;
-	  //        default:
-	  //            return 0; //TODO:
-  }
+enum ibv_mtu pp_mtu_to_enum(int mtu) {
+    switch (mtu) {
+        case 256:
+            return IBV_MTU_256;
+        case 512:
+            return IBV_MTU_512;
+        case 1024:
+            return IBV_MTU_1024;
+        case 2048:
+            return IBV_MTU_2048;
+        case 4096:
+            return IBV_MTU_4096;
+            //        default:
+            //            return 0; //TODO:
+    }
 }
 
-int pp_get_port_info(struct ibv_context *context, int port, struct ibv_port_attr *attr)
-{
-  return ibv_query_port(context, port, attr);
+int pp_get_port_info(struct ibv_context *context, int port, struct ibv_port_attr *attr) {
+    return ibv_query_port(context, port, attr);
 }
 
-void wire_gid_to_gid(char *wgid, union ibv_gid *gid)
-{
-  char tmp[9];
-  unsigned int v32;
-  int i;
-  uint32_t tmp_gid[4];
+void wire_gid_to_gid(char *wgid, union ibv_gid *gid) {
+    char tmp[9];
+    unsigned int v32;
+    int i;
+    uint32_t tmp_gid[4];
 
-  for (tmp[8] = 0, i = 0; i < 4; ++i)
-  {
-	memcpy(tmp, wgid + i * 8, 8);
-	sscanf(tmp, "%x", &v32);
-	tmp_gid[i] = be32toh(v32);
-  }
-  memcpy(gid, tmp_gid, sizeof(*gid));
+    for (tmp[8] = 0, i = 0; i < 4; ++i) {
+        memcpy(tmp, wgid + i * 8, 8);
+        sscanf(tmp, "%x", &v32);
+        tmp_gid[i] = be32toh(v32);
+    }
+    memcpy(gid, tmp_gid, sizeof(*gid));
 }
 
 void gid_to_wire_gid(union ibv_gid *gid, char wgid[]);
 
 
-void gid_to_wire_gid(union ibv_gid *gid, char *wgid)
-{
-  uint32_t tmp_gid[4];
-  int i;
+void gid_to_wire_gid(union ibv_gid *gid, char *wgid) {
+    uint32_t tmp_gid[4];
+    int i;
 
-  memcpy(tmp_gid, gid, sizeof(tmp_gid));
-  for (i = 0; i < 4; ++i)
-  {
-	sprintf(&wgid[i * 8], "%08x", htobe32(tmp_gid[i]));
-  }
+    memcpy(tmp_gid, gid, sizeof(tmp_gid));
+    for (i = 0; i < 4; ++i) {
+        sprintf(&wgid[i * 8], "%08x", htobe32(tmp_gid[i]));
+    }
 }
 
 
 //TODO: clean this and replace with methods from Stream, Connector and Acceptor
 int connectClientToRemote(const char *servername,
-	int port,
-	std::vector<serverInfo> &localQPserverInfo,
-	std::vector<serverInfo> &remoteQPserverInfo)
-{
-  struct addrinfo *res, *t;
-  struct addrinfo hints;
-  hints.ai_family = AF_INET;
-  hints.ai_socktype = SOCK_STREAM;
+                          int port,
+                          std::vector<serverInfo> &localQPserverInfo,
+                          std::vector<serverInfo> &remoteQPserverInfo) {
+    struct addrinfo *res, *t;
+    struct addrinfo hints;
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
 
-  char *service;
-  char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
-  int n;
-  int sockfd = -1;
-  serverInfo *rem_dest = NULL;
-
-  if (asprintf(&service, "%d", port) < 0)
-  {
-	return NULL;
-  }
-
-  n = getaddrinfo(servername, service, &hints, &res);
-
-  if (n < 0)
-  {
-	fprintf(stderr, "%s for %s:%d\n", gai_strerror(n), servername, port);
-	free(service);
-	return NULL;
-  }
-
-  for (t = res; t; t = t->ai_next)
-  {
-	sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
-	if (sockfd >= 0)
-	{
-	  if (!connect(sockfd, t->ai_addr, t->ai_addrlen))
-	  {
-		break;
-	  }
-	  close(sockfd);
-	  sockfd = -1;
-	}
-  }
-
-  freeaddrinfo(res);
-  free(service);
-
-  if (sockfd < 0)
-  {
-	fprintf(stderr, "Couldn't connect to %s:%d\n", servername, port);
-	return NULL;
-  }
-
-  unsigned int k = 0;
-  std::for_each(localQPserverInfo.begin(), localQPserverInfo.end(), [&](serverInfo &localQP)
-  {
-	char gid[33];
-	gid_to_wire_gid(&localQP.gid, gid);
-	sprintf(msg, "%04x:%06x:%06x:%s", localQP.lid, localQP.qpn, localQP.psn, localQP.gid);
-	printf("Sending Local QP info - %s", msg);
-	if (write(sockfd, msg, sizeof msg) != sizeof msg)
-	{
-	  fprintf(stderr, "Couldn't send local address\n");
-	  close(sockfd);
-	  return 1;
-	}
-
-	if (read(sockfd, msg, sizeof msg) != sizeof msg)
-	{
-	  perror("client read");
-	  fprintf(stderr, "Couldn't read remote address\n");
-	  close(sockfd);
-	  return 1;
-	}
-	printf("Read remote QP info - %s", msg);
-
-	write(sockfd, "done", sizeof "done");
-
-	sscanf(msg,
-		"%d:%d:%d:%s",
-		remoteQPserverInfo[k].lid,
-		remoteQPserverInfo[k].qpn,
-		remoteQPserverInfo[k].psn,
-		remoteQPserverInfo[k].gid);
-	wire_gid_to_gid(gid, &remoteQPserverInfo[k].gid);
+    char *service;
+    char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
+    int n;
+    int sockfd = -1;
 
 
-	k++;
-  });
+    if (asprintf(&service, "%d", port) < 0) {
+        return NULL;
+    }
 
-  out:
-  close(sockfd);
-  return 0;
+    n = getaddrinfo(servername, service, &hints, &res);
+
+    if (n < 0) {
+        fprintf(stderr, "%s for %s:%d\n", gai_strerror(n), servername, port);
+        free(service);
+        return NULL;
+    }
+
+    for (t = res; t; t = t->ai_next) {
+        sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
+        if (sockfd >= 0) {
+            if (!connect(sockfd, t->ai_addr, t->ai_addrlen)) {
+                break;
+            }
+            close(sockfd);
+            sockfd = -1;
+        }
+    }
+
+    freeaddrinfo(res);
+    free(service);
+
+    if (sockfd < 0) {
+        printf("Sokcetfd is Null\n");
+        fprintf(stderr, "Couldn't connect to %s:%d\n", servername, port);
+        return NULL;
+    }
+
+    unsigned int k = 0;
+    std::for_each(localQPserverInfo.begin(), localQPserverInfo.end(), [&](serverInfo &localQP) {
+        char gid[33];
+        gid_to_wire_gid(&localQP.gid, gid);//TODO check with pingpong
+        std::cout<<"Sending hello this is my cool qp address - so call me maybe" <<std::endl;
+        sprintf(msg, "%04x:%06x:%06x:%s", localQP.lid, localQP.qpn, localQP.psn, gid);
+        std::cout << "Sending Local QP info " << msg<<std::endl;
+
+        if (write(sockfd, msg, sizeof msg) != sizeof msg) {
+            fprintf(stderr, "Couldn't send local address\n");
+            close(sockfd);
+            return 1;
+        }
+
+        if (read(sockfd, msg, sizeof msg) != sizeof msg) {
+            perror("client read");
+            fprintf(stderr, "Couldn't read remote address\n");
+            close(sockfd);
+            return 1;
+        }
+        printf("Read remote QP info - %s", msg);
+
+        write(sockfd, "done", sizeof "done");
+
+        sscanf(msg,
+               "%x:%x:%x:%s",
+               remoteQPserverInfo[k].lid,
+               remoteQPserverInfo[k].qpn,
+               remoteQPserverInfo[k].psn,
+               remoteQPserverInfo[k].gid);
+        wire_gid_to_gid(gid, &remoteQPserverInfo[k].gid);//TODO maybe crash
+
+
+        k++;
+    });
+
+    out:
+    close(sockfd);
+    return 0;
 }
 
 
 struct Connection *init_connection(struct ibv_device *ib_dev,
-	int size,
-	int rx_depth,
-	int port,
-	int use_event,
-	int is_server,
-	int peerNum,
-	int messageChar)
-{
-  //struct Connection *ctx;
+                                   int size,
+                                   int rx_depth,
+                                   int port,
+                                   int use_event,
+                                   int is_server,
+                                   int peerNum,
+                                   int messageChar) {
+    //struct Connection *ctx;
 
 
-  connection = (Connection *) calloc(1, sizeof *connection);
-  if (!connection)
-	return NULL;
+    connection = (Connection *) calloc(1, sizeof *connection);
+    if (!connection)
+        return NULL;
 
-  std::cout<< "Init connection " << std::endl;
-  connection->peerNum = peerNum;
+    std::cout << "Init connection " << std::endl;
+    connection->peerNum = peerNum;
 
-  std::cout<< "Open device "<<ib_dev->dev_name << std::endl;
-  connection->context = ibv_open_device(ib_dev);
-  if (!connection->context)
-  {
-	fprintf(stderr, "Couldn't get context for %s\n", ibv_get_device_name(ib_dev));
-	return NULL;
-  }
+    std::cout << "Open device " << ib_dev->dev_name << std::endl;
+    connection->context = ibv_open_device(ib_dev);
+    if (!connection->context) {
+        fprintf(stderr, "Couldn't get context for %s\n", ibv_get_device_name(ib_dev));
+        return NULL;
+    }
 
-  if (use_event)
-  {
-	connection->channel = ibv_create_comp_channel(connection->context);
-	if (!connection->channel)
-	{
-	  fprintf(stderr, "Couldn't create completion channel\n");
-	  return nullptr;
-	}
-  }
-  else
-  {
-	connection->channel = NULL;
-  }
+    if (use_event) {
+        connection->channel = ibv_create_comp_channel(connection->context);
+        if (!connection->channel) {
+            fprintf(stderr, "Couldn't create completion channel\n");
+            return nullptr;
+        }
+    } else {
+        connection->channel = NULL;
+    }
 
-  std::cout<< "Init connection " << std::endl;
-  connection->pd = ibv_alloc_pd(connection->context);
-  if (!connection->pd)
-  {
-	fprintf(stderr, "Couldn't allocate PD\n");
-	return NULL;
-  }
-    std::cout<< "PD set " << std::endl;
+    std::cout << "Init connection " << std::endl;
+    connection->pd = ibv_alloc_pd(connection->context);
+    if (!connection->pd) {
+        fprintf(stderr, "Couldn't allocate PD\n");
+        return NULL;
+    }
+    std::cout << "PD set " << std::endl;
 
-  std::cout<< "Init connection size" << std::endl;
+    std::cout << "Init connection size" << std::endl;
 
-  connection->size = sizeof(char) + 1;
-  connection->rx_depth = rx_depth;
-  page_size = sysconf(_SC_PAGESIZE);
+    connection->size = sizeof(char) + 1;
+    connection->rx_depth = rx_depth;
+    page_size = sysconf(_SC_PAGESIZE);
 
-  connection->buf = malloc(roundup(size, page_size));
-  if (!connection->buf)
-  {
-	fprintf(stderr, "Couldn't allocate work buf.\n");
-	return NULL;
-  }
-  std::cout<< "Set buffer char " << std::endl;
+    connection->buf = malloc(roundup(size, page_size));
+    if (!connection->buf) {
+        fprintf(stderr, "Couldn't allocate work buf.\n");
+        return NULL;
+    }
+    std::cout << "Set buffer char " << std::endl;
 
-  memset(connection->buf, messageChar, connection->size);
-  std::cout<< "Buffer char set with " <<messageChar << " with size " << connection->size<< std::endl;
+    memset(connection->buf, messageChar, connection->size);
+    std::cout << "Buffer char set with " << messageChar << " with size " << connection->size << std::endl;
 
 
+    connection->mr = ibv_reg_mr(connection->pd, connection->buf, connection->size, IBV_ACCESS_LOCAL_WRITE);
+    if (!connection->mr) {
+        fprintf(stderr, "Couldn't register MR\n");
+        return nullptr;
+    }
+    std::cout << "MR set " << std::endl;
 
-  connection->mr = ibv_reg_mr(connection->pd, connection->buf, connection->size, IBV_ACCESS_LOCAL_WRITE);
-  if (!connection->mr)
-  {
-	fprintf(stderr, "Couldn't register MR\n");
-	return nullptr;
-  }
-  std::cout<< "MR set " << std::endl;
+    connection->cq = ibv_create_cq(connection->context, rx_depth + 1, NULL, connection->channel, 0);
+    if (!connection->cq) {
+        fprintf(stderr, "Couldn't create CQ\n");
+        return nullptr;
+    }
+    std::cout << "CQ set " << std::endl;
 
-  connection->cq = ibv_create_cq(connection->context, rx_depth + 1, NULL, connection->channel, 0);
-  if (!connection->cq)
-  {
-	fprintf(stderr, "Couldn't create CQ\n");
-	return nullptr;
-  }
-  std::cout<< "CQ set " << std::endl;
+    {
+        struct ibv_qp_init_attr attr = {};
+        attr.send_cq = connection->cq;
+        attr.recv_cq = connection->cq;
+        attr.cap = {
+                1, rx_depth, 1, 1, 0
+        };
+        attr.qp_type = IBV_QPT_RC;
+        attr.qp_context = NULL;
+        attr.srq = NULL;
+        attr.sq_sig_all = 0;
 
-  {
-	struct ibv_qp_init_attr attr = {};
-	attr.send_cq = connection->cq;
-	attr.recv_cq = connection->cq;
-	attr.cap = {
-		1, rx_depth, 1, 1, 0
-	};
-	attr.qp_type = IBV_QPT_RC;
-      attr.qp_context = NULL;
-      attr.srq = NULL;
-      attr.sq_sig_all =0;
-
-	std::cout<< "QP BASE attr set " << std::endl;
+        std::cout << "QP BASE attr set " << std::endl;
 
 
-	//Create our QP's
-	//connection->qp = std::vector<ibv_qp*>(peerNum);
-	std::cout<< "QP vector create and assign for "<<peerNum <<" QP's" << std::endl;
+        //Create our QP's
+        //connection->qp = std::vector<ibv_qp*>(peerNum);
+        std::cout << "QP vector create and assign for " << peerNum << " QP's" << std::endl;
 
-	for(int i = 0; i < peerNum; i++){
+        for (int i = 0; i < peerNum; i++) {
 
-	  ibv_qp *it = (ibv_qp*) malloc(sizeof(ibv_qp*));
-	  if(it == NULL){
-		std::cout<< "Failed to allocate qp" <<std::endl;
-		return nullptr;
-	  }
-	  it =  ibv_create_qp(connection->pd, &attr);
-	  if(!(it)){
-		std::cerr << "Couldn't create QP";
-		return nullptr;
-	  }
-	  connection->qp.push_back(it);
-	  std::cout<< "QP created  " << std::endl;
-	}
-	//for (auto iter = connection->qp.begin(); iter != connection->qp.end(); ++iter)
-	//{
-	//  //ibv_qp& item = *iter;
-	//  *iter = ibv_create_qp(connection->pd, &attr);
-	//  std::cout<< "QP create  " << std::endl;
-	//}
-	//connection->qp[0]->qp_num=peerNum;
-	//std::cout << connection->qp[0]->qp_type <<std::endl;
-  }
-  std::cout<< "Finished creating QP's  " << std::endl;
+            ibv_qp *it = (ibv_qp *) malloc(sizeof(ibv_qp *));
+            if (it == NULL) {
+                std::cout << "Failed to allocate qp" << std::endl;
+                return nullptr;
+            }
+            it = ibv_create_qp(connection->pd, &attr);
+            if (!(it)) {
+                std::cerr << "Couldn't create QP";
+                return nullptr;
+            }
+            connection->qp.push_back(it);
+            std::cout << "QP created  " << std::endl;
+        }
+        //for (auto iter = connection->qp.begin(); iter != connection->qp.end(); ++iter)
+        //{
+        //  //ibv_qp& item = *iter;
+        //  *iter = ibv_create_qp(connection->pd, &attr);
+        //  std::cout<< "QP create  " << std::endl;
+        //}
+        //connection->qp[0]->qp_num=peerNum;
+        //std::cout << connection->qp[0]->qp_type <<std::endl;
+    }
+    std::cout << "Finished creating QP's  " << std::endl;
 
-  {
-	if(InitQPs(port)){
-	  return nullptr;
-	}
-  }
+    {
+        if (InitQPs(port)) {
+            return nullptr;
+        }
+    }
 
-  //Init our connection structs that will hold information on our and our destination QP addresses
+    //Init our connection structs that will hold information on our and our destination QP addresses
 
-  std::cout<< "Finished creating connection  " << std::endl;
+    std::cout << "Finished creating connection  " << std::endl;
 
-  return connection;
+    return connection;
 }
 
-int InitQPs(int port)
-{
+int InitQPs(int port) {
 
-  std::cout<< "Modifying QP's to init" << std::endl;
+    std::cout << "Modifying QP's to init" << std::endl;
 
-  struct ibv_qp_attr attr;
+    struct ibv_qp_attr attr;
     attr = {};
-  attr.qp_state = IBV_QPS_INIT;
-  attr.pkey_index = 0;
-  attr.port_num = (uint8_t) port;
-  attr.qp_access_flags = 0;
+    attr.qp_state = IBV_QPS_INIT;
+    attr.pkey_index = 0;
+    attr.port_num = (uint8_t) port;
+    attr.qp_access_flags = 0;
 
-  for (auto iter = connection->qp.begin(); iter != connection->qp.end(); ++iter)
-  {
-	//INIT state of QP's
-	//ibv_qp* temp = iter;
+    for (auto iter = connection->qp.begin(); iter != connection->qp.end(); ++iter) {
+        //INIT state of QP's
+        //ibv_qp* temp = iter;
 
-	std::cout<< "Modifying QP to init" << std::endl;
+        std::cout << "Modifying QP to init" << std::endl;
 
 
-	if((*iter) == nullptr){
-	  std::cout<< "QP is null "<< std::endl;
-	}
-	if (ibv_modify_qp((*iter), &attr, IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS))
-	{
-	  fprintf(stderr, "Failed to modify QP to INIT\n");
-	  return 1;
-	}
-  }
+        if ((*iter) == nullptr) {
+            std::cout << "QP is null " << std::endl;
+        }
+        if (ibv_modify_qp((*iter), &attr, IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS)) {
+            fprintf(stderr, "Failed to modify QP to INIT\n");
+            return 1;
+        }
+    }
 
     return 0;
 }
 
 int connectRemoteToClient(struct Connection *ctx,
-	int ib_port,
-	enum ibv_mtu mtu,
-	int port,
-	int sl,
-	int sgid_idx,
-	std::vector<serverInfo> &localQPserverInfo,
-	std::vector<serverInfo> &remoteQPserverInfo)
-{
-  struct addrinfo *res, *t;
-  struct addrinfo hints = {.ai_flags    = AI_PASSIVE, .ai_family   = AF_INET, .ai_socktype = SOCK_STREAM};
-  char *service;
-  char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
-  int n;
-  int sockfd = -1, connfd;
-  char gid[33];
+                          int ib_port,
+                          enum ibv_mtu mtu,
+                          int port,
+                          int sl,
+                          int sgid_idx,
+                          std::vector<serverInfo> &localQPserverInfo,
+                          std::vector<serverInfo> &remoteQPserverInfo) {
+    struct addrinfo *res, *t;
+    struct addrinfo hints = {.ai_flags    = AI_PASSIVE, .ai_family   = AF_INET, .ai_socktype = SOCK_STREAM};
+    char *service;
+    char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
+    int n;
+    int sockfd = -1, connfd;
+    char gid[33];
 
-  if (asprintf(&service, "%d", port) < 0)
-  {
-	return 1;
-  }
+    if (asprintf(&service, "%d", port) < 0) {
+        return 1;
+    }
 
-  n = getaddrinfo(NULL, service, &hints, &res);
+    n = getaddrinfo(NULL, service, &hints, &res);
 
-  if (n < 0)
-  {
-	fprintf(stderr, "%s for port %d\n", gai_strerror(n), port);
-	free(service);
-	return 1;
-  }
+    if (n < 0) {
+        fprintf(stderr, "%s for port %d\n", gai_strerror(n), port);
+        free(service);
+        return 1;
+    }
 
-  for (t = res; t; t = t->ai_next)
-  {
-	sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
-	if (sockfd >= 0)
-	{
-	  n = 1;
+    for (t = res; t; t = t->ai_next) {
+        sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
+        if (sockfd >= 0) {
+            n = 1;
 
-	  setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &n, sizeof n);
+            setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &n, sizeof n);
 
-	  if (!bind(sockfd, t->ai_addr, t->ai_addrlen))
-	  {
-		break;
-	  }
-	  close(sockfd);
-	  sockfd = -1;
-	}
-  }
+            if (!bind(sockfd, t->ai_addr, t->ai_addrlen)) {
+                break;
+            }
+            close(sockfd);
+            sockfd = -1;
+        }
+    }
 
-  freeaddrinfo(res);
-  free(service);
+    freeaddrinfo(res);
+    free(service);
 
-  if (sockfd < 0)
-  {
-	fprintf(stderr, "Couldn't listen to port %d\n", port);
-	return 1;
-  }
+    if (sockfd < 0) {
+        fprintf(stderr, "Couldn't listen to port %d\n", port);
+        return 1;
+    }
 
-  listen(sockfd, 1);
-  connfd = accept(sockfd, NULL, 0);
-  close(sockfd);
-  if (connfd < 0)
-  {
-	fprintf(stderr, "accept() failed\n");
-	return 1;
-  }
+    listen(sockfd, 1);
+    connfd = accept(sockfd, NULL, 0);
+    close(sockfd);
+    if (connfd < 0) {
+        fprintf(stderr, "accept() failed\n");
+        return 1;
+    }
 
 
-  unsigned int l = 0;
-  std::for_each(remoteQPserverInfo.begin(), remoteQPserverInfo.end(), [&](serverInfo &remoteQP)
-  {
+    unsigned int l = 0;
+    std::for_each(remoteQPserverInfo.begin(), remoteQPserverInfo.end(), [&](serverInfo &remoteQP) {
 
-	n = read(connfd, msg, sizeof msg);
-	if (n != sizeof msg)
-	{
-	  perror("server read");
-	  fprintf(stderr, "%d/%d: Couldn't read remote address\n", n, (int) sizeof msg);
-	  close(connfd);
-	  return 1;
-	}
-      printf("Read client QP address %s \n", msg);
+        n = read(connfd, msg, sizeof msg);
+        if (n != sizeof msg) {
+            perror("server read");
+            fprintf(stderr, "%d/%d: Couldn't read remote address\n", n, (int) sizeof msg);
+            close(connfd);
+            return 1;
+        }
 
 	sscanf(msg, "%x:%x:%x:%s", &remoteQP.lid, &remoteQP.qpn, &remoteQP.psn, gid);
 	wire_gid_to_gid(gid, &remoteQP.gid);
+	printf("Read client QP address %s \n", msg);
 	if (prepIbDeviceToConnect(ctx, ib_port, localQPserverInfo[l].psn, mtu, sl, &remoteQP, sgid_idx))
 	{
 	  fprintf(stderr, "Couldn't connect to remote QP\n");
 	  close(connfd);
 
-	  return 1;
-	}
+            return 1;
+        }
 
 	gid_to_wire_gid(&localQPserverInfo[l].gid, gid);
-      printf("Read Server QP address %s \n", msg);
-
-      sprintf(msg, "%04x:%06x:%06x:%s", localQPserverInfo[l].lid, localQPserverInfo[l].qpn, localQPserverInfo[l].psn, gid);
+	sprintf(msg, "%04x:%06x:%06x:%s", localQPserverInfo[l].lid, localQPserverInfo[l].qpn, localQPserverInfo[l].psn, gid);
+	printf("Read Server QP address %s \n", msg);
 	if (write(connfd, msg, sizeof msg) != sizeof msg)
 	{
 	  fprintf(stderr, "Couldn't send local address\n");
@@ -473,48 +434,41 @@ int connectRemoteToClient(struct Connection *ctx,
 	  return 1;
 	}
 	read(connfd, msg, sizeof msg);
-      printf("Read client answer to local address %s \n", msg);
+	l++;
 
-      l++;
-
-  });
+    });
 
 
-
-
-
-  out:
-  return 0;
+    out:
+    return 0;
 }
 
 int
-setQPstateRTR(struct Connection *ctx, int port, int my_psn, enum ibv_mtu mtu, int sl, serverInfo *dest, int sgid_idx)
-{
-  struct ibv_qp_attr attr;
+setQPstateRTR(struct Connection *ctx, int port, int my_psn, enum ibv_mtu mtu, int sl, serverInfo *dest, int sgid_idx) {
+    struct ibv_qp_attr attr;
     attr ={};
-  attr.qp_state = IBV_QPS_RTR;
-  attr.path_mtu = mtu;
-  attr.dest_qp_num = dest->qpn;
-  attr.rq_psn = dest->psn;
-  attr.max_dest_rd_atomic = 1;
-  attr.min_rnr_timer = 12;
-  attr.ah_attr.is_global = 0;
-  attr.ah_attr.dlid = dest->lid;
-  attr.ah_attr.sl = sl;
-  attr.ah_attr.src_path_bits = 0;
-  attr.ah_attr.port_num = port;
+    attr.qp_state = IBV_QPS_RTR;
+    attr.path_mtu = mtu;
+    attr.dest_qp_num = dest->qpn;
+    attr.rq_psn = dest->psn;
+    attr.max_dest_rd_atomic = 1;
+    attr.min_rnr_timer = 12;
+    attr.ah_attr.is_global = 0;
+    attr.ah_attr.dlid = dest->lid;
+    attr.ah_attr.sl = sl;
+    attr.ah_attr.src_path_bits = 0;
+    attr.ah_attr.port_num = port;
 
 
-  if (dest->gid.global.interface_id)
-  {
-	attr.ah_attr.is_global = 1;
-	attr.ah_attr.grh.hop_limit = 1;
-	attr.ah_attr.grh.dgid = dest->gid;
-	attr.ah_attr.grh.sgid_index = sgid_idx;
-  }
+    if (dest->gid.global.interface_id) {
+        attr.ah_attr.is_global = 1;
+        attr.ah_attr.grh.hop_limit = 1;
+        attr.ah_attr.grh.dgid = dest->gid;
+        attr.ah_attr.grh.sgid_index = sgid_idx;
+    }
 
-  std::vector<ibv_qp*> &_qpVector = ctx->qp;
-  std::for_each(_qpVector.
+    std::vector<ibv_qp *> &_qpVector = ctx->qp;
+    std::for_each(_qpVector.
 
 		  begin(), _qpVector
 
@@ -547,10 +501,9 @@ int
 setQPstateRTS(struct Connection *ctx, int port, int my_psn, enum ibv_mtu mtu, int sl, serverInfo *dest, int sgid_idx)
 {
   // first the qp state has to be changed to rtr
-  setQPstateRTR(ctx, port, my_psn, mtu, sl, dest, sgid_idx);
+//  setQPstateRTR(ctx, port, my_psn, mtu, sl, dest, sgid_idx);
   struct ibv_qp_attr attr;
-    attr={};
-
+    attr = {};
   attr.ah_attr.is_global = 0;
   attr.ah_attr.dlid = dest->lid;
   attr.ah_attr.sl = sl;

@@ -7,6 +7,8 @@
 
 #include <thread>
 #include <vector>
+#include <unistd.h>
+#include <string.h>
 #include <iostream>
 #include <mutex>
 #include <algorithm>
@@ -14,8 +16,6 @@
 #include <netinet/in.h>
 #include <sys/time.h>
 #include <arpa/inet.h>
-#include <cstdlib>
-#include <stdlib.h>
 #include "CommonIBUtilFuncs.hpp"
 
 
@@ -25,13 +25,14 @@ struct ibv_device **dev_list;
 struct ibv_device *ib_dev;
 int size = 4096;
 int ib_port = 1;
-int port = 18515;
+int port = 18900;
 
 int rx_depth = 500; //Used to note minimum number of enteries for CQ
 int use_event = 0;
 int gidx = -1;
 char gid[33];
 
+int                      routs;//TODO turn to vector
 
 char *servername = NULL;
 int peerNum = 1;
@@ -44,13 +45,11 @@ std::vector<serverInfo> _localQPinfo;
 std::vector<serverInfo> _remoteQPinfo;
 
 
-Connection *connection;
 
 int setThreadAffinity(int threadId);
 
 int setupIB()
 {
-  page_size = sysconf(_SC_PAGESIZE);
 
   std::cout<<"get device list"<<std::endl;
   //get the device list on the client
@@ -94,9 +93,9 @@ int setupIB()
     }
 
 
-//    /*
-//     * prepares Connection to get the given amount of packets
-//     */
+    /*
+     * prepares Connection to get the given amount of packets
+     */
 //    int routs = postRecvWorkReq(connection, (*connection).rx_depth);
 //    if (routs < (*connection).rx_depth)
 //    {
@@ -113,6 +112,17 @@ int setupIB()
 //        }
 //    }
 
+    for(int tidQP = 0;tidQP < peerNum;tidQP++){
+        routs = postRecvWorkReq(connection, (*connection).rx_depth,tidQP);
+        if (routs < (*connection).rx_depth)
+        {
+            fprintf(stderr, "Couldn't post receive (%d)\n", routs);
+            return 1;
+        }
+
+    }
+
+
     if (pp_get_port_info((*connection).context, ib_port,
                          &(*connection).portinfo))
     {
@@ -126,8 +136,7 @@ int setupIB()
                   [&](serverInfo &localQP)
                   {
                       localQP.lid = connection->portinfo.lid;
-                      localQP.qpn = connection->qp.at(j).qp_num;
-                      localQP.psn = lrand48() & 0xffffff;
+
 
                       if (gidx >= 0)
                       {
@@ -143,6 +152,8 @@ int setupIB()
                       {
                           memset(&localQP.gid, 0, sizeof localQP.gid);
                       }
+                      localQP.qpn = (*connection->qp.at(j)).qp_num;
+                      localQP.psn = lrand48() & 0xffffff;
 
                       inet_ntop(AF_INET6, &localQP.gid, gid, sizeof gid);
                       printf("  local address:  LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n",
@@ -190,7 +201,7 @@ void threadFunc(int threadId);
 int main(int argc, char *argv[])
 {
     int ret = 0;
-
+    srand48(getpid() * time(NULL));
     //TODO: check args
 
     if (argc < 4)
@@ -207,7 +218,7 @@ int main(int argc, char *argv[])
   std::cout << "get Messagechar: " << argv[2] << std::endl;
 
     servername = argv[1];
-    peerNum = *argv[3];
+    peerNum = atoi(argv[3]);
     messageChar = *argv[2];
     //TODO: Test peerNum isn't bigger than max ThreadNum which is the
     // logical CPU count
@@ -243,12 +254,11 @@ void threadFunc(int threadId)
     int num_wc = 20;
     bool start_sending = false;
     bool stop = false;
-    int                      routs;
 
     pthread_t self;
     cpu_set_t cpuset;
 
-    struct ibv_qp *qp = &connection->qp[threadId];
+    struct ibv_qp *qp = connection->qp[threadId];
     struct ibv_cq *cq = connection->cq;
     struct ibv_wc *wc = NULL;
     uint32_t lkey = connection->mr->lkey;
