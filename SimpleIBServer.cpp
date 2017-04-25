@@ -123,8 +123,6 @@ int setupIB()
 	  [&](serverInfo &localQP)
 	  {
 		localQP.lid = connection->portinfo.lid;
-		localQP.qpn = (*connection->qp.at(j)).qp_num;
-		localQP.psn = lrand48() & 0xffffff;
 
 		if (gidx >= 0)
 		{
@@ -141,18 +139,21 @@ int setupIB()
 		  memset(&localQP.gid, 0, sizeof localQP.gid);
 		}
 
+		  localQP.qpn = (*connection->qp.at(j)).qp_num;
+		  localQP.psn = lrand48() & 0xffffff;
 		inet_ntop(AF_INET6, &localQP.gid, gid, sizeof gid);
 		printf("  local address:  LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n",
 			localQP.lid, localQP.qpn, localQP.psn, gid);
 		j++;
 	  });
 
+    std::cout << "Setting the connection to the clients" <<std::endl;
 
 
   //Exchange information on target server
   if (connectRemoteToClient(connection, ib_port, mtu, port, sl, gidx, _localQPinfo, _remoteQPinfo ))  {
 	std::cerr
-		<< "cannot init connection to remote server and retreive remote QP"
+		<< "cannot init connection to remote server and retrieve remote QP"
 		<< std::endl;
 	return 1;
   }
