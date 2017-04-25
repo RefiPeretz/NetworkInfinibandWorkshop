@@ -92,7 +92,16 @@ int setupIB()
   }
 
 
+	for(int tidQP = 0;tidQP < peerNum;tidQP++){
+		connection->routs = postRecvWorkReq(connection, (*connection).rx_depth,
+									   tidQP);
+		if (connection->routs < (*connection).rx_depth)
+		{
+			fprintf(stderr, "Couldn't post receive (%d)\n", connection->routs);
+			return 1;
+		}
 
+	}
 
       /*
        * prepares Connection to get the given amount of packets

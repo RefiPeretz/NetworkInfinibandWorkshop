@@ -32,7 +32,6 @@ int use_event = 0;
 int gidx = -1;
 char gid[33];
 
-int                      routs;//TODO turn to vector
 
 char *servername = NULL;
 int peerNum = 1;
@@ -113,10 +112,10 @@ int setupIB()
 //    }
 
     for(int tidQP = 0;tidQP < peerNum;tidQP++){
-        routs = postRecvWorkReq(connection, (*connection).rx_depth,tidQP);
-        if (routs < (*connection).rx_depth)
+        connection->routs = postRecvWorkReq(connection, (*connection).rx_depth,tidQP);
+        if (connection->routs < (*connection).rx_depth)
         {
-            fprintf(stderr, "Couldn't post receive (%d)\n", routs);
+            fprintf(stderr, "Couldn't post receive (%d)\n", connection->routs);
             return 1;
         }
 
@@ -357,15 +356,15 @@ void threadFunc(int threadId)
                         break;
 
                     case RECV_WRID:
-                        if (--routs <= 1) //TODO: not sure it was init
+                        if (--connection->routs <= 1) //TODO: not sure it was init
                         {
-                            routs +=
+                            connection->routs +=
                                     postRecvWorkReq(connection, connection->rx_depth -
-                                                         routs, threadId);
-                            if (routs < connection->rx_depth)
+                                                         connection->routs, threadId);
+                            if (connection->routs < connection->rx_depth)
                             {
                                 fprintf(stderr, "Couldn't post receive (%d)\n",
-                                        routs);
+                                        connection->routs);
                                 std::terminate(); //TODO crash thread
                             }
                         }
