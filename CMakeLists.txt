@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.6)
 project(ex1v2)
-set(LDFLAGS "-pthread")
+set(LDFLAGS "-lpthread")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 99)
 
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -Wall -Wextra")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -Wall -Wextra -o")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LDFLAGS} -libverbs -Wall -Wextra")
 
 
@@ -37,7 +37,7 @@ set(NBTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
 add_executable(NonBlockingTcpServer ${NBTS})
 
 #Verbs Api versions
-SET(GCC_COVERAGE_LINK_FLAGS "-lrdmacm -libverbs")
+SET(GCC_COVERAGE_LINK_FLAGS "-g -libverbs")
 
 #set(SIBC SingleInfiniBandClient.c CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
 #add_executable(SingleInfiniBandClient ${SIBC})

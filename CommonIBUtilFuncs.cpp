@@ -242,6 +242,7 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 	fprintf(stderr, "Couldn't allocate PD\n");
 	return NULL;
   }
+    std::cout<< "PD set " << std::endl;
 
   std::cout<< "Init connection size" << std::endl;
 
@@ -260,12 +261,6 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
   memset(connection->buf, messageChar, connection->size);
   std::cout<< "Buffer char set with " <<messageChar << " with size " << connection->size<< std::endl;
 
-  connection->pd = ibv_alloc_pd(connection->context);
-  if (!connection->pd) {
-	fprintf(stderr, "Couldn't allocate PD\n");
-	return nullptr;
-  }
-  std::cout<< "PD set " << std::endl;
 
 
   connection->mr = ibv_reg_mr(connection->pd, connection->buf, connection->size, IBV_ACCESS_LOCAL_WRITE);
@@ -285,13 +280,16 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
   std::cout<< "CQ set " << std::endl;
 
   {
-	struct ibv_qp_init_attr attr;
+	struct ibv_qp_init_attr attr = {};
 	attr.send_cq = connection->cq;
 	attr.recv_cq = connection->cq;
 	attr.cap = {
-		1, rx_depth, 1, 1
+		1, rx_depth, 1, 1, 0
 	};
 	attr.qp_type = IBV_QPT_RC;
+      attr.qp_context = NULL;
+      attr.srq = NULL;
+      attr.sq_sig_all =0;
 
 	std::cout<< "QP BASE attr set " << std::endl;
 
@@ -345,6 +343,7 @@ int InitQPs(int port)
   std::cout<< "Modifying QP's to init" << std::endl;
 
   struct ibv_qp_attr attr;
+    attr = {};
   attr.qp_state = IBV_QPS_INIT;
   attr.pkey_index = 0;
   attr.port_num = (uint8_t) port;
@@ -367,6 +366,8 @@ int InitQPs(int port)
 	  return 1;
 	}
   }
+
+    return 0;
 }
 
 int connectRemoteToClient(struct Connection *ctx,
