@@ -547,7 +547,6 @@ int
 setQPstateRTS(struct Connection *ctx, int port, int my_psn, enum ibv_mtu mtu, int sl, serverInfo *dest, int sgid_idx)
 {
   // first the qp state has to be changed to rtr
-  setQPstateRTR(ctx, port, my_psn, mtu, sl, dest, sgid_idx);
   struct ibv_qp_attr attr;
     attr={};
 
