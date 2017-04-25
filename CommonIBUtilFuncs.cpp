@@ -380,7 +380,10 @@ int connectRemoteToClient(struct Connection *ctx,
 	std::vector<serverInfo> &remoteQPserverInfo)
 {
   struct addrinfo *res, *t;
-  struct addrinfo hints = {.ai_flags    = AI_PASSIVE, .ai_family   = AF_INET, .ai_socktype = SOCK_STREAM};
+  struct addrinfo hints = {};
+    hints.ai_flags    = AI_PASSIVE;
+    hints.ai_family   = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
   char *service;
   char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
   int n;
@@ -463,10 +466,12 @@ int connectRemoteToClient(struct Connection *ctx,
 	}
 
 	gid_to_wire_gid(&localQPserverInfo[l].gid, gid);
-      printf("Read Server QP address %s \n", msg);
+      printf("Set client QP address %s \n", msg);
 
       sprintf(msg, "%04x:%06x:%06x:%s", localQPserverInfo[l].lid, localQPserverInfo[l].qpn, localQPserverInfo[l].psn, gid);
-	if (write(connfd, msg, sizeof msg) != sizeof msg)
+      printf("Writing server QP address %s \n", msg);
+
+      if (write(connfd, msg, sizeof msg) != sizeof msg)
 	{
 	  fprintf(stderr, "Couldn't send local address\n");
 	  close(connfd);
@@ -484,6 +489,7 @@ int connectRemoteToClient(struct Connection *ctx,
 
 
   out:
+    close(connfd);
   return 0;
 }
 
