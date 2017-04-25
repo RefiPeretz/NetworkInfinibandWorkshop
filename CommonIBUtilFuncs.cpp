@@ -229,7 +229,7 @@ struct Connection *init_connection(struct ibv_device *ib_dev,
 
     std::cout << "Init connection size" << std::endl;
 
-    connection->size = sizeof(char) + 1;
+    connection->size = 4096;
     connection->rx_depth = rx_depth;
     page_size = sysconf(_SC_PAGESIZE);
 
