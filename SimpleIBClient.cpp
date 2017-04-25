@@ -179,7 +179,7 @@ int setupIB()
 
         inet_ntop(AF_INET6, &remoteQP.gid, gid, sizeof gid);
         printf("  remote address: LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n",
-               remoteQP.lid, remoteQP.qpn, remoteQP.psn, remoteQP.gid);
+               remoteQP.lid, remoteQP.qpn, remoteQP.psn, gid);
 
 
         if (prepIbDeviceToConnect(connection, ib_port, _localQPinfo[k].psn, mtu,
@@ -194,8 +194,9 @@ int setupIB()
 
     });
 
-
+    return 0;
 };
+
 void threadFunc(int threadId);
 
 int main(int argc, char *argv[])

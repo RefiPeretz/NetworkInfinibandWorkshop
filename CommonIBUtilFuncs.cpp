@@ -665,7 +665,7 @@ int prepIbDeviceToConnect(struct Connection *ctx,
 	serverInfo *dest,
 	int sgid_idx)
 {
-  setQPstateRTR(ctx, port, my_psn, mtu, sl, dest, sgid_idx);
+  setQPstateRTR(ctx, port, my_psn, mtu, sl, dest, sgid_idx);//TODO CHECK IF FAILed
   setQPstateRTS(ctx, port, my_psn, mtu, sl, dest, sgid_idx);
 
   return 0;
