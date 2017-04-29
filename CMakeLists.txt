@@ -47,10 +47,10 @@ SET(GCC_COVERAGE_LINK_FLAGS "-g -libverbs")
 #add_executable(SingleInfiniBandServer ${SIBS})
 #target_link_libraries(SingleInfiniBandServer "${GCC_COVERAGE_LINK_FLAGS}")
 
-set(IBSC SimpleIBClient.cpp CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
-add_executable(SimpleIBClient ${IBSC})
-target_link_libraries(SimpleIBClient "${GCC_COVERAGE_LINK_FLAGS}")
-
-set(IBSS SimpleIBServer.cpp CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
-add_executable(SimpleIBServer ${IBSS})
-target_link_libraries(SimpleIBServer "${GCC_COVERAGE_LINK_FLAGS}")
+#set(IBSC SimpleIBClient.cpp CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
+#add_executable(SimpleIBClient ${IBSC})
+#target_link_libraries(SimpleIBClient "${GCC_COVERAGE_LINK_FLAGS}")
+#
+#set(IBSS SimpleIBServer.cpp CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
+#add_executable(SimpleIBServer ${IBSS})
+#target_link_libraries(SimpleIBServer "${GCC_COVERAGE_LINK_FLAGS}")
