@@ -6,7 +6,7 @@ set(CMAKE_C_STANDARD 99)
 
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -Wall -Wextra -o")
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LDFLAGS} -libverbs -Wall -Wextra")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LDFLAGS} -Wall -Wextra")
 
 
 set(SSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp Acceptor.hpp SingleStreamTcpServer.cpp)
@@ -17,7 +17,7 @@ set(SSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
 add_executable(SingleStreamTcpClient ${SSTC})
 
 set(MSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
-    Acceptor.hpp MultiStreamTcpClient.cpp Metrics.cpp Metrics.hpp SimpleIBClient.hpp)
+    Acceptor.hpp MultiStreamTcpClient.cpp Metrics.cpp Metrics.hpp)
 add_executable(MultiStreamTcpClient ${MSTS})
 
 set(VSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
@@ -54,3 +54,8 @@ SET(GCC_COVERAGE_LINK_FLAGS "-g -libverbs")
 #set(IBSS SimpleIBServer.cpp CommonIBUtilFuncs.cpp CommonIBUtilFuncs.hpp)
 #add_executable(SimpleIBServer ${IBSS})
 #target_link_libraries(SimpleIBServer "${GCC_COVERAGE_LINK_FLAGS}")
+
+set(SinglePingp1 rc_pingpong.c rc_pingpong.h pingpong.h
+        pingpong.c)
+add_executable(SinglePingp ${SinglePingp1})
+target_link_libraries(SinglePingp "${GCC_COVERAGE_LINK_FLAGS}")
