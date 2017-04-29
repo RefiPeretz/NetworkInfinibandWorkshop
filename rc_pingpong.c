@@ -998,8 +998,10 @@ int main(int argc, char *argv[])
                 //                if(*((int*) result) == 1){
                 //                    printf("We got an error in thread - %d", thread);
                 //                }
+
             }
             free(pthread);
+
 
         }
     }

@@ -16,6 +16,13 @@
 #include <math.h>
 #include "Connector.hpp"
 
+#ifdef __cplusplus
+extern "C" {
+
+#endif
+#endif
+
+
 typedef struct{
     int thread_num;
     int msgNum;
@@ -43,5 +50,7 @@ double calcAverageThroughput(size_t numOfMessages, size_t messageSize, double to
 double calcAveragePacketRate(size_t numOfMessages, double totalTime);
 
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif //EX1V2_METRICS_H
