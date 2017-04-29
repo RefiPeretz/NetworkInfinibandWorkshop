@@ -226,7 +226,7 @@ static int createServerConnection(int port)
     char *service;
     //        char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
     int n;
-    int sockfd = -1, connfd;
+    int sockfd = -1;
 
     if (asprintf(&service, "%d", port) < 0)
     {
@@ -270,7 +270,11 @@ static int createServerConnection(int port)
     }
 
     int listen1 = listen(sockfd, 10); //TODO: check for errors
-
+    if (listen1 < 0)
+    {
+        perror("Couldn't listen \n");
+        return -1;
+    }
 
 
     return sockfd;
@@ -279,7 +283,11 @@ static int createServerConnection(int port)
 int acceptClientConnection(int sockfd)
 {
     int connfd;
-    connfd = accept(sockfd, NULL, 0);
+    struct sockaddr_in	 peer_addr;
+    socklen_t		 peer_addr_len	= sizeof(struct sockaddr_in);
+
+    connfd = accept(sockfd, (struct sockaddr *)&peer_addr,
+                    &peer_addr_len);
 //    printf("current connfd %d\n", connfd);
     if(connfd < 0){
 //        perror("accept() failed");
@@ -578,7 +586,7 @@ static int pp_post_send(struct pingpong_context *ctx)
 }
 
 
-void *runPingPong(void *commands)
+void *runPingPong(void *commands1)
 {
     struct ibv_device **dev_list;
     struct ibv_device *ib_dev;
@@ -604,21 +612,22 @@ void *runPingPong(void *commands)
 
     srand48(getpid() * time(NULL));
 
-    port = ((Commands *) (commands))->port;
+    port = ((Commands *) (commands1))->port;
     if (port < 0 || port > 65535)
     {
         return (void *) 1;
     }
     printf("new port - %d\n", port);
 
-    printf(" size param - %d\n", ((Commands *) (commands))->size);
+    printf(" size param - %d\n", ((Commands *) (commands1))->size);
 
-    size = ((Commands *) (commands))->size;
+    size = ((Commands *) (commands1))->size;
     printf("new size - %d\n", size);
 
-    servername = ((Commands *) (commands))->servername;
+    servername = ((Commands *) (commands1))->servername;
+    printf("commands - %x\n", *((Commands *) (commands1)));
 
-    int connfd = ((Commands *) (commands))->connfd;
+    int connfd = ((Commands *) (commands1))->connfd;
     printf("new connection id - %d\n", connfd);
 
 
@@ -882,6 +891,7 @@ void *runPingPong(void *commands)
 
         return (void *) usec;
     }
+
     return 0;
 }
 
@@ -933,21 +943,30 @@ int main(int argc, char *argv[])
             int sockfd;
             if(is_server){
                 sockfd = createServerConnection(commands.port);
+                printf("started server bind\n");
+
             }
 
             printf("starting round with %d threads\n", (numThreads));
 
             pthread = malloc(numThreads * sizeof(pthread_t));
 
+
             if (is_server)
             {
                 int thread = 0;
                 while(thread < numThreads){
-                    commands.connfd = acceptClientConnection(sockfd);
+                    Commands *newCommands;
+                    newCommands = calloc(0, sizeof(Commands));
+                    (*newCommands).port = commands.port;
+                    (*newCommands).servername = commands.servername;
+                    (*newCommands).size = commands.size;
 
-                    if(commands.connfd >= 0){
+                    (*newCommands).connfd = acceptClientConnection(sockfd);
+                    printf("new confd - %d\n", (*newCommands).connfd);
+                    if((*newCommands).connfd >= 0){
                         pthread_create(&pthread[thread], NULL, runPingPong,
-                                       (void *) &commands);
+                                      newCommands);
                         thread++;
                     }
                 }
