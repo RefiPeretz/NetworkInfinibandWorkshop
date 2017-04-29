@@ -340,17 +340,18 @@ void threadFunc(int threadId)
                         std::terminate(); //TODO crash thread
                 }
 
-                connection->pending &= ~(int) wc[i].wr_id; //check if we
+                connection->pending &= ~(int) wc[i].wr_id; //TODO: check if we
                 // shouldnt
                 // vecotrize pending
                 if (scnt < iters && !connection->pending)
                 {
-//                    if (postSendWorkReq(connection, threadId))
-//                    {
-//                        fprintf(stderr, "Couldn't post send\n");
-//                        std::terminate(); //TODO crash thread
-//                    }
-                    connection->pending = RECV_WRID | SEND_WRID;
+                    if (postSendWorkReq(connection, threadId))
+                    {
+                        fprintf(stderr, "Couldn't post send\n");
+                        std::terminate(); //TODO crash thread
+                    }
+                    connection->pending = RECV_WRID | SEND_WRID; //TODO: multithread
+
                 }
             }
         }
