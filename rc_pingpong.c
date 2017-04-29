@@ -76,6 +76,7 @@ typedef struct Commands
     int port;
     int size;
     char *servername;
+    int connfd;
 } Commands;
 
 struct pingpong_dest
@@ -214,24 +215,22 @@ pp_client_exch_dest(const char *servername, int port,
     return rem_dest;
 }
 
-static struct pingpong_dest *
-pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
-                    int port, int sl, const struct pingpong_dest *my_dest,
-                    int sgid_idx)
+
+int acceptClientConnection(int sockfd);
+
+static int createServerConnection(int port)
 {
     struct addrinfo *res, *t;
     struct addrinfo hints =
             {.ai_flags    = AI_PASSIVE, .ai_family   = AF_INET, .ai_socktype = SOCK_STREAM};
     char *service;
-    char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
+    //        char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
     int n;
     int sockfd = -1, connfd;
-    struct pingpong_dest *rem_dest = NULL;
-    char gid[33];
 
     if (asprintf(&service, "%d", port) < 0)
     {
-        return NULL;
+        return -1;
     }
 
     n = getaddrinfo(NULL, service, &hints, &res);
@@ -240,7 +239,7 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
     {
         fprintf(stderr, "%s for port %d\n", gai_strerror(n), port);
         free(service);
-        return NULL;
+        return -1;
     }
 
     for (t = res; t; t = t->ai_next)
@@ -267,14 +266,93 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
     if (sockfd < 0)
     {
         fprintf(stderr, "Couldn't listen to port %d\n", port);
-        return NULL;
+        return -1;
     }
 
-    listen(sockfd, 1);
+    int listen1 = listen(sockfd, 10); //TODO: check for errors
 
 
+
+    return sockfd;
+}
+
+int acceptClientConnection(int sockfd)
+{
+    int connfd;
     connfd = accept(sockfd, NULL, 0);
-    close(sockfd);
+//    printf("current connfd %d\n", connfd);
+    if(connfd < 0){
+//        perror("accept() failed");
+        return -1;
+    }
+//    close(sockfd); //TODO:
+    return connfd;
+}
+
+
+static struct pingpong_dest *
+pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
+                    int port, int sl, const struct pingpong_dest *my_dest,
+                    int sgid_idx, int connfd)
+{
+    //    struct addrinfo *res, *t;
+    //    struct addrinfo hints =
+    //            {.ai_flags    = AI_PASSIVE, .ai_family   = AF_INET, .ai_socktype = SOCK_STREAM};
+    //    char *service;
+    char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
+    int n;
+    //    int sockfd = -1, connfd;
+    struct pingpong_dest *rem_dest = NULL;
+    char gid[33];
+
+    //    if (asprintf(&service, "%d", port) < 0)
+    //    {
+    //        return NULL;
+    //    }
+    //
+    //    n = getaddrinfo(NULL, service, &hints, &res);
+    //
+    //    if (n < 0)
+    //    {
+    //        fprintf(stderr, "%s for port %d\n", gai_strerror(n), port);
+    //        free(service);
+    //        return NULL;
+    //    }
+    //
+    //    for (t = res; t; t = t->ai_next)
+    //    {
+    //        sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
+    //        if (sockfd >= 0)
+    //        {
+    //            n = 1;
+    //
+    //            setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &n, sizeof n);
+    //
+    //            if (!bind(sockfd, t->ai_addr, t->ai_addrlen))
+    //            {
+    //                break;
+    //            }
+    //            close(sockfd);
+    //            sockfd = -1;
+    //        }
+    //    }
+    //
+    //    freeaddrinfo(res);
+    //    free(service);
+    //
+    //    if (sockfd < 0)
+    //    {
+    //        fprintf(stderr, "Couldn't listen to port %d\n", port);
+    //        return NULL;
+    //    }
+    //
+    //    listen(sockfd, 1);
+    //
+    //
+    //    connfd = accept(sockfd, NULL, 0);
+    //    close(sockfd); //TODO:
+
+    //    int connfd = createServerConnection(port);
     if (connfd < 0)
     {
         fprintf(stderr, "accept() failed\n");
@@ -529,7 +607,7 @@ void *runPingPong(void *commands)
     port = ((Commands *) (commands))->port;
     if (port < 0 || port > 65535)
     {
-       return (void *) 1;
+        return (void *) 1;
     }
     printf("new port - %d\n", port);
 
@@ -540,13 +618,17 @@ void *runPingPong(void *commands)
 
     servername = ((Commands *) (commands))->servername;
 
+    int connfd = ((Commands *) (commands))->connfd;
+    printf("new connection id - %d\n", connfd);
+
+
     page_size = sysconf(_SC_PAGESIZE);
 
     dev_list = ibv_get_device_list(NULL);
     if (!dev_list)
     {
         perror("Failed to get IB devices list");
-       return (void *) 1;
+        return (void *) 1;
     }
 
     if (!ib_devname)
@@ -555,7 +637,7 @@ void *runPingPong(void *commands)
         if (!ib_dev)
         {
             fprintf(stderr, "No IB devices found\n");
-           return (void *) 1;
+            return (void *) 1;
         }
     } else
     {
@@ -571,21 +653,21 @@ void *runPingPong(void *commands)
         if (!ib_dev)
         {
             fprintf(stderr, "IB device %s not found\n", ib_devname);
-           return (void *) 1;
+            return (void *) 1;
         }
     }
 
     ctx = pp_init_ctx(ib_dev, size, rx_depth, ib_port, use_event, !servername);
     if (!ctx)
     {
-       return (void *) 1;
+        return (void *) 1;
     }
 
     routs = pp_post_recv(ctx, ctx->rx_depth);
     if (routs < ctx->rx_depth)
     {
         fprintf(stderr, "Couldn't post receive (%d)\n", routs);
-       return (void *) 1;
+        return (void *) 1;
     }
 
     if (use_event)
@@ -593,7 +675,7 @@ void *runPingPong(void *commands)
         if (ibv_req_notify_cq(ctx->cq, 0))
         {
             fprintf(stderr, "Couldn't request CQ notification\n");
-           return (void *) 1;
+            return (void *) 1;
         }
     }
 
@@ -601,14 +683,14 @@ void *runPingPong(void *commands)
     if (pp_get_port_info(ctx->context, ib_port, &ctx->portinfo))
     {
         fprintf(stderr, "Couldn't get port info\n");
-       return (void *) 1;
+        return (void *) 1;
     }
 
     my_dest.lid = ctx->portinfo.lid;
     if (ctx->portinfo.link_layer == IBV_LINK_LAYER_INFINIBAND && !my_dest.lid)
     {
         fprintf(stderr, "Couldn't get local LID\n");
-       return (void *) 1;
+        return (void *) 1;
     }
 
     if (gidx >= 0)
@@ -616,7 +698,7 @@ void *runPingPong(void *commands)
         if (ibv_query_gid(ctx->context, ib_port, gidx, &my_dest.gid))
         {
             fprintf(stderr, "Could not get local gid for gid index %d\n", gidx);
-           return (void *) 1;
+            return (void *) 1;
         }
     } else
     {
@@ -635,13 +717,14 @@ void *runPingPong(void *commands)
         rem_dest = pp_client_exch_dest(servername, port, &my_dest);
     } else
     {
-        rem_dest = pp_server_exch_dest(ctx, ib_port, mtu, port, sl, &my_dest,
-                                       gidx);
+        rem_dest =
+                pp_server_exch_dest(ctx, ib_port, mtu, port, sl, &my_dest, gidx,
+                                    connfd);
     }
 
     if (!rem_dest)
     {
-       return (void *) 1;
+        return (void *) 1;
     }
 
     inet_ntop(AF_INET6, &rem_dest->gid, gid, sizeof gid);
@@ -652,7 +735,7 @@ void *runPingPong(void *commands)
     {
         if (pp_connect_ctx(ctx, ib_port, my_dest.psn, mtu, sl, rem_dest, gidx))
         {
-           return (void *) 1;
+            return (void *) 1;
         }
     }
 
@@ -663,7 +746,7 @@ void *runPingPong(void *commands)
         if (pp_post_send(ctx))
         {
             fprintf(stderr, "Couldn't post send\n");
-           return (void *) 1;
+            return (void *) 1;
         }
         ctx->pending |= PINGPONG_SEND_WRID;
     }
@@ -671,7 +754,7 @@ void *runPingPong(void *commands)
     if (gettimeofday(&start, NULL))
     {
         perror("gettimeofday");
-       return (void *) 1;
+        return (void *) 1;
     }
 
     rcnt = scnt = 0;
@@ -685,7 +768,7 @@ void *runPingPong(void *commands)
             if (ibv_get_cq_event(ctx->channel, &ev_cq, &ev_ctx))
             {
                 fprintf(stderr, "Failed to get cq_event\n");
-               return (void *) 1;
+                return (void *) 1;
             }
 
             ++num_cq_events;
@@ -693,13 +776,13 @@ void *runPingPong(void *commands)
             if (ev_cq != ctx->cq)
             {
                 fprintf(stderr, "CQ event for unknown CQ %p\n", ev_cq);
-               return (void *) 1;
+                return (void *) 1;
             }
 
             if (ibv_req_notify_cq(ctx->cq, 0))
             {
                 fprintf(stderr, "Couldn't request CQ notification\n");
-               return (void *) 1;
+                return (void *) 1;
             }
         }
 
@@ -713,7 +796,7 @@ void *runPingPong(void *commands)
                 if (ne < 0)
                 {
                     fprintf(stderr, "poll CQ failed %d\n", ne);
-                   return (void *) 1;
+                    return (void *) 1;
                 }
 
             } while (!use_event && ne < 1);
@@ -725,7 +808,7 @@ void *runPingPong(void *commands)
                     fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
                             ibv_wc_status_str(wc[i].status), wc[i].status,
                             (int) wc[i].wr_id);
-                   return (void *) 1;
+                    return (void *) 1;
                 }
 
                 switch ((int) wc[i].wr_id)
@@ -742,7 +825,7 @@ void *runPingPong(void *commands)
                             {
                                 fprintf(stderr, "Couldn't post receive (%d)\n",
                                         routs);
-                               return (void *) 1;
+                                return (void *) 1;
                             }
                         }
 
@@ -752,7 +835,7 @@ void *runPingPong(void *commands)
                     default:
                         fprintf(stderr, "Completion for unknown wr_id %d\n",
                                 (int) wc[i].wr_id);
-                       return (void *) 1;
+                        return (void *) 1;
                 }
 
                 ctx->pending &= ~(int) wc[i].wr_id;
@@ -761,7 +844,7 @@ void *runPingPong(void *commands)
                     if (pp_post_send(ctx))
                     {
                         fprintf(stderr, "Couldn't post send\n");
-                       return (void *) 1;
+                        return (void *) 1;
                     }
                     ctx->pending = PINGPONG_RECV_WRID | PINGPONG_SEND_WRID;
                 }
@@ -772,7 +855,7 @@ void *runPingPong(void *commands)
     if (gettimeofday(&end, NULL))
     {
         perror("gettimeofday");
-       return (void *) 1;
+        return (void *) 1;
     }
 
 
@@ -780,7 +863,7 @@ void *runPingPong(void *commands)
 
     if (pp_close_ctx(ctx))
     {
-       return (void *) 1;
+        return (void *) 1;
     }
 
     ibv_free_device_list(dev_list);
@@ -805,20 +888,29 @@ void *runPingPong(void *commands)
 
 int main(int argc, char *argv[])
 {
+    int is_server = 0;
     //Usage first param if not null is num of threads, second is port,
     // third is servername
+    printf("Num of args %d\n", argc);
     if (argc < 3 || argc > 4)
     {
         printf("Bad usage - please enter max num of threads, port and if "
                        "client - servername\n");
-       return 1;
+        return 1;
     }
-//    void *time;
+    //    void *time;
     pthread_t *pthread;
     Commands commands;
 
     int maxThreadNum = atoi(argv[1]);
+
     commands.port = atoi(argv[2]);
+    if (commands.port < 0 || commands.port > 65535)
+    {
+        return 1;
+    }
+    printf("new port - %d\n", commands.port);
+
 
     commands.servername = NULL;
     if (argc == 4)
@@ -826,6 +918,11 @@ int main(int argc, char *argv[])
         commands.servername = argv[3];
         printf("ServerAddress %s\n", commands.servername);
     }
+    commands.connfd = -1;
+    if(!commands.servername){
+        is_server = 1;
+    }
+
     for (int varsize = 8; varsize <= 1048576; varsize *= 2)
     {
         printf("starting round with size- %d\n", varsize);
@@ -833,34 +930,55 @@ int main(int argc, char *argv[])
 
         for (int numThreads = 1; numThreads <= maxThreadNum; numThreads++)
         {
+            int sockfd;
+            if(is_server){
+                sockfd = createServerConnection(commands.port);
+            }
+
             printf("starting round with %d threads\n", (numThreads));
 
             pthread = malloc(numThreads * sizeof(pthread_t));
 
-            for (int thread = 0; thread < numThreads; thread++)
+            if (is_server)
             {
-                if (!commands.servername)
-                {
-                    pthread_create(&pthread[thread], NULL, runPingPong,
-                                   (void *) &commands);
-                } else
-                {
-                    sleep(15);
-                    pthread_create(&pthread[thread], NULL, runPingPong,
-                                   (void *) &commands);
+                int thread = 0;
+                while(thread < numThreads){
+                    commands.connfd = acceptClientConnection(sockfd);
+
+                    if(commands.connfd >= 0){
+                        pthread_create(&pthread[thread], NULL, runPingPong,
+                                       (void *) &commands);
+                        thread++;
+                    }
                 }
+                printf("Close FD\n");
+                close(sockfd); //TODO:
+
+
+            } else
+            {
+                sleep(15);
+                for (int thread = 0; thread < numThreads; thread++)
+                {
+                    pthread_create(&pthread[thread], NULL, runPingPong,
+                                   (void *) &commands);
+
+                }
+
             }
-//            void *result;
+
+
+            //            void *result;
 
             for (int thread = 0; thread < numThreads; thread++)
             {
                 pthread_join(pthread[thread], NULL);
                 //                    printf("time %f\n", *((float *) time));
 
-//                printf("result %d\n", *((int*) result));
-//                if(*((int*) result) == 1){
-//                    printf("We got an error in thread - %d", thread);
-//                }
+                //                printf("result %d\n", *((int*) result));
+                //                if(*((int*) result) == 1){
+                //                    printf("We got an error in thread - %d", thread);
+                //                }
             }
             free(pthread);
 
