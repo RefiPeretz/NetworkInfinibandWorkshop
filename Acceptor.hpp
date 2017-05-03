@@ -6,21 +6,27 @@
 #define EX1V2_ACCEPT_HPP
 
 #include <iostream>
+#include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
 #include "Stream.hpp"
 
 using std::string;
 
 class Acceptor
 {
-  int    m_lsd; //Socket descriptor
+   //Socket descriptor
   string m_address;
   int    m_port;
   bool   m_listening;
 
  public:
-  Acceptor(int port, const char* address="");
-  ~Acceptor();
+    int max_sd;
+    fd_set fds;
+    struct sockaddr_in address;
+    int    m_lsd;
 
+    Acceptor(int port, const char* address="");
+  ~Acceptor();
+  void reinit();
   int     start();
   Stream* accept();
 

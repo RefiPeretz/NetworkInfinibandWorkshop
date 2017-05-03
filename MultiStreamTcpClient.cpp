@@ -28,8 +28,7 @@ int main(int argc, char **argv) {
     char ack[MAX_MSG_SIZE];
     struct timeval start, end;
     double t1, t2;
-   // int resultSize = (int)((log2(MAX_MSG_SIZE) + 1) * 6);
-    //double results[resultSize] = {0.0};
+    double results[1000] = {0.0};
     int resultIndex = 0;
     int curMsgSize;
     for (int msgSize = MIN_MSG_SIZE; msgSize <= MAX_MSG_SIZE; msgSize = msgSize * 2){
@@ -51,43 +50,43 @@ int main(int argc, char **argv) {
                 streams[stream] = connector.connect(SERVER_ADDRESS, SERVER_PORT);
                 for(int i = 0 ; i < numMsgs; i++){
                     bytesRead = 0;
-                    if ( streams[stream]) {
+                    if (streams[stream]) {
                         streams[stream]->send(message, curMsgSize);
                         printf("sent - %s with sizeof %d\n", message, curMsgSize);
+                        bytesRead +=  streams[stream]->receive(ack, MAX_MSG_SIZE);
+                        //printf("Bytes read before loop %d\n",bytesRead);
                         while(bytesRead < curMsgSize){
-                            bytesRead +=  streams[stream]->receive(ack, MAX_MSG_SIZE,1);
+                            bytesRead +=  streams[stream]->receive(ack, MAX_MSG_SIZE);
                         }
-                        printf("received - %d Bytes\n", bytesRead);
+
 
                     }
                 }
-               delete(streams[stream]);
             }
 
             if (gettimeofday(&end, NULL)) {
                 printf("time failed\n");
                 exit(1);
             }
-            t1 += start.tv_sec + (start.tv_usec / 1000000.0);
-            t2 += end.tv_sec + (end.tv_usec / 1000000.0);
-            double rtt = calcAverageRTT(1,numMsgs, (t2-t1) / 100);
-            double packetRate = calcAveragePacketRate(numMsgs,(t2-t1) / 100);
-            double throughput = calcAverageThroughput(numMsgs,msgSize,(t2-t1) / 100);
+            double totalTime = timeDifference(start,end);
+            double rtt = calcAverageRTT(1,socketNum*numMsgs, totalTime);
+            double packetRate = calcAveragePacketRate(socketNum*numMsgs,totalTime);
+            double throughput = calcAverageThroughput(socketNum*numMsgs,msgSize,totalTime);
             double numOfSockets = 1;
             printf("avgRTT: %g\n", rtt);
             printf("avgPacketRate: %g\n", packetRate);
             printf("avgThroughput: %g\n", throughput);
-            //resultIndex = saveResults(rtt,throughput,packetRate,resultIndex,results,numOfSockets,msgSize,numMsgs);
+            resultIndex = saveResults(rtt,throughput,packetRate,resultIndex,results,socketNum,msgSize,numMsgs*socketNum);
             free(message);
-//            for(int stream = 0; stream < socketNum;stream++){
-//                delete(streams);
-//            }
+            for(int stream = 0; stream < socketNum;stream++){
+                delete(streams[stream]);
+            }
 
         }
 
 
     }
-    //createResultFile(resultSize,"SingleStreamResults.csv",results);
+    createResultFile(1000,"MultiStreamResults.csv",results);
 
 
 }

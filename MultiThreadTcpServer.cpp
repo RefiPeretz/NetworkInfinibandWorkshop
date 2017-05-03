@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 void ConnectionHandler(Stream *stream) {
     int len;
     char line[MAX_PACKET_SIZE];
-    while ((len = stream->receive(line, sizeof(line), 1)) > 0) {
+    while ((len = stream->receive(line, sizeof(line))) > 0) {
         line[len] = '\0';
         stream->send(line, len);
         printf("received - %s\n", line);
