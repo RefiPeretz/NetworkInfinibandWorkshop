@@ -969,7 +969,7 @@ void *runPingPong(void *commands1)
     for(int p=0; p<ctx->peerNum; p++){
         free(rem_dest_arr[p]);
     }
-    free(rem_dest_arr);// TODO:
+//    free(rem_dest_arr);// TODO:
 
     {
         float *usec = malloc(sizeof(float));
