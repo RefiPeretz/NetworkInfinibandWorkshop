@@ -11,9 +11,15 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <math.h>
 
-//#define SEC_TO_MICRO pow(10, 6)
-#define MAX_MSG_SIZE 1024
+#define MICRO_TO_SEC pow(10, -6)
+#define SEC_TO_NANO pow(10, 9)
+#define MICRO_SEC_TO_NANO pow(10, 3)
+#define BIT_TO_MBIT pow(10, -6)
+#define SEC_TO_MICRO pow(10, 6)
+#define MICRO_TO_SEC pow(10, -6)
+
 
 
 using namespace std;
@@ -25,7 +31,7 @@ void createResultFile(int resultLength,char* nameOfFile,double* results){
     ofstream myFile;
     myFile.open(nameOfFile);
     myFile << "Results\n";
-    myFile << "Number of Threads/Sockets[Integer],Number Of messages[Integer],Size per message[Bytes],RTT[ms],Throughput[ms],Packet Rate[ms],Packet Size[bytes]\n";
+    myFile << "Number of Threads/Sockets[Integer],Number Of messages[Integer],Size per message[Bytes],RTT[us],Throughput[Mib/s],Packet Rate[P/s],Packet Size[Bytes]\n";
     for(int i = 0 ; i < resultLength; i+=6) {
         rttIndex = i;
         throIndex = i + 1;
@@ -99,30 +105,42 @@ void warmUpServer(int port,int numOfMsgs = 1000,std::string server = "localhost"
 }
 
 
-double timeDifference(timeval time1, timeval time2)
-{
-//    double res =  ((time2.tv_sec - time1.tv_sec) * SEC_TO_MICRO)
-//                  + ((time2.tv_usec - time1.tv_usec)); //TODO change to seconds
-//    // return abs of difference
-//    return res < 0 ? (-1)*res : res;
-    return 0;
-}
 
 
 double calcAverageRTT(int numOfSockets,size_t numOfMessages, double totalTime)
 {
     return (totalTime / (double)numOfMessages)/numOfSockets;
 }
+//
+//double calcAverageThroughput(size_t numOfMessages, size_t messageSize, double totalTime)
+//{
+//    return (2 * numOfMessages * messageSize) / totalTime;
+//}
+//
+//double calcAveragePacketRate(size_t numOfMessages, double totalTime)
+//{
+//    return (double) 2 * numOfMessages / totalTime; //messages per second
+//}
+
+double timeDifference(timeval time1, timeval time2)
+{
+    double res =  ((time2.tv_sec - time1.tv_sec) * SEC_TO_MICRO)
+                  + ((time2.tv_usec - time1.tv_usec)); //TODO change to seconds
+    // return abs of difference
+    return res < 0 ? (-1)*res : res;
+}
+
 
 double calcAverageThroughput(size_t numOfMessages, size_t messageSize, double totalTime)
 {
-    return (2 * numOfMessages * messageSize) / totalTime;
+    return (2 * 8 * numOfMessages * messageSize * BIT_TO_MBIT) / (totalTime * MICRO_TO_SEC);
 }
 
 double calcAveragePacketRate(size_t numOfMessages, double totalTime)
 {
-    return (double) 2 * numOfMessages / totalTime; //messages per second
+    return (double) 2 * numOfMessages / (totalTime * MICRO_TO_SEC); //messages per second
 }
+
 
 
 

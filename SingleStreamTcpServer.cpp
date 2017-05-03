@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Acceptor.hpp"
+#include "Metrics.hpp"
 
 int main(int argc, char** argv)
 {
@@ -26,7 +27,7 @@ int main(int argc, char** argv)
 	  stream = acceptor->accept();
 	  if (stream != NULL) {
 		int len;
-		char line[256];
+		char line[MAX_PACKET_SIZE];
 		while ((len = stream->receive(line, sizeof(line),5000)) > 0) {
 		  line[len] = NULL;
 		  printf("received - %s\n", line);

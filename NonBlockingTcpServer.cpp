@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
             stream = acceptor->accept();
             if (stream != NULL) {
                 int len;
-                char line[256];
+                char line[MAX_PACKET_SIZE];
                 while ((len = stream->receive(line, sizeof(line), 5)) > 0) {
                     line[len] = '\0';
                     stream->send(line, len);

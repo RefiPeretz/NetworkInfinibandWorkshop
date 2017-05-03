@@ -48,7 +48,9 @@
 #include <time.h>
 #include <sys/param.h>
 #include <pthread.h>
+
 #include "pingpong.h"
+#include "MetricsIBV.h"
 
 
 enum
@@ -888,8 +890,12 @@ void *runPingPong(void *commands1)
                *usec / 1000000., bytes * 8. / *usec);
         printf("%d iters in %.2f seconds = %.2f usec/iter\n", iters,
                *usec / 1000000., *usec / iters);
+        printf("Calculate total time of work\n");
+        free(usec);
+        double *timeForCSV = malloc(sizeof(double));
+        *timeForCSV = timeDifference(start,end);
 
-        return (void *) usec;
+        return (void *) timeForCSV;
     }
 
     return 0;
@@ -932,14 +938,16 @@ int main(int argc, char *argv[])
     if(!commands.servername){
         is_server = 1;
     }
-
-    for (int varsize = 8; varsize <= 1048576; varsize *= 2)
+    double results[1000] = {0.0};
+    int resultIndex = 0;
+    for (int varsize = 8; varsize <= 16; varsize *= 2)
     {
         printf("starting round with size- %d\n", varsize);
-        commands.size = varsize;
+
 
         for (int numThreads = 1; numThreads <= maxThreadNum; numThreads++)
         {
+            commands.size = varsize/numThreads;
             int sockfd;
             if(is_server){
                 sockfd = createServerConnection(commands.port);
@@ -976,7 +984,7 @@ int main(int argc, char *argv[])
 
             } else
             {
-                sleep(15);
+                sleep(10);
                 for (int thread = 0; thread < numThreads; thread++)
                 {
                     pthread_create(&pthread[thread], NULL, runPingPong,
@@ -987,22 +995,31 @@ int main(int argc, char *argv[])
             }
 
 
-            //            void *result;
-
+            void *result;
+            double maxThreadTime = DEFAULT_THREAD_TIME;
             for (int thread = 0; thread < numThreads; thread++)
             {
-                pthread_join(pthread[thread], NULL);
-                //                    printf("time %f\n", *((float *) time));
-
-                //                printf("result %d\n", *((int*) result));
-                //                if(*((int*) result) == 1){
-                //                    printf("We got an error in thread - %d", thread);
-                //                }
+                double curTime = 0.0;
+                pthread_join(pthread[thread], &result);
+                curTime = *((double *)result);
+                printf("Time: %f\n",curTime);
+                if(maxThreadTime < curTime){
+                    maxThreadTime = curTime;
+                }
 
             }
             free(pthread);
-
+            double rtt = calcAverageRTT(1,DEFAULT_NUM_OF_MSGS*numThreads, maxThreadTime);
+            double packetRate = calcAveragePacketRate(DEFAULT_NUM_OF_MSGS*numThreads,maxThreadTime);
+            double throughput = calcAverageThroughput(DEFAULT_NUM_OF_MSGS*numThreads,varsize,maxThreadTime);
+            double numOfSockets = numThreads;
+            printf("avgRTT: %g\n", rtt);
+            printf("avgPacketRate: %g\n", packetRate);
+            printf("avgThroughput: %g\n", throughput);
+            resultIndex = saveResults(rtt,throughput,packetRate,resultIndex,results,numOfSockets,varsize,DEFAULT_NUM_OF_MSGS*numThreads);
 
         }
     }
+    char* filename = "infinband.csv";
+    createCSV(filename,results,1000);
 }

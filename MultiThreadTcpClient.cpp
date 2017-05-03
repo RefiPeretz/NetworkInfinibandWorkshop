@@ -76,11 +76,10 @@ int main(int argc, char **argv)
 //                delete(connectors[i]);
 //            }
             printf("=====Clock Stop=====\n");
-            t1 += start.tv_sec + (start.tv_usec / 1000000.0);
-            t2 += end.tv_sec + (end.tv_usec / 1000000.0);
-            double rtt = (calcAverageRTT(1,data->msgNum*coreCount, (t2-t1) / 100));
-            double packetRate = calcAveragePacketRate(data->msgNum*coreCount,(t2-t1) / 100);
-            double throughput = calcAverageThroughput(data->msgNum*coreCount,msgSize,(t2-t1) / 100);
+            double totalTime = timeDifference(start,end);
+            double rtt = calcAverageRTT(1,data->msgNum*coreCount, totalTime);
+            double packetRate = calcAveragePacketRate(data->msgNum*coreCount,totalTime);
+            double throughput = calcAverageThroughput(data->msgNum*coreCount,msgSize,totalTime);
             double numOfSockets = coreCount;
             printf("avgRTT: %g\n", rtt);
             printf("avgPacketRate: %g\n", packetRate);
@@ -104,7 +103,7 @@ void* client(void* data)
     int thread_num = handlerData->thread_num;
     printf("====Start thread %d on msgSize %d====\n",thread_num,msgSize);
     int len;
-    char ack[256];
+    char ack[MAX_PACKET_SIZE];
     int bytesRead = 0;
     Connector *connector = new Connector();
     Stream *stream = connector->connect(SERVER_ADDRESS, SERVER_PORT);
@@ -114,10 +113,10 @@ void* client(void* data)
         {
             stream->send(handlerData->msg, handlerData->msgSize);
             printf("sent - %s with sizeof %d, thread: %d\n", handlerData->msg, msgSize,thread_num);
-            bytesRead += stream->receive(ack, 256);
+            bytesRead += stream->receive(ack, MAX_PACKET_SIZE);
             while(bytesRead < msgSize){
                 //printf("papo: %d,%d, thread: %d\n",bytesRead,msgSize, thread_num);
-                bytesRead += stream->receive(ack, 256);
+                bytesRead += stream->receive(ack, MAX_PACKET_SIZE);
                // printf("papo: now is: %d,%d, thread: %d, msg: %s\n",bytesRead,msgSize, thread_num, handlerData->msg);
             }
             //printf("len : %d thread: %d\n", bytesRead);

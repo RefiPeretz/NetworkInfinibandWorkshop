@@ -58,11 +58,11 @@ int main(int argc, char **argv) {
             printf("time failed\n");
             exit(1);
         }
-        t1 += start.tv_sec + (start.tv_usec / 1000000.0);
-        t2 += end.tv_sec + (end.tv_usec / 1000000.0);
-        double rtt = calcAverageRTT(1,numMsgs, (t2-t1) / 100);
-        double packetRate = calcAveragePacketRate(numMsgs,(t2-t1) / 100);
-        double throughput = calcAverageThroughput(numMsgs,msgSize,(t2-t1) / 100);
+
+        double totalTime = timeDifference(start,end);
+        double rtt = calcAverageRTT(1,numMsgs, totalTime);
+        double packetRate = calcAveragePacketRate(numMsgs,totalTime);
+        double throughput = calcAverageThroughput(numMsgs,msgSize,totalTime);
         double numOfSockets = 1;
         printf("avgRTT: %g\n", rtt);
         printf("avgPacketRate: %g\n", packetRate);

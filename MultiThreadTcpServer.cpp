@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include "Acceptor.hpp"
+#include "Metrics.hpp"
 
 //void join_all(std::vector<std::thread>& v);
 void ConnectionHandler(Stream *stream);
@@ -41,7 +42,7 @@ int main(int argc, char **argv) {
 
 void ConnectionHandler(Stream *stream) {
     int len;
-    char line[256];
+    char line[MAX_PACKET_SIZE];
     while ((len = stream->receive(line, sizeof(line), 1)) > 0) {
         line[len] = '\0';
         stream->send(line, len);

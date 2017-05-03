@@ -56,8 +56,8 @@ SET(GCC_COVERAGE_LINK_FLAGS "-g -libverbs")
 #target_link_libraries(SimpleIBServer "${GCC_COVERAGE_LINK_FLAGS}")
 
 set(SinglePingp1 rc_pingpong.c rc_pingpong.h pingpong.h
-        pingpong.c)
-add_executable(SinglePingp ${SinglePingp1})
+        pingpong.c MetricsIBV.c MetricsIBV.h)
+add_executable(SinglePingp ${SinglePingp1} MetricsIBV.c MetricsIBV.h)
 target_link_libraries(SinglePingp "${GCC_COVERAGE_LINK_FLAGS}")
 
 set(MultiStreamIBFiles multistreamPPSupport.c multistreamPPSupport.h
