@@ -622,7 +622,7 @@ static int pp_post_send(struct pingpong_context *ctx)
     return ibv_post_send(ctx->qp, &wr, &bad_wr);
 }
 
-static int pp_post_send_qp(struct pingpong_context *ctx, ibv_qp* qp)
+static int pp_post_send_qp(struct pingpong_context *ctx, struct ibv_qp* qp)
 {
   struct ibv_sge list = {.addr    = (uintptr_t) ctx->buf, .length = ctx
 	  ->size, .lkey    = ctx->mr->lkey};
