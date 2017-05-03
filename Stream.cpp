@@ -55,8 +55,8 @@ bool Stream::waitForReadEvent(int timeout)
   fd_set sdset;
   struct timeval tv;
 
-  tv.tv_sec = timeout;
-  tv.tv_usec = 0;
+  tv.tv_sec = 0;
+  tv.tv_usec = timeout;
   FD_ZERO(&sdset);
   FD_SET(m_sd, &sdset);
   if (result = select(m_sd+1, &sdset, NULL, NULL, &tv) > 0)

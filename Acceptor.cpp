@@ -17,6 +17,13 @@ Acceptor::~Acceptor()
   }
 }
 
+void Acceptor::reinit(){
+    FD_ZERO(&fds);
+
+    FD_SET(m_lsd, &fds);
+
+}
+
 int Acceptor::start()
 {
   if (m_listening == true) {
@@ -25,7 +32,6 @@ int Acceptor::start()
 
   m_lsd = socket(PF_INET, SOCK_STREAM, 0);
 
-  struct sockaddr_in address;
   memset(&address, 0, sizeof(address));
   address.sin_family = PF_INET;
   address.sin_port = htons(m_port);
@@ -44,7 +50,7 @@ int Acceptor::start()
 	perror("bind() failed");
 	return result;
   }
-  result = listen(m_lsd, 5);
+  result = listen(m_lsd, 10);
   if (result != 0) {
 	perror("listen() failed");
 	return result;
@@ -60,7 +66,6 @@ Stream* Acceptor::accept()
 	return NULL;
   }
 
-  struct sockaddr_in address;
   socklen_t len = sizeof(address);
   memset(&address, 0, sizeof(address));
   int sd = ::accept(m_lsd, (struct sockaddr*)&address, &len);
@@ -68,6 +73,6 @@ Stream* Acceptor::accept()
 	perror("accept() failed");
 	return NULL;
   }
-    std::cout<<"confd: "<<sd<<endl;
+    //std::cout<<"confd: "<<sd<<endl;
   return new Stream(sd, &address);
 }

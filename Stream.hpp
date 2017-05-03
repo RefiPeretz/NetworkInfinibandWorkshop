@@ -14,11 +14,12 @@ using namespace std;
 
 class Stream
 {
-  int     m_sd;
+
   string  m_peerIP;
   int     m_peerPort;
 
  public:
+  int     m_sd;
   friend class Acceptor;
   friend class Connect;
 

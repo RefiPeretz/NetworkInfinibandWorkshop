@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     int resultSize = (int)((log2(MAX_MSG_SIZE) + 1) * 6);
     double results[resultSize] = {0.0};
     int resultIndex = 0;
-    for (int msgSize = 1; msgSize <= MAX_MSG_SIZE; msgSize = msgSize * 2){
+    for (int msgSize = 1; msgSize <= 1024; msgSize = msgSize * 2){
         t1 = 0.0;
         t2 = 0.0;
         createMsg(msgSize,'w',&message);

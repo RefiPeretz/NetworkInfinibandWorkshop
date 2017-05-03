@@ -10,6 +10,7 @@
 #define SERVER_ADDRESS "localhost"
 #define SERVER_PORT 8081
 #define MIN_MSG_SIZE 8
+#define MAX_CLIENTS 10
 
 #include <sstream>
 #include <math.h>
