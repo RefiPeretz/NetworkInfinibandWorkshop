@@ -188,7 +188,6 @@ int createClientSocketConnection(int port, char *servername)
     char *service;
     int n;
     int sockfd = -1;
-    struct pingpong_dest *rem_dest = NULL;
 
     if (asprintf(&service, "%d", port) < 0)
     {
@@ -232,7 +231,6 @@ static struct pingpong_dest *
 pp_client_exch_dest(const char *servername, int port,
                     const struct pingpong_dest *my_dest, int connectionId)
 {
-    int n;
     char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
     struct pingpong_dest *rem_dest = NULL;
     char gid[33];
@@ -275,7 +273,6 @@ pp_client_exch_dest(const char *servername, int port,
     printf("got msg from server: %s\n", msg);
 
     out:
-//    close(connectionId);//TODO: MOVE|!!!
     return rem_dest;
 }
 
@@ -386,7 +383,7 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
         goto out;
     }
 
-    printf("got %s from client %s\n",msg);
+    printf("got %s from client\n",msg);
 
     rem_dest = malloc(sizeof *rem_dest);
     if (!rem_dest)
@@ -397,7 +394,7 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
     sscanf(msg, "%x:%x:%x:%s", &rem_dest->lid, &rem_dest->qpn, &rem_dest->psn,
            gid);
     wire_gid_to_gid(gid, &rem_dest->gid);
-    printf("got %s from client %s\n",msg);
+    printf("got %s from client\n",msg);
 
     if (pp_connect_ctx_per_qp(pQp, ib_port, my_dest->psn, mtu, sl, rem_dest,
                         sgid_idx))
@@ -419,7 +416,7 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
         rem_dest = NULL;
         goto out;
     }
-    printf("Wrote %s to client %s\n",msg);
+    printf("Wrote %s to client\n",msg);
 
     read(connfd, msg, sizeof msg);
     printf("Read last msg from client %s\n",msg);
@@ -634,7 +631,7 @@ void *runPingPong(void *commands1)
     struct pingpong_dest my_dest;
     struct pingpong_dest *my_dest_arr = NULL;
     struct pingpong_dest *rem_dest;
-    struct pingpong_dest **rem_dest_arr = NULL;
+    struct pingpong_dest *rem_dest_arr[] = {NULL};
 
     struct timeval start, end;
     char *ib_devname = NULL;
@@ -787,17 +784,23 @@ void *runPingPong(void *commands1)
         printf("  remote address: LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n",
                rem_dest_arr[k]->lid, rem_dest_arr[k]->qpn, rem_dest_arr[k]->psn, gid);
 
+
+        if (servername)
+        {
+            printf("Connecting client qp to server\n");
+            if (pp_connect_ctx_per_qp(ctx->qpArr[k], ib_port,
+                                      my_dest_arr[k].psn,
+                                      mtu, sl,
+                                      rem_dest_arr[k],
+                                      gidx))
+            {
+                return (void *) 1;
+            }
+        }
+
     }
     close(connfd);
     printf("Closed TCP connction to remote\n");
-
-    if (servername)
-    {
-        if (pp_connect_ctx(ctx, ib_port, my_dest.psn, mtu, sl, rem_dest, gidx))
-        {
-            return (void *) 1;
-        }
-    }
 
     ctx->pending = PINGPONG_RECV_WRID;
 
@@ -927,7 +930,8 @@ void *runPingPong(void *commands1)
     }
 
     ibv_free_device_list(dev_list);
-    free(rem_dest);
+    printf("Cleaning rem_dest \n");
+    free(rem_dest);// TODO:
 
     {
         float *usec = malloc(sizeof(float));
@@ -1009,6 +1013,10 @@ int main(int argc, char *argv[])
             } else {
                 sockfd = createClientSocketConnection(commands.port,
                                                       commands.servername);
+            }
+            if(sockfd == -1){
+                fprintf(stderr, "Error creating socket\n");
+                return 1;
             }
 
             printf("starting round with %d threads\n", (numThreads));
