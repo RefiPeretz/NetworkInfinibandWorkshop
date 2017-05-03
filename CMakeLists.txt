@@ -59,3 +59,9 @@ set(SinglePingp1 rc_pingpong.c rc_pingpong.h pingpong.h
         pingpong.c)
 add_executable(SinglePingp ${SinglePingp1})
 target_link_libraries(SinglePingp "${GCC_COVERAGE_LINK_FLAGS}")
+
+set(MultiStreamIBFiles multistreamPPSupport.c multistreamPPSupport.h
+        multistreamTestRunner.c)
+add_executable(MultiStreamIB ${MultiStreamIBFiles})
+target_link_libraries(MultiStreamIB "${GCC_COVERAGE_LINK_FLAGS}")
+
