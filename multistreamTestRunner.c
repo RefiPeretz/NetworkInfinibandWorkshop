@@ -135,23 +135,64 @@ static int pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn,
     return 0;
 }
 
-static struct pingpong_dest *
-pp_client_exch_dest(const char *servername, int port,
-                    const struct pingpong_dest *my_dest, int connectionId)
+static int pp_connect_ctx_per_qp(struct ibv_qp *qp, int port, int
+my_psn,
+                                 enum ibv_mtu mtu, int sl, struct pingpong_dest *dest,
+                                 int sgid_idx)
+{
+    struct ibv_qp_attr attr =
+            {.qp_state        = IBV_QPS_RTR, .path_mtu        = mtu, .dest_qp_num        = dest
+                    ->qpn, .rq_psn            = dest
+                    ->psn, .max_dest_rd_atomic    = 1, .min_rnr_timer        = 12, .ah_attr        = {.is_global    = 0, .dlid        = dest
+                    ->lid, .sl        = sl, .src_path_bits    = 0, .port_num    = port}};
+
+    if (dest->gid.global.interface_id)
+    {
+        attr.ah_attr.is_global = 1;
+        attr.ah_attr.grh.hop_limit = 1;
+        attr.ah_attr.grh.dgid = dest->gid;
+        attr.ah_attr.grh.sgid_index = sgid_idx;
+    }
+    if (ibv_modify_qp(qp, &attr,
+                      IBV_QP_STATE | IBV_QP_AV | IBV_QP_PATH_MTU |
+                      IBV_QP_DEST_QPN | IBV_QP_RQ_PSN |
+                      IBV_QP_MAX_DEST_RD_ATOMIC | IBV_QP_MIN_RNR_TIMER))
+    {
+        fprintf(stderr, "Failed to modify QP to RTR\n");
+        return 1;
+    }
+
+    attr.qp_state = IBV_QPS_RTS;
+    attr.timeout = 14;
+    attr.retry_cnt = 7;
+    attr.rnr_retry = 7;
+    attr.sq_psn = my_psn;
+    attr.max_rd_atomic = 1;
+    if (ibv_modify_qp(qp, &attr,
+                      IBV_QP_STATE | IBV_QP_TIMEOUT | IBV_QP_RETRY_CNT |
+                      IBV_QP_RNR_RETRY | IBV_QP_SQ_PSN |
+                      IBV_QP_MAX_QP_RD_ATOMIC))
+    {
+        fprintf(stderr, "Failed to modify QP to RTS\n");
+        return 1;
+    }
+
+    return 0;
+}
+
+int createClientSocketConnection(int port, char *servername)
 {
     struct addrinfo *res, *t;
     struct addrinfo
             hints = {.ai_family   = AF_INET, .ai_socktype = SOCK_STREAM};
     char *service;
-    char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
     int n;
     int sockfd = -1;
     struct pingpong_dest *rem_dest = NULL;
-    char gid[33];
 
     if (asprintf(&service, "%d", port) < 0)
     {
-        return NULL;
+        return -1;
     }
 
     n = getaddrinfo(servername, service, &hints, &res);
@@ -160,7 +201,7 @@ pp_client_exch_dest(const char *servername, int port,
     {
         fprintf(stderr, "%s for %s:%d\n", gai_strerror(n), servername, port);
         free(service);
-        return NULL;
+        return -1;
     }
 
     for (t = res; t; t = t->ai_next)
@@ -179,8 +220,24 @@ pp_client_exch_dest(const char *servername, int port,
 
     freeaddrinfo(res);
     free(service);
-
     if (sockfd < 0)
+    {
+        fprintf(stderr, "Couldn't connect to %s:%d\n", servername, port);
+        return -1;
+    }
+    return sockfd;
+}
+
+static struct pingpong_dest *
+pp_client_exch_dest(const char *servername, int port,
+                    const struct pingpong_dest *my_dest, int connectionId)
+{
+    int n;
+    char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
+    struct pingpong_dest *rem_dest = NULL;
+    char gid[33];
+
+    if (connectionId < 0)
     {
         fprintf(stderr, "Couldn't connect to %s:%d\n", servername, port);
         return NULL;
@@ -189,21 +246,23 @@ pp_client_exch_dest(const char *servername, int port,
     gid_to_wire_gid(&my_dest->gid, gid);
     sprintf(msg, "%04x:%06x:%06x:%s", my_dest->lid, my_dest->qpn, my_dest->psn,
             gid);
-    if (write(sockfd, msg, sizeof msg) != sizeof msg)
+    if (write(connectionId, msg, sizeof msg) != sizeof msg)
     {
         fprintf(stderr, "Couldn't send local address\n");
         goto out;
     }
+    printf("Wrote msg to server: %s\n", msg);
 
-    if (read(sockfd, msg, sizeof msg) != sizeof msg)
+    if (read(connectionId, msg, sizeof msg) != sizeof msg)
     {
         perror("client read");
         fprintf(stderr, "Couldn't read remote address\n");
         goto out;
     }
+    printf("Got msg from server: %s\n", msg);
 
-    write(sockfd, "done", sizeof "done");
-
+    write(connectionId, "done", sizeof "done");
+    printf("Wrote Done to server\n");
     rem_dest = malloc(sizeof *rem_dest);
     if (!rem_dest)
     {
@@ -213,9 +272,10 @@ pp_client_exch_dest(const char *servername, int port,
     sscanf(msg, "%x:%x:%x:%s", &rem_dest->lid, &rem_dest->qpn, &rem_dest->psn,
            gid);
     wire_gid_to_gid(gid, &rem_dest->gid);
+    printf("got msg from server: %s\n", msg);
 
     out:
-    close(sockfd);
+//    close(connectionId);//TODO: MOVE|!!!
     return rem_dest;
 }
 
@@ -302,8 +362,8 @@ int acceptClientConnection(int sockfd)
 
 static struct pingpong_dest *
 pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
-                    int port, int sl, const struct pingpong_dest *my_dest,
-                    int sgid_idx, int connfd)
+                    int port, int sl, struct pingpong_dest *my_dest,
+                    int sgid_idx, int connfd, struct ibv_qp *pQp)
 {
     char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
     int n;
@@ -326,6 +386,8 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
         goto out;
     }
 
+    printf("got %s from client %s\n",msg);
+
     rem_dest = malloc(sizeof *rem_dest);
     if (!rem_dest)
     {
@@ -335,8 +397,10 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
     sscanf(msg, "%x:%x:%x:%s", &rem_dest->lid, &rem_dest->qpn, &rem_dest->psn,
            gid);
     wire_gid_to_gid(gid, &rem_dest->gid);
+    printf("got %s from client %s\n",msg);
 
-    if (pp_connect_ctx(ctx, ib_port, my_dest->psn, mtu, sl, rem_dest, sgid_idx))
+    if (pp_connect_ctx_per_qp(pQp, ib_port, my_dest->psn, mtu, sl, rem_dest,
+                        sgid_idx))
     {
         fprintf(stderr, "Couldn't connect to remote QP\n");
         free(rem_dest);
@@ -355,8 +419,10 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
         rem_dest = NULL;
         goto out;
     }
+    printf("Wrote %s to client %s\n",msg);
 
     read(connfd, msg, sizeof msg);
+    printf("Read last msg from client %s\n",msg);
 
     out:
     return rem_dest;
@@ -604,7 +670,7 @@ void *runPingPong(void *commands1)
     printf("new size - %d\n", size);
 
     servername = ((Commands *) (commands1))->servername;
-    printf("commands - %x\n", *((Commands *) (commands1)));
+    printf("commands - %s\n", servername);
 
     connfd = ((Commands *) (commands1))->connfd;
     printf("new connection id - %d\n", connfd);
@@ -627,22 +693,6 @@ void *runPingPong(void *commands1)
         if (!ib_dev)
         {
             fprintf(stderr, "No IB devices found\n");
-            return (void *) 1;
-        }
-    } else
-    {
-        int i;
-        for (i = 0; dev_list[i]; ++i)
-        {
-            if (!strcmp(ibv_get_device_name(dev_list[i]), ib_devname))
-            {
-                break;
-            }
-        }
-        ib_dev = dev_list[i];
-        if (!ib_dev)
-        {
-            fprintf(stderr, "IB device %s not found\n", ib_devname);
             return (void *) 1;
         }
     }
@@ -717,14 +767,14 @@ void *runPingPong(void *commands1)
         if (servername)
         {
             rem_dest_arr[k] = pp_client_exch_dest(servername, port,
-                                              &my_dest_arr[k],connfd);
+                                              &my_dest_arr[k], connfd);
         } else
         {
-            rem_dest_arr[k] =
-                    pp_server_exch_dest(ctx, ib_port, mtu, port, sl, &my_dest_arr[k], gidx,
-                                        connfd);
+            rem_dest_arr[k] = pp_server_exch_dest(ctx, ib_port, mtu, port, sl,
+                                                  &my_dest_arr[k], gidx, connfd,
+                                                  ctx->qpArr[k]);
         }
-
+        printf("Finished setting %d remote<->local QP \n",k);
         if (!rem_dest_arr[k])
         {
             fprintf(stderr,"Failed to init remdest of qp - %d\n", k);
@@ -956,7 +1006,9 @@ int main(int argc, char *argv[])
             if(is_server){
                 sockfd = createServerConnection(commands.port);
                 printf("started server bind\n");
-
+            } else {
+                sockfd = createClientSocketConnection(commands.port,
+                                                      commands.servername);
             }
 
             printf("starting round with %d threads\n", (numThreads));
@@ -989,13 +1041,20 @@ int main(int argc, char *argv[])
 
             } else
             {
-
                 sleep(15);
                 for (int thread = 0; thread < numThreads; thread++)
                 {
-                    pthread_create(&pthread[thread], NULL, runPingPong,
-                                   (void *) &commands);
+                    Commands *newCommands;
+                    newCommands = calloc(0, sizeof(Commands));
+                    (*newCommands).port = commands.port;
+                    (*newCommands).servername = commands.servername;
+                    (*newCommands).size = commands.size;
+                    (*newCommands).peerNum = commands.peerNum;
+                    (*newCommands).connfd = sockfd;
+                    printf("new connection fd - %d\n", (*newCommands).connfd);
 
+                    pthread_create(&pthread[thread], NULL, runPingPong,
+                                   newCommands);
                 }
 
             }
