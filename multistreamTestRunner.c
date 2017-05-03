@@ -181,15 +181,18 @@ pp_connect_ctx_per_qp(struct ibv_qp *qp, int port, int my_psn, enum ibv_mtu mtu,
     return 0;
 }
 
-int retryClientServerConnect(int sockfd, const struct sockaddr *addr, socklen_t
-alen){
+int retryClientServerConnect(int sockfd, const struct sockaddr *addr,
+                             socklen_t alen)
+{
     int numsec;
 
     /*
     * Try to connect with exponential backoff.
     */
-    for (numsec = 1; numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT; numsec <<= 1) {
-        if (connect(sockfd, addr, alen) == 0) {
+    for (numsec = 1; numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT; numsec <<= 1)
+    {
+        if (connect(sockfd, addr, alen) == 0)
+        {
             /*
             * Connection accepted.
             */
@@ -198,8 +201,10 @@ alen){
         /*
         * Delay before trying again.
         */
-        if (numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT/2)
+        if (numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT / 2)
+        {
             sleep(numsec);
+        }
     }
     return (-1);
 }
@@ -227,7 +232,8 @@ int createClientSocketConnection(int port, char *servername)
         return -1;
     }
 
-    for (int numsec = 1; numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT; numsec <<= 1) {
+    for (int numsec = 1; numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT; numsec <<= 1)
+    {
 
         for (t = res; t; t = t->ai_next)
         {
@@ -243,17 +249,19 @@ int createClientSocketConnection(int port, char *servername)
             }
         }
 
-        if(sockfd >= 0){
+        if (sockfd >= 0)
+        {
             break;
         }
 
         /*
         * Delay before trying again.
         */
-        if (numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT/2)
+        if (numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT / 2)
+        {
             sleep(numsec);
+        }
     }
-
 
 
     freeaddrinfo(res);
@@ -658,8 +666,8 @@ static int pp_post_recv(struct pingpong_context *ctx, int n)
     return i;
 }
 
-static int pp_post_recv_pQp(struct pingpong_context *ctx, int n, struct ibv_qp
-*qp)
+static int
+pp_post_recv_pQp(struct pingpong_context *ctx, int n, struct ibv_qp *qp)
 {
     struct ibv_sge list = {.addr    = (uintptr_t) ctx->buf, .length = ctx
             ->size, .lkey    = ctx->mr->lkey};
@@ -902,89 +910,86 @@ void *runPingPong(void *commands1)
     while (rcnt < iters || scnt < iters)
     {
 
+        struct ibv_wc *wc = (struct ibv_wc *) calloc(ctx->peerNum * 2,
+                                                     sizeof(struct ibv_wc));
+        int ne, i;
+
+        do
         {
-            struct ibv_wc *wc = (struct ibv_wc *) calloc(ctx->peerNum * 2,
-                                                         sizeof(struct ibv_wc));
-            int ne, i;
-
-            do
+            ne = ibv_poll_cq(ctx->cq, (ctx->peerNum * 2), wc);
+            if (ne < 0)
             {
-                ne = ibv_poll_cq(ctx->cq, (ctx->peerNum * 2), wc);
-                if (ne < 0)
+                fprintf(stderr, "poll CQ failed %d\n", ne);
+                return (void *) -1;
+            }
+        } while (ne < 1);
+
+        for (i = 0; i < ne; ++i)
+        {
+            struct ibv_qp *currentQp = NULL;
+            //find wc matching qp
+            for (int h = 0; h < peersNum; h++)
+            {
+                if (wc[i].qp_num == ctx->qpArr[h]->qp_num)
                 {
-                    fprintf(stderr, "poll CQ failed %d\n", ne);
-                    return (void *) -1;
+                    currentQp = ctx->qpArr[h];
                 }
+            }
 
-            } while (!use_event && ne < 1);
-
-            for (i = 0; i < ne; ++i)
+            if (currentQp == NULL)
             {
-                struct ibv_qp* currentQp = NULL;
-                //find wc matching qp
-                for(int h=0; h<peersNum; h++){
-                    if(wc[i].qp_num == ctx->qpArr[h]->qp_num){
-                        currentQp = ctx->qpArr[h];
+                fprintf(stderr, "couldn't connect wc to qp.");
+                return (void *) -1;
+            }
+            //                printf("Found match between WC[%d] to qp num %d",i,currentQp->qp_num);
+
+            if (wc[i].status != IBV_WC_SUCCESS)
+            {
+                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
+                        ibv_wc_status_str(wc[i].status), wc[i].status,
+                        (int) wc[i].wr_id);
+                return (void *) -1;
+            }
+
+            switch ((int) wc[i].wr_id)
+            {
+                case PINGPONG_SEND_WRID:
+                    ++scnt;
+                    break;
+
+                case PINGPONG_RECV_WRID:
+                    if (--routs <= 1)
+                    {
+                        routs += pp_post_recv_pQp(ctx, ctx->rx_depth - routs,
+                                                  currentQp);
+
+                        if (routs < ctx->rx_depth)
+                        {
+                            fprintf(stderr, "Couldn't post receive (%d)\n",
+                                    routs);
+                            return (void *) -1;
+                        }
                     }
-                }
 
-                if(currentQp == NULL){
-                    fprintf(stderr,"couldn't connect wc to qp.");
+                    ++rcnt;
+                    break;
+
+                default:
+                    fprintf(stderr, "Completion for unknown wr_id %d\n",
+                            (int) wc[i].wr_id);
+                    return (void *) -1;
+            }
+
+            ctx->pending &= ~(int) wc[i].wr_id;
+            if (scnt < iters && !ctx->pending)
+            {
+                if (pp_post_send_qp(ctx, currentQp))
+                {
+                    fprintf(stderr, "Couldn't post send for qp %d\n",
+                            currentQp->qp_num);
                     return (void *) -1;
                 }
-//                printf("Found match between WC[%d] to qp num %d",i,currentQp->qp_num);
-
-                if (wc[i].status != IBV_WC_SUCCESS)
-                {
-                    fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
-                            ibv_wc_status_str(wc[i].status), wc[i].status,
-                            (int) wc[i].wr_id);
-                    return (void *) 1;
-                }
-
-                switch ((int) wc[i].wr_id)
-                {
-                    case PINGPONG_SEND_WRID:
-                        ++scnt;
-                        break;
-
-                    case PINGPONG_RECV_WRID:
-                        if (--routs <= 1)
-                        {
-                            routs += pp_post_recv_pQp(ctx, ctx->rx_depth -
-                                    routs, currentQp);
-
-                            if (routs < ctx->rx_depth)
-                            {
-                                fprintf(stderr, "Couldn't post receive (%d)\n",
-                                        routs);
-                                return (void *) 1;
-                            }
-                        }
-
-                        ++rcnt;
-                        break;
-
-                    default:
-                        fprintf(stderr, "Completion for unknown wr_id %d\n",
-                                (int) wc[i].wr_id);
-                        return (void *) 1;
-                }
-
-                ctx->pending &= ~(int) wc[i].wr_id;
-                if (scnt < iters && !ctx->pending)
-                {
-//                    for (int t = 0; t < peersNum; t++)
-//                    {
-                        if (pp_post_send_qp(ctx, currentQp))
-                        {
-                            fprintf(stderr, "Couldn't post send for qp %d\n",
-                                    currentQp->qp_num);
-                            return (void *) 1;
-                        }
-//                    }
-                    ctx->pending = PINGPONG_RECV_WRID | PINGPONG_SEND_WRID;
-                }
+                ctx->pending = PINGPONG_RECV_WRID | PINGPONG_SEND_WRID;
             }
         }
     }
@@ -1006,10 +1011,11 @@ void *runPingPong(void *commands1)
     ibv_free_device_list(dev_list);
 
     printf("Cleaning rem_dest \n");
-    for(int p=0; p<ctx->peerNum; p++){
+    for (int p = 0; p < ctx->peerNum; p++)
+    {
         free(rem_dest_arr[p]);
     }
-//    free(rem_dest_arr);// TODO:
+    //    free(rem_dest_arr);// TODO:
 
     {
         float *usec = malloc(sizeof(float));
@@ -1027,7 +1033,6 @@ void *runPingPong(void *commands1)
 
     return 0;
 }
-
 
 
 int main(int argc, char *argv[])
