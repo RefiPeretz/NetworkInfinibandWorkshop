@@ -17,7 +17,7 @@
  *
  *      - Redistributions in binary form must reproduce the above
  *        copyright notice, this list of conditions and the following
- *        disclaimer in the documentation and/or other materials
+ *        disclaimer in the documentation and/or other materialsclo
  *        provided with the distribution.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
@@ -26,7 +26,7 @@
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
  * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
  * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * CONNECTION WITH THEc SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 
@@ -622,6 +622,17 @@ static int pp_post_send(struct pingpong_context *ctx)
     return ibv_post_send(ctx->qp, &wr, &bad_wr);
 }
 
+static int pp_post_send_qp(struct pingpong_context *ctx, ibv_qp* qp)
+{
+  struct ibv_sge list = {.addr    = (uintptr_t) ctx->buf, .length = ctx
+	  ->size, .lkey    = ctx->mr->lkey};
+  struct ibv_send_wr wr =
+	  {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode     = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,};
+  struct ibv_send_wr *bad_wr;
+
+  return ibv_post_send(qp, &wr, &bad_wr);
+}
+
 
 void *runPingPong(void *commands1)
 {
@@ -800,18 +811,20 @@ void *runPingPong(void *commands1)
 
     }
     close(connfd);
-    printf("Closed TCP connction to remote\n");
+    printf("Closed TCP connection to remote\n");
 
     ctx->pending = PINGPONG_RECV_WRID;
 
     if (servername)
     {
-        if (pp_post_send(ctx))
-        {
-            fprintf(stderr, "Couldn't post send\n");
-            return (void *) 1;
-        }
-        ctx->pending |= PINGPONG_SEND_WRID;
+	  for(int i = 0; i < ctx->peerNum; i++){
+		if (pp_post_send_qp(ctx, ctx->qpArr[i]))
+		{
+		  fprintf(stderr, "Couldn't post send for %d qp\n", i);
+		  return (void *) 1;
+		}
+		ctx->pending |= PINGPONG_SEND_WRID;
+	  }
     }
 
     if (gettimeofday(&start, NULL))
@@ -823,31 +836,6 @@ void *runPingPong(void *commands1)
     rcnt = scnt = 0;
     while (rcnt < iters || scnt < iters)
     {
-        if (use_event)
-        {
-            struct ibv_cq *ev_cq;
-            void *ev_ctx;
-
-            if (ibv_get_cq_event(ctx->channel, &ev_cq, &ev_ctx))
-            {
-                fprintf(stderr, "Failed to get cq_event\n");
-                return (void *) 1;
-            }
-
-            ++num_cq_events;
-
-            if (ev_cq != ctx->cq)
-            {
-                fprintf(stderr, "CQ event for unknown CQ %p\n", ev_cq);
-                return (void *) 1;
-            }
-
-            if (ibv_req_notify_cq(ctx->cq, 0))
-            {
-                fprintf(stderr, "Couldn't request CQ notification\n");
-                return (void *) 1;
-            }
-        }
 
         {
             struct ibv_wc wc[2];
