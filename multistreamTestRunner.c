@@ -51,6 +51,8 @@
 #include "multistreamPPSupport.h"
 
 
+#define CLIENT_TO_SERVER_RETRY_TIMEOUT 30 //Timeout to connect from client to server
+
 enum
 {
     PINGPONG_RECV_WRID = 1, PINGPONG_SEND_WRID = 2,
@@ -179,6 +181,29 @@ pp_connect_ctx_per_qp(struct ibv_qp *qp, int port, int my_psn, enum ibv_mtu mtu,
     return 0;
 }
 
+int retryClientServerConnect(int sockfd, const struct sockaddr *addr, socklen_t
+alen){
+    int numsec;
+
+    /*
+    * Try to connect with exponential backoff.
+    */
+    for (numsec = 1; numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT; numsec <<= 1) {
+        if (connect(sockfd, addr, alen) == 0) {
+            /*
+            * Connection accepted.
+            */
+            return (sockfd);
+        }
+        /*
+        * Delay before trying again.
+        */
+        if (numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT/2)
+            sleep(numsec);
+    }
+    return (-1);
+}
+
 int createClientSocketConnection(int port, char *servername)
 {
     struct addrinfo *res, *t;
@@ -202,19 +227,34 @@ int createClientSocketConnection(int port, char *servername)
         return -1;
     }
 
-    for (t = res; t; t = t->ai_next)
-    {
-        sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
-        if (sockfd >= 0)
+    for (int numsec = 1; numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT; numsec <<= 1) {
+
+        for (t = res; t; t = t->ai_next)
         {
-            if (!connect(sockfd, t->ai_addr, t->ai_addrlen))
+            sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
+            if (sockfd >= 0)
             {
-                break;
+                if (!connect(sockfd, t->ai_addr, t->ai_addrlen))
+                {
+                    break;
+                }
+                close(sockfd);
+                sockfd = -1;
             }
-            close(sockfd);
-            sockfd = -1;
         }
+
+        if(sockfd >= 0){
+            break;
+        }
+
+        /*
+        * Delay before trying again.
+        */
+        if (numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT/2)
+            sleep(numsec);
     }
+
+
 
     freeaddrinfo(res);
     free(service);
@@ -989,6 +1029,7 @@ void *runPingPong(void *commands1)
 }
 
 
+
 int main(int argc, char *argv[])
 {
     int is_server = 0;
@@ -1054,12 +1095,13 @@ int main(int argc, char *argv[])
             {
                 sockfd = createClientSocketConnection(commands.port,
                                                       commands.servername);
+                if (sockfd == -1)
+                {
+                    fprintf(stderr, "Error creating socket\n");
+                    return 1;
+                }
             }
-            if (sockfd == -1)
-            {
-                fprintf(stderr, "Error creating socket\n");
-                return 1;
-            }
+
 
             printf("starting round with %d threads\n", (numThreads));
 
