@@ -4,9 +4,10 @@
 
 #ifndef EX1V2_METRICS_H
 #define EX1V2_METRICS_H
-#define MAX_MSG_SIZE 1048576
+//#define MAX_MSG_SIZE 1048576//TODO
+#define MAX_MSG_SIZE 4096//TODO
 #define MAX_PACKET_SIZE 256
-#define MAX_CORE 8
+#define MAX_CORE 4//TODO
 #define SERVER_ADDRESS "localhost"
 #define SERVER_PORT 8081
 #define MIN_MSG_SIZE 8
@@ -15,12 +16,6 @@
 #include <math.h>
 #include <math.h>
 #include "Connector.hpp"
-
-#ifdef __cplusplus
-extern "C" {
-
-#endif
-#endif
 
 
 typedef struct{
@@ -50,7 +45,4 @@ double calcAverageThroughput(size_t numOfMessages, size_t messageSize, double to
 double calcAveragePacketRate(size_t numOfMessages, double totalTime);
 
 
-#ifdef __cplusplus
-}
-#endif
 #endif //EX1V2_METRICS_H

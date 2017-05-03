@@ -68,5 +68,6 @@ Stream* Acceptor::accept()
 	perror("accept() failed");
 	return NULL;
   }
+    std::cout<<"confd: "<<sd<<endl;
   return new Stream(sd, &address);
 }
