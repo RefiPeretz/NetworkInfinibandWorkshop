@@ -1,34 +1,3 @@
-/*
- * Copyright (c) 2005 Topspin Communications.  All rights reserved.
- *
- * This software is available to you under a choice of one of two
- * licenses.  You may choose to be licensed under the terms of the GNU
- * General Public License (GPL) Version 2, available from the file
- * COPYING in the main directory of this source tree, or the
- * OpenIB.org BSD license below:
- *
- *     Redistribution and use in source and binary forms, with or
- *     without modification, are permitted provided that the following
- *     conditions are met:
- *
- *      - Redistributions of source code must retain the above
- *        copyright notice, this list of conditions and the following
- *        disclaimer.
- *
- *      - Redistributions in binary form must reproduce the above
- *        copyright notice, this list of conditions and the following
- *        disclaimer in the documentation and/or other materialsclo
- *        provided with the distribution.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THEc SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
 
 #if HAVE_CONFIG_H
 #  include <config.h>
@@ -260,6 +229,7 @@ int createClientSocketConnection(int port, char *servername)
         if (numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT / 2)
         {
             sleep(numsec);
+            printf("Retrying to connect to server after %d sec\n", numsec);
         }
     }
 
@@ -933,6 +903,7 @@ void *runPingPong(void *commands1)
                 if (wc[i].qp_num == ctx->qpArr[h]->qp_num)
                 {
                     currentQp = ctx->qpArr[h];
+                    break;
                 }
             }
 
@@ -1139,7 +1110,6 @@ int main(int argc, char *argv[])
 
             } else
             {
-                sleep(15);
                 for (int thread = 0; thread < numThreads; thread++)
                 {
                     Commands *newCommands;
