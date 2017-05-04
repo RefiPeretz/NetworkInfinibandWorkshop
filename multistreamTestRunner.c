@@ -812,7 +812,7 @@ void *runPingPong(void *commands1)
     for(int y=0; y<ctx->peerNum; y++){
         ctx->pending_qp[y] = PINGPONG_RECV_WRID;
     }
-//    ctx->pending = PINGPONG_RECV_WRID;
+
 
     if (servername)
     {
