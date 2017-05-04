@@ -1106,6 +1106,9 @@ int main(int argc, char *argv[])
                         pthread_create(&pthread[thread], NULL, runPingPong,
                                        newCommands);
                         thread++;
+                    } else {
+                        fprintf(stderr, "Couldn't create server socket");
+                        break;
                     }
                 }
                 printf("Close FD\n");
