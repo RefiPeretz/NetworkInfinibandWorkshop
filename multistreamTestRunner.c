@@ -38,8 +38,9 @@ struct pingpong_context
     struct ibv_qp **qpArr;
     void *buf;
     int size;
+//    int rx_depth;
     int rx_depth;
-    int pending;
+//    int pending;
     int *pending_qp;
     struct ibv_port_attr portinfo;
     int peerNum;
@@ -62,49 +63,49 @@ struct pingpong_dest
     union ibv_gid gid;
 };
 
-static int pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn,
-                          enum ibv_mtu mtu, int sl, struct pingpong_dest *dest,
-                          int sgid_idx)
-{
-    struct ibv_qp_attr attr =
-            {.qp_state        = IBV_QPS_RTR, .path_mtu        = mtu, .dest_qp_num        = dest
-                    ->qpn, .rq_psn            = dest
-                    ->psn, .max_dest_rd_atomic    = 1, .min_rnr_timer        = 12, .ah_attr        = {.is_global    = 0, .dlid        = dest
-                    ->lid, .sl        = sl, .src_path_bits    = 0, .port_num    = port}};
-
-    if (dest->gid.global.interface_id)
-    {
-        attr.ah_attr.is_global = 1;
-        attr.ah_attr.grh.hop_limit = 1;
-        attr.ah_attr.grh.dgid = dest->gid;
-        attr.ah_attr.grh.sgid_index = sgid_idx;
-    }
-    if (ibv_modify_qp(ctx->qp, &attr,
-                      IBV_QP_STATE | IBV_QP_AV | IBV_QP_PATH_MTU |
-                      IBV_QP_DEST_QPN | IBV_QP_RQ_PSN |
-                      IBV_QP_MAX_DEST_RD_ATOMIC | IBV_QP_MIN_RNR_TIMER))
-    {
-        fprintf(stderr, "Failed to modify QP to RTR\n");
-        return 1;
-    }
-
-    attr.qp_state = IBV_QPS_RTS;
-    attr.timeout = 14;
-    attr.retry_cnt = 7;
-    attr.rnr_retry = 7;
-    attr.sq_psn = my_psn;
-    attr.max_rd_atomic = 1;
-    if (ibv_modify_qp(ctx->qp, &attr,
-                      IBV_QP_STATE | IBV_QP_TIMEOUT | IBV_QP_RETRY_CNT |
-                      IBV_QP_RNR_RETRY | IBV_QP_SQ_PSN |
-                      IBV_QP_MAX_QP_RD_ATOMIC))
-    {
-        fprintf(stderr, "Failed to modify QP to RTS\n");
-        return 1;
-    }
-
-    return 0;
-}
+//static int pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn,
+//                          enum ibv_mtu mtu, int sl, struct pingpong_dest *dest,
+//                          int sgid_idx)
+//{
+//    struct ibv_qp_attr attr =
+//            {.qp_state        = IBV_QPS_RTR, .path_mtu        = mtu, .dest_qp_num        = dest
+//                    ->qpn, .rq_psn            = dest
+//                    ->psn, .max_dest_rd_atomic    = 1, .min_rnr_timer        = 12, .ah_attr        = {.is_global    = 0, .dlid        = dest
+//                    ->lid, .sl        = sl, .src_path_bits    = 0, .port_num    = port}};
+//
+//    if (dest->gid.global.interface_id)
+//    {
+//        attr.ah_attr.is_global = 1;
+//        attr.ah_attr.grh.hop_limit = 1;
+//        attr.ah_attr.grh.dgid = dest->gid;
+//        attr.ah_attr.grh.sgid_index = sgid_idx;
+//    }
+//    if (ibv_modify_qp(ctx->qp, &attr,
+//                      IBV_QP_STATE | IBV_QP_AV | IBV_QP_PATH_MTU |
+//                      IBV_QP_DEST_QPN | IBV_QP_RQ_PSN |
+//                      IBV_QP_MAX_DEST_RD_ATOMIC | IBV_QP_MIN_RNR_TIMER))
+//    {
+//        fprintf(stderr, "Failed to modify QP to RTR\n");
+//        return 1;
+//    }
+//
+//    attr.qp_state = IBV_QPS_RTS;
+//    attr.timeout = 14;
+//    attr.retry_cnt = 7;
+//    attr.rnr_retry = 7;
+//    attr.sq_psn = my_psn;
+//    attr.max_rd_atomic = 1;
+//    if (ibv_modify_qp(ctx->qp, &attr,
+//                      IBV_QP_STATE | IBV_QP_TIMEOUT | IBV_QP_RETRY_CNT |
+//                      IBV_QP_RNR_RETRY | IBV_QP_SQ_PSN |
+//                      IBV_QP_MAX_QP_RD_ATOMIC))
+//    {
+//        fprintf(stderr, "Failed to modify QP to RTS\n");
+//        return 1;
+//    }
+//
+//    return 0;
+//}
 
 static int
 pp_connect_ctx_per_qp(struct ibv_qp *qp, int port, int my_psn, enum ibv_mtu mtu,
@@ -611,30 +612,30 @@ int pp_close_ctx(struct pingpong_context *ctx)
     return 0;
 }
 
-static int pp_post_recv(struct pingpong_context *ctx, int n)
-{
-    struct ibv_sge list = {.addr    = (uintptr_t) ctx->buf, .length = ctx
-            ->size, .lkey    = ctx->mr->lkey};
-    //TODO: Maybe we need this in ARR?
-    struct ibv_recv_wr wr =
-            {.wr_id        = PINGPONG_RECV_WRID, .sg_list    = &list, .num_sge    = 1,};
-    struct ibv_recv_wr *bad_wr;
-    int i = 0;
-
-    for (int j = 0; j < ctx->peerNum; j++)
-    {
-        for (i = 0; i < n; ++i)
-        {
-            if (ibv_post_recv(ctx->qpArr[j], &wr, &bad_wr))
-            {
-                break;
-            }
-        }
-    }
-
-
-    return i;
-}
+//static int pp_post_recv(struct pingpong_context *ctx, int n)
+//{
+//    struct ibv_sge list = {.addr    = (uintptr_t) ctx->buf, .length = ctx
+//            ->size, .lkey    = ctx->mr->lkey};
+//    //TODO: Maybe we need this in ARR?
+//    struct ibv_recv_wr wr =
+//            {.wr_id        = PINGPONG_RECV_WRID, .sg_list    = &list, .num_sge    = 1,};
+//    struct ibv_recv_wr *bad_wr;
+//    int i = 0;
+//
+//    for (int j = 0; j < ctx->peerNum; j++)
+//    {
+//        for (i = 0; i < n; ++i)
+//        {
+//            if (ibv_post_recv(ctx->qpArr[j], &wr, &bad_wr))
+//            {
+//                break;
+//            }
+//        }
+//    }
+//
+//
+//    return i;
+//}
 
 static int
 pp_post_recv_pQp(struct pingpong_context *ctx, int n, struct ibv_qp *qp)
@@ -659,16 +660,16 @@ pp_post_recv_pQp(struct pingpong_context *ctx, int n, struct ibv_qp *qp)
     return i;
 }
 
-static int pp_post_send(struct pingpong_context *ctx)
-{
-    struct ibv_sge list = {.addr    = (uintptr_t) ctx->buf, .length = ctx
-            ->size, .lkey    = ctx->mr->lkey};
-    struct ibv_send_wr wr =
-            {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode     = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,};
-    struct ibv_send_wr *bad_wr;
-
-    return ibv_post_send(ctx->qp, &wr, &bad_wr);
-}
+//static int pp_post_send(struct pingpong_context *ctx)
+//{
+//    struct ibv_sge list = {.addr    = (uintptr_t) ctx->buf, .length = ctx
+//            ->size, .lkey    = ctx->mr->lkey};
+//    struct ibv_send_wr wr =
+//            {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode     = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,};
+//    struct ibv_send_wr *bad_wr;
+//
+//    return ibv_post_send(ctx->qp, &wr, &bad_wr);
+//}
 
 static int pp_post_send_qp(struct pingpong_context *ctx, struct ibv_qp *qp)
 {
@@ -691,7 +692,7 @@ void *runPingPong(void *commands1)
     struct pingpong_dest *rem_dest_arr[] = {NULL};
 
     struct timeval start, end;
-    char *ib_devname = NULL;
+//    char *ib_devname = NULL;
     char *servername = NULL;
     int port = 18515;
     int ib_port = 1;
@@ -700,7 +701,8 @@ void *runPingPong(void *commands1)
     int rx_depth = 500;
     int iters = 1000;
     int use_event = 0;
-    int routs;
+//    int routs;
+    int *routs_arr;
     int rcnt, scnt;
     int num_cq_events = 0;
     int sl = 0;
@@ -757,12 +759,13 @@ void *runPingPong(void *commands1)
         return (void *) 1;
     }
 
+    routs_arr = (int *) calloc(ctx->peerNum, sizeof(int));
     for (int peerQp = 0; peerQp < ctx->peerNum; peerQp++)
     {
-        routs = pp_post_recv_pQp(ctx, ctx->rx_depth, ctx->qpArr[peerQp]);
-        if (routs < ctx->rx_depth)
+        routs_arr[peerQp] = pp_post_recv_pQp(ctx, ctx->rx_depth, ctx->qpArr[peerQp]);
+        if (routs_arr[peerQp]  < ctx->rx_depth)
         {
-            fprintf(stderr, "Couldn't post receive (%d)\n", routs);
+            fprintf(stderr, "Couldn't post receive (%d)\n", routs_arr[peerQp]);
             return (void *) 1;
         }
     }
@@ -930,15 +933,15 @@ void *runPingPong(void *commands1)
                     break;
 
                 case PINGPONG_RECV_WRID:
-                    if (--routs <= 1)
+                    if (--routs_arr[currentQPquePlace] <= 1)
                     {
-                        routs += pp_post_recv_pQp(ctx, ctx->rx_depth - routs,
+                        routs_arr[currentQPquePlace] += pp_post_recv_pQp(ctx, ctx->rx_depth - routs_arr[currentQPquePlace],
                                                   currentQp);
 
-                        if (routs < ctx->rx_depth)
+                        if (routs_arr[currentQPquePlace] < ctx->rx_depth)
                         {
                             fprintf(stderr, "Couldn't post receive (%d)\n",
-                                    routs);
+                                    routs_arr[currentQPquePlace]);
                             return (void *) -1;
                         }
                     }
@@ -982,12 +985,12 @@ void *runPingPong(void *commands1)
 
     ibv_free_device_list(dev_list);
 
+//    for (int p = 0; p < ctx->peerNum; p++)
+//    {
+//        free(rem_dest_arr[p]);
+//    }
+//        free(rem_dest_arr);// TODO:
     printf("Cleaning rem_dest \n");
-    for (int p = 0; p < ctx->peerNum; p++)
-    {
-        free(rem_dest_arr[p]);
-    }
-    //    free(rem_dest_arr);// TODO:
 
     {
         float *usec = malloc(sizeof(float));
