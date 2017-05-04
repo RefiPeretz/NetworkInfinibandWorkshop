@@ -1,4 +1,3 @@
-
 #if HAVE_CONFIG_H
 #  include <config.h>
 #endif /* HAVE_CONFIG_H */
@@ -41,6 +40,7 @@ struct pingpong_context
     int size;
     int rx_depth;
     int pending;
+    int *pending_qp;
     struct ibv_port_attr portinfo;
     int peerNum;
 };
@@ -687,9 +687,7 @@ void *runPingPong(void *commands1)
     struct ibv_device **dev_list;
     struct ibv_device *ib_dev;
     struct pingpong_context *ctx;
-    struct pingpong_dest my_dest;
     struct pingpong_dest *my_dest_arr = NULL;
-    struct pingpong_dest *rem_dest;
     struct pingpong_dest *rem_dest_arr[] = {NULL};
 
     struct timeval start, end;
@@ -743,14 +741,12 @@ void *runPingPong(void *commands1)
         return (void *) 1;
     }
 
-    if (!ib_devname)
+
+    ib_dev = *dev_list;
+    if (!ib_dev)
     {
-        ib_dev = *dev_list;
-        if (!ib_dev)
-        {
-            fprintf(stderr, "No IB devices found\n");
-            return (void *) 1;
-        }
+        fprintf(stderr, "No IB devices found\n");
+        return (void *) 1;
     }
 
     ctx = pp_init_ctx(ib_dev, size, rx_depth, ib_port, use_event, !servername,
@@ -854,8 +850,11 @@ void *runPingPong(void *commands1)
     }
     close(connfd);
     printf("Closed TCP connection to remote\n");
-
-    ctx->pending = PINGPONG_RECV_WRID;
+    ctx->pending_qp = calloc(ctx->peerNum, sizeof(int));
+    for(int y=0; y<ctx->peerNum; y++){
+        ctx->pending_qp[y] = PINGPONG_RECV_WRID;
+    }
+//    ctx->pending = PINGPONG_RECV_WRID;
 
     if (servername)
     {
@@ -866,7 +865,8 @@ void *runPingPong(void *commands1)
                 fprintf(stderr, "Couldn't post send for %d qp\n", i);
                 return (void *) 1;
             }
-            ctx->pending |= PINGPONG_SEND_WRID;
+
+            ctx->pending_qp[i] |= PINGPONG_SEND_WRID;
         }
     }
 
@@ -897,6 +897,7 @@ void *runPingPong(void *commands1)
         for (i = 0; i < ne; ++i)
         {
             struct ibv_qp *currentQp = NULL;
+            int currentQPquePlace = 0;
             //find wc matching qp
             for (int h = 0; h < peersNum; h++)
             {
@@ -907,7 +908,7 @@ void *runPingPong(void *commands1)
                 }
             }
 
-            if (currentQp == NULL)
+            if (currentQp == NULL || currentQPquePlace >= peersNum)
             {
                 fprintf(stderr, "couldn't connect wc to qp.");
                 return (void *) -1;
@@ -951,8 +952,8 @@ void *runPingPong(void *commands1)
                     return (void *) -1;
             }
 
-            ctx->pending &= ~(int) wc[i].wr_id;
-            if (scnt < iters && !ctx->pending)
+            ctx->pending_qp[currentQPquePlace] &= ~(int) wc[i].wr_id;
+            if (scnt < iters && !ctx->pending_qp[currentQPquePlace])
             {
                 if (pp_post_send_qp(ctx, currentQp))
                 {
@@ -960,7 +961,7 @@ void *runPingPong(void *commands1)
                             currentQp->qp_num);
                     return (void *) -1;
                 }
-                ctx->pending = PINGPONG_RECV_WRID | PINGPONG_SEND_WRID;
+                ctx->pending_qp[currentQPquePlace] = PINGPONG_RECV_WRID | PINGPONG_SEND_WRID;
             }
         }
     }
