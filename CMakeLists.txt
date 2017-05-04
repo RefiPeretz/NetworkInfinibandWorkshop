@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 99)
 
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -lstdc++ -Wall -Wextra -o")
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LDFLAGS}  -lstdc++  -Wall -Wextra -o")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -lm -Wall -Wextra -o")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LDFLAGS} -lm -Wall -Wextra -o")
 
 
 set(SSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp Acceptor.hpp SingleStreamTcpServer.cpp)

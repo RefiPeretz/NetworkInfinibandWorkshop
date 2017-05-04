@@ -6,16 +6,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <netdb.h>
-#include <stdlib.h>
-#include <getopt.h>
 #include <arpa/inet.h>
 #include <time.h>
 #include <sys/param.h>
 #include <pthread.h>
+#include <math.h>
 #include "multistreamPPSupport.h"
 
 
@@ -27,6 +25,7 @@ enum
 };
 
 static int page_size;
+
 struct pingpong_context
 {
     struct ibv_context *context;
@@ -38,12 +37,11 @@ struct pingpong_context
     struct ibv_qp **qpArr;
     void *buf;
     int size;
-//    int rx_depth;
     int rx_depth;
-//    int pending;
     int *pending_qp;
     struct ibv_port_attr portinfo;
     int peerNum;
+    int *sizePerQP;
 };
 
 typedef struct Commands
@@ -62,50 +60,6 @@ struct pingpong_dest
     int psn;
     union ibv_gid gid;
 };
-
-//static int pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn,
-//                          enum ibv_mtu mtu, int sl, struct pingpong_dest *dest,
-//                          int sgid_idx)
-//{
-//    struct ibv_qp_attr attr =
-//            {.qp_state        = IBV_QPS_RTR, .path_mtu        = mtu, .dest_qp_num        = dest
-//                    ->qpn, .rq_psn            = dest
-//                    ->psn, .max_dest_rd_atomic    = 1, .min_rnr_timer        = 12, .ah_attr        = {.is_global    = 0, .dlid        = dest
-//                    ->lid, .sl        = sl, .src_path_bits    = 0, .port_num    = port}};
-//
-//    if (dest->gid.global.interface_id)
-//    {
-//        attr.ah_attr.is_global = 1;
-//        attr.ah_attr.grh.hop_limit = 1;
-//        attr.ah_attr.grh.dgid = dest->gid;
-//        attr.ah_attr.grh.sgid_index = sgid_idx;
-//    }
-//    if (ibv_modify_qp(ctx->qp, &attr,
-//                      IBV_QP_STATE | IBV_QP_AV | IBV_QP_PATH_MTU |
-//                      IBV_QP_DEST_QPN | IBV_QP_RQ_PSN |
-//                      IBV_QP_MAX_DEST_RD_ATOMIC | IBV_QP_MIN_RNR_TIMER))
-//    {
-//        fprintf(stderr, "Failed to modify QP to RTR\n");
-//        return 1;
-//    }
-//
-//    attr.qp_state = IBV_QPS_RTS;
-//    attr.timeout = 14;
-//    attr.retry_cnt = 7;
-//    attr.rnr_retry = 7;
-//    attr.sq_psn = my_psn;
-//    attr.max_rd_atomic = 1;
-//    if (ibv_modify_qp(ctx->qp, &attr,
-//                      IBV_QP_STATE | IBV_QP_TIMEOUT | IBV_QP_RETRY_CNT |
-//                      IBV_QP_RNR_RETRY | IBV_QP_SQ_PSN |
-//                      IBV_QP_MAX_QP_RD_ATOMIC))
-//    {
-//        fprintf(stderr, "Failed to modify QP to RTS\n");
-//        return 1;
-//    }
-//
-//    return 0;
-//}
 
 static int
 pp_connect_ctx_per_qp(struct ibv_qp *qp, int port, int my_psn, enum ibv_mtu mtu,
@@ -459,6 +413,12 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
     ctx->peerNum = peerNumber;
     ctx->size = size;
     ctx->rx_depth = rx_depth;
+    ctx->sizePerQP = calloc(ctx->peerNum, sizeof(int));
+    int sizePerPeer = (int) floor(size / ctx->peerNum);
+    for(int i=1; i<ctx->peerNum; i++){
+        ctx->sizePerQP[i] = sizePerPeer;
+    }
+    ctx->sizePerQP[0] = size - (sizePerPeer * (ctx->peerNum - 1));
 
     ctx->buf = malloc(roundup(size, page_size));
     if (!ctx->buf)
@@ -612,31 +572,6 @@ int pp_close_ctx(struct pingpong_context *ctx)
     return 0;
 }
 
-//static int pp_post_recv(struct pingpong_context *ctx, int n)
-//{
-//    struct ibv_sge list = {.addr    = (uintptr_t) ctx->buf, .length = ctx
-//            ->size, .lkey    = ctx->mr->lkey};
-//    //TODO: Maybe we need this in ARR?
-//    struct ibv_recv_wr wr =
-//            {.wr_id        = PINGPONG_RECV_WRID, .sg_list    = &list, .num_sge    = 1,};
-//    struct ibv_recv_wr *bad_wr;
-//    int i = 0;
-//
-//    for (int j = 0; j < ctx->peerNum; j++)
-//    {
-//        for (i = 0; i < n; ++i)
-//        {
-//            if (ibv_post_recv(ctx->qpArr[j], &wr, &bad_wr))
-//            {
-//                break;
-//            }
-//        }
-//    }
-//
-//
-//    return i;
-//}
-
 static int
 pp_post_recv_pQp(struct pingpong_context *ctx, int n, struct ibv_qp *qp)
 {
@@ -659,17 +594,6 @@ pp_post_recv_pQp(struct pingpong_context *ctx, int n, struct ibv_qp *qp)
 
     return i;
 }
-
-//static int pp_post_send(struct pingpong_context *ctx)
-//{
-//    struct ibv_sge list = {.addr    = (uintptr_t) ctx->buf, .length = ctx
-//            ->size, .lkey    = ctx->mr->lkey};
-//    struct ibv_send_wr wr =
-//            {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode     = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,};
-//    struct ibv_send_wr *bad_wr;
-//
-//    return ibv_post_send(ctx->qp, &wr, &bad_wr);
-//}
 
 static int pp_post_send_qp(struct pingpong_context *ctx, struct ibv_qp *qp)
 {
