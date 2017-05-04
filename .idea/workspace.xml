@@ -30,7 +30,6 @@
   <component name="ChangeListManager">
     <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/multistreamTestRunner.c" afterPath="$PROJECT_DIR$/multistreamTestRunner.c" />
     </list>
     <list id="ed5b0da3-4860-4bf5-a85a-dd6805f11d6b" name="11" comment="" />
     <list id="786bcf74-7ba9-41dc-ad33-e0d7ede81f2a" name="New changelist" comment="" />
@@ -84,8 +83,8 @@
       <file leaf-file-name="multistreamTestRunner.c" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/multistreamTestRunner.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="137">
-              <caret line="787" column="30" selection-start-line="787" selection-start-column="30" selection-end-line="787" selection-end-column="30" />
+            <state relative-caret-position="183">
+              <caret line="789" column="0" selection-start-line="789" selection-start-column="0" selection-end-line="789" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -545,7 +544,7 @@
       <workItem from="1493480021576" duration="5603000" />
       <workItem from="1493791225540" duration="32768000" />
       <workItem from="1493887563650" duration="10207000" />
-      <workItem from="1493903723367" duration="3584000" />
+      <workItem from="1493903723367" duration="3894000" />
     </task>
     <task id="LOCAL-00001" summary="Added RTT evaluation">
       <created>1489742159010</created>
@@ -799,11 +798,18 @@
       <option name="project" value="LOCAL" />
       <updated>1493906956851</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="fixed size support">
+      <created>1493907312163</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1493907312163</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="225425000" />
+    <option name="totallyTimeSpent" value="225735000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-3" y="24" width="1926" height="1035" extended-state="6" />
@@ -1319,8 +1325,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/multistreamTestRunner.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="787" column="30" selection-start-line="787" selection-start-column="30" selection-end-line="787" selection-end-column="30" />
+        <state relative-caret-position="183">
+          <caret line="789" column="0" selection-start-line="789" selection-start-column="0" selection-end-line="789" selection-end-column="0" />
           <folding />
         </state>
       </provider>
