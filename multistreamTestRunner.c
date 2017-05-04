@@ -643,7 +643,7 @@ void *runPingPong(void *commands1)
     struct ibv_device *ib_dev;
     struct pingpong_context *ctx;
     struct pingpong_dest *my_dest_arr = NULL;
-    struct pingpong_dest *rem_dest_arr[] = {NULL};
+    struct pingpong_dest **rem_dest_arr = {NULL};
 
     struct timeval start, end;
 //    char *ib_devname = NULL;
@@ -765,6 +765,7 @@ void *runPingPong(void *commands1)
                my_dest_arr[i].lid, my_dest_arr[i].qpn, my_dest_arr[i].psn, gid);
 
     }
+    rem_dest_arr = calloc(ctx->peerNum, sizeof(struct pingpong_dest));
 
     for (int k = 0; k < ctx->peerNum; k++)
     {
