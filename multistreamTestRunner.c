@@ -36,7 +36,7 @@ struct pingpong_context
     struct ibv_qp *qp;
     struct ibv_qp **qpArr;
     void *buf;
-    void **buf_arr;
+//    void **buf_arr;
 
     int size;
     int rx_depth;
@@ -419,30 +419,35 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
     int sizePerPeer = (int) floor(size / ctx->peerNum);
     for(int i=1; i<ctx->peerNum; i++){
         ctx->sizePerQP[i] = sizePerPeer;
-        ctx->buf_arr[i] = malloc(roundup(sizePerPeer, page_size));\
-            if (!ctx->buf_arr[i])
-        {
-            fprintf(stderr, "Couldn't allocate work buf.\n");
-            return NULL;
-        }
+//        ctx->buf_arr[i] = malloc(roundup(ctx->sizePerQP[i], page_size));
+//            if (!ctx->buf_arr[i])
+//        {
+//            fprintf(stderr, "Couldn't allocate (%d) qp work buf.\n",i);
+//            return NULL;
+//        }
 
     }
     ctx->sizePerQP[0] = size - (sizePerPeer * (ctx->peerNum - 1));
-    ctx->buf_arr[0] = malloc(roundup(sizePerPeer, page_size));
-    if (!ctx->buf_arr[0])
-    {
-        fprintf(stderr, "Couldn't allocate work buf.\n");
-        return NULL;
-    }
-
-//    ctx->buf = malloc(roundup(size, page_size));
+//    ctx->buf_arr[0] = malloc(roundup(sizePerPeer, page_size));
+//    if (!ctx->buf_arr[0])
+//    {
+//        fprintf(stderr, "Couldn't allocate (%d) qp work buf.\n",0);
+//        return NULL;
+//    }
+//
+//    for(int i=0; i<ctx->peerNum; i++){
+//        memset( ctx->buf_arr[i], 0x7b + is_server, ctx->sizePerQP[i]);
+//    }
+    ctx->buf = malloc(roundup(size, page_size));
     if (!ctx->buf)
     {
-        fprintf(stderr, "Couldn't allocate work buf.\n");
+        fprintf(stderr, "Couldn't allocate (%d) qp work buf.\n",0);
         return NULL;
     }
 
-    memset(ctx->buf, 0x7b + is_server, size);
+//    for(int i=0; i<ctx->peerNum; i++){
+        memset( ctx->buf, 0x7b + is_server, ctx->size);
+//    }
 
     ctx->context = ibv_open_device(ib_dev);
     if (!ctx->context)
@@ -588,10 +593,15 @@ int pp_close_ctx(struct pingpong_context *ctx)
 }
 
 static int
-pp_post_recv_pQp(struct pingpong_context *ctx, int n, struct ibv_qp *qp)
+pp_post_recv_pQp(struct pingpong_context *ctx, int n, struct ibv_qp *qp, int
+qp_index)
 {
-    struct ibv_sge list = {.addr    = (uintptr_t) ctx->buf, .length = ctx
-            ->size, .lkey    = ctx->mr->lkey};
+    int buf_offset = ctx->sizePerQP[qp_index] * qp_index;
+    char* buf_ptr    = ctx->buf + buf_offset;
+
+
+    struct ibv_sge list = {.addr    = (uintptr_t) buf_ptr , .length = ctx
+            ->sizePerQP[qp_index], .lkey    = ctx->mr->lkey};
     //TODO: Maybe we need this in ARR?
     struct ibv_recv_wr wr =
             {.wr_id        = PINGPONG_RECV_WRID, .sg_list    = &list, .num_sge    = 1,};
@@ -610,10 +620,15 @@ pp_post_recv_pQp(struct pingpong_context *ctx, int n, struct ibv_qp *qp)
     return i;
 }
 
-static int pp_post_send_qp(struct pingpong_context *ctx, struct ibv_qp *qp)
+static int pp_post_send_qp(struct pingpong_context *ctx, struct ibv_qp *qp, int
+qp_index)
 {
-    struct ibv_sge list = {.addr    = (uintptr_t) ctx->buf, .length = ctx
-            ->size, .lkey    = ctx->mr->lkey}; //TODO: divide size by qp number
+    int buf_offset = ctx->sizePerQP[qp_index] * qp_index;
+    char* buf_ptr    = ctx->buf + buf_offset;
+
+    struct ibv_sge list = {.addr    = (uintptr_t) buf_ptr, .length = ctx
+            ->sizePerQP[qp_index], .lkey    = ctx->mr->lkey}; //TODO: divide size by
+    // qp number
     struct ibv_send_wr wr =
             {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode     = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,};
     struct ibv_send_wr *bad_wr;
@@ -701,7 +716,8 @@ void *runPingPong(void *commands1)
     routs_arr = (int *) calloc(ctx->peerNum, sizeof(int));
     for (int peerQp = 0; peerQp < ctx->peerNum; peerQp++)
     {
-        routs_arr[peerQp] = pp_post_recv_pQp(ctx, ctx->rx_depth, ctx->qpArr[peerQp]);
+        routs_arr[peerQp] = pp_post_recv_pQp(ctx, ctx->rx_depth,
+                                             ctx->qpArr[peerQp], peerQp);
         if (routs_arr[peerQp]  < ctx->rx_depth)
         {
             fprintf(stderr, "Couldn't post receive (%d)\n", routs_arr[peerQp]);
@@ -802,7 +818,7 @@ void *runPingPong(void *commands1)
     {
         for (int i = 0; i < ctx->peerNum; i++)
         {
-            if (pp_post_send_qp(ctx, ctx->qpArr[i]))
+            if (pp_post_send_qp(ctx, ctx->qpArr[i], i))
             {
                 fprintf(stderr, "Couldn't post send for %d qp\n", i);
                 return (void *) 1;
@@ -875,7 +891,7 @@ void *runPingPong(void *commands1)
                     if (--routs_arr[currentQPquePlace] <= 1)
                     {
                         routs_arr[currentQPquePlace] += pp_post_recv_pQp(ctx, ctx->rx_depth - routs_arr[currentQPquePlace],
-                                                  currentQp);
+                                                  currentQp, currentQPquePlace);
 
                         if (routs_arr[currentQPquePlace] < ctx->rx_depth)
                         {
@@ -897,7 +913,7 @@ void *runPingPong(void *commands1)
             ctx->pending_qp[currentQPquePlace] &= ~(int) wc[i].wr_id;
             if (scnt < iters && !ctx->pending_qp[currentQPquePlace])
             {
-                if (pp_post_send_qp(ctx, currentQp))
+                if (pp_post_send_qp(ctx, currentQp, currentQPquePlace))
                 {
                     fprintf(stderr, "Couldn't post send for qp %d\n",
                             currentQp->qp_num);
@@ -998,7 +1014,7 @@ int main(int argc, char *argv[])
         is_server = 1;
     }
 
-    for (int varsize = 8; varsize <= 1048576; varsize *= 2)
+    for (int varsize = 1; varsize <= 1048576; varsize *= 2)
     {
         printf("starting round with size- %d\n", varsize);
         commands.size = varsize;
