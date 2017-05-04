@@ -954,7 +954,7 @@ void *runPingPong(void *commands1)
         long long bytes = (long long) size * iters * 2;
 
         printf("%lld bytes in %.2f seconds = %.2f Mbit/sec\n", bytes,
-               *usec / 1000000., bytes * 8. / *usec);
+               *usec / 1000000., (bytes * 8. / *usec)/ctx->peerNum);
         printf("%d iters in %.2f seconds = %.2f usec/iter\n", iters,
                *usec / 1000000., *usec / iters);
 
