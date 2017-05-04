@@ -899,11 +899,11 @@ void *runPingPong(void *commands1)
             struct ibv_qp *currentQp = NULL;
             int currentQPquePlace = 0;
             //find wc matching qp
-            for (int h = 0; h < peersNum; h++)
+            for (currentQPquePlace = 0; currentQPquePlace < peersNum; currentQPquePlace++)
             {
-                if (wc[i].qp_num == ctx->qpArr[h]->qp_num)
+                if (wc[i].qp_num == ctx->qpArr[currentQPquePlace]->qp_num)
                 {
-                    currentQp = ctx->qpArr[h];
+                    currentQp = ctx->qpArr[currentQPquePlace];
                     break;
                 }
             }
