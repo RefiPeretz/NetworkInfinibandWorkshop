@@ -52,7 +52,7 @@ void createResultFile(int resultLength,char* nameOfFile,double* results){
         std::stringstream totalNumOfMsgsSS(stringstream::in | stringstream::out);
         totalNumOfMsgsSS << setprecision(5) <<  results[totalNumOfMsgs] << endl;
         std::stringstream msgSizeSS(stringstream::in | stringstream::out);
-        msgSizeSS << setprecision(5) <<  results[packetSize]/results[numOfSockets] << endl;
+        msgSizeSS << setprecision(5) <<  (int)results[packetSize]/results[numOfSockets] << endl;
         std::string writeToFile = numOfSocketsSS.str()+","+totalNumOfMsgsSS.str()+","+msgSizeSS.str()+","+rttSS.str() +","+throughputSS.str()+","+packetRateSS.str()+","+packetSizeSS.str();
         writeToFile.erase(std::remove(writeToFile.begin(), writeToFile.end(), '\n'), writeToFile.end());
         myFile << writeToFile+"\n";

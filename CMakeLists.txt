@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.6)
 project(ex1v2)
-set(LDFLAGS "-lpthread")
+set(LDFLAGS "-pthread")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 99)
 
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -lm -Wall -Wextra -o")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -g -lm -Wall -Wextra -o")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LDFLAGS} -lm -Wall -Wextra -o")
 
 
@@ -20,17 +20,17 @@ set(MSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
     Acceptor.hpp MultiStreamTcpClient.cpp Metrics.cpp Metrics.hpp)
 add_executable(MultiStreamTcpClient ${MSTS})
 
+set(MTTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
+        Acceptor.hpp MultiThreadTcpServer.cpp Metrics.cpp Metrics.hpp)
+add_executable(MultiThreadTcpServer ${MTTS})
+
 set(VSTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
     Acceptor.hpp VaryingSizeTcpClient.cpp Metrics.cpp Metrics.hpp)
 add_executable(VaryingSizeTcpClient ${VSTC})
 
-set(MSTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
+set(MTTC Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
         Acceptor.hpp MultiThreadTcpClient.cpp MultiThreadTcpClient.cpp Metrics.cpp Metrics.hpp)
-add_executable(MultiThreadTcpClient ${MSTS})
-
-set(MTTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
-    Acceptor.hpp MultiThreadTcpServer.cpp)
-add_executable(MultiThreadTcpServer ${MTTS})
+add_executable(MultiThreadTcpClient ${MTTC})
 
 set(NBTS Stream.cpp Stream.hpp Connector.cpp Connector.hpp Acceptor.cpp
     Acceptor.hpp NonBlockingTcpServer.cpp)

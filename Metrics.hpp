@@ -9,7 +9,7 @@
 #define MAX_CORE 8//TODO
 #define SERVER_ADDRESS "localhost"
 #define SERVER_PORT 8081
-#define MIN_MSG_SIZE 8
+#define MIN_MSG_SIZE 1
 #define MAX_CLIENTS 10
 
 #include <sstream>

@@ -22,20 +22,20 @@ int main(int argc, char** argv)
   else {
 	acceptor = new Acceptor(atoi(argv[1]));
   }
-  if (acceptor->start() == 0) {
+	acceptor->start();
+
 	while (1) {
-	  stream = acceptor->accept();
-	  if (stream != NULL) {
-		int len;
-		char line[MAX_PACKET_SIZE];
-		while ((len = stream->receive(line, sizeof(line),5000)) > 0) {
-		  line[len] = NULL;
-		  printf("received - %s\n", line);
-		  stream->send(line, len);
+		stream = acceptor->accept();
+		if (stream != NULL) {
+			int len;
+			char line[MAX_PACKET_SIZE];
+			while ((len = stream->receive(line, sizeof(line),5000)) > 0) {
+				line[len] = NULL;
+				printf("received - %s\n", line);
+				stream->send(line, len);
+			}
+			delete stream;
 		}
-		delete stream;
-	  }
-	}
   }
   perror("Could not start the server");
   exit(-1);

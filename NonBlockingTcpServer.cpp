@@ -6,7 +6,6 @@
 #include <string.h>   //strlen
 #include <stdlib.h>
 #include <errno.h>
-#include <unistd.h>   //close
 #include <arpa/inet.h>    //close
 #include "Metrics.hpp"
 #include "Acceptor.hpp"
@@ -19,7 +18,7 @@ int main(int argc, char *argv[]) {
     int  addrlen, new_socket, clients[10],
             status, i, bytesRead, cur_sd;
 
-
+    Stream *stream = NULL;
     char buffer[MAX_PACKET_SIZE];  //data buffer of 1K
 
     for (i = 0; i < MAX_CLIENTS; i++) {
@@ -27,10 +26,10 @@ int main(int argc, char *argv[]) {
     }
 
     Acceptor *acceptor = new Acceptor(SERVER_PORT, SERVER_ADDRESS);
-    acceptor->start();
+    struct sockaddr_in address = acceptor->start();
 
 
-    addrlen = sizeof(acceptor->address);
+    addrlen = sizeof(address);
     printf("MultiStream ser"
                    "ver is up\n");
     while (1) {
@@ -55,7 +54,7 @@ int main(int argc, char *argv[]) {
 
         if (FD_ISSET(acceptor->m_lsd, &acceptor->fds)) {
             if ((new_socket = accept(acceptor->m_lsd,
-                                     (struct sockaddr *) &acceptor->address, (socklen_t *) &addrlen)) < 0) {
+                                     (struct sockaddr *) &address, (socklen_t *) &addrlen)) < 0) {
                 perror("accept");
                 exit(-1);
             }

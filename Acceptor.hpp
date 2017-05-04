@@ -11,29 +11,30 @@
 
 using std::string;
 
-class Acceptor
-{
-   //Socket descriptor
-  string m_address;
-  int    m_port;
-  bool   m_listening;
+class Acceptor {
+    //Socket descriptor
+    string m_address;
+    int m_port;
+    bool m_listening;
 
- public:
+public:
     int max_sd;
     fd_set fds;
-    struct sockaddr_in address;
-    int    m_lsd;
+    int m_lsd;
 
-    Acceptor(int port, const char* address="");
-  ~Acceptor();
-  void reinit();
-  int     start();
-  Stream* accept();
+    Acceptor(int port, const char *address = "");
 
- private:
-  Acceptor() {}
+    ~Acceptor();
+
+    void reinit();
+
+    struct sockaddr_in start();
+
+    Stream *accept();
+
+private:
+    Acceptor() {}
 };
-
 
 
 #endif //EX1V2_ACCEPT_HPP

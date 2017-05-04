@@ -27,13 +27,12 @@ int main(int argc, char **argv) {
     } else {
         acceptor = new Acceptor(atoi(argv[1]));
     }
-    if (acceptor->start() == 0) {
-        while (1) {
-            stream = acceptor->accept();
-            if (stream != NULL) {
-                std::thread v1(ConnectionHandler, stream);
-                v1.detach();
-            }
+    acceptor->start();
+    while (1) {
+        stream = acceptor->accept();
+        if (stream != NULL) {
+            std::thread v1(ConnectionHandler, stream);
+            v1.detach();
         }
     }
     perror("Could not start the server");

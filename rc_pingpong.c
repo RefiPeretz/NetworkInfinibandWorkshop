@@ -730,7 +730,7 @@ void *runPingPong(void *commands1)
     {
         rem_dest =
                 pp_server_exch_dest(ctx, ib_port, mtu, port, sl, &my_dest, gidx,
-                                    connfd, NULL);
+                                    connfd);
     }
 
     if (!rem_dest)
