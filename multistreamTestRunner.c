@@ -36,6 +36,8 @@ struct pingpong_context
     struct ibv_qp *qp;
     struct ibv_qp **qpArr;
     void *buf;
+    void **buf_arr;
+
     int size;
     int rx_depth;
     int *pending_qp;
@@ -417,10 +419,23 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
     int sizePerPeer = (int) floor(size / ctx->peerNum);
     for(int i=1; i<ctx->peerNum; i++){
         ctx->sizePerQP[i] = sizePerPeer;
+        ctx->buf_arr[i] = malloc(roundup(sizePerPeer, page_size));\
+            if (!ctx->buf_arr[i])
+        {
+            fprintf(stderr, "Couldn't allocate work buf.\n");
+            return NULL;
+        }
+
     }
     ctx->sizePerQP[0] = size - (sizePerPeer * (ctx->peerNum - 1));
+    ctx->buf_arr[0] = malloc(roundup(sizePerPeer, page_size));
+    if (!ctx->buf_arr[0])
+    {
+        fprintf(stderr, "Couldn't allocate work buf.\n");
+        return NULL;
+    }
 
-    ctx->buf = malloc(roundup(size, page_size));
+//    ctx->buf = malloc(roundup(size, page_size));
     if (!ctx->buf)
     {
         fprintf(stderr, "Couldn't allocate work buf.\n");

@@ -29,49 +29,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Acceptor.cpp" afterPath="$PROJECT_DIR$/Acceptor.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Acceptor.hpp" afterPath="$PROJECT_DIR$/Acceptor.hpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CMakeLists.txt" afterPath="$PROJECT_DIR$/CMakeLists.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Connector.cpp" afterPath="$PROJECT_DIR$/Connector.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Connector.hpp" afterPath="$PROJECT_DIR$/Connector.hpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Metrics.cpp" afterPath="$PROJECT_DIR$/Metrics.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Metrics.hpp" afterPath="$PROJECT_DIR$/Metrics.hpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MetricsIBV.c" afterPath="$PROJECT_DIR$/MetricsIBV.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MetricsIBV.h" afterPath="$PROJECT_DIR$/MetricsIBV.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MultiStreamTcpClient.cpp" afterPath="$PROJECT_DIR$/MultiStreamTcpClient.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MultiThreadTcpClient.cpp" afterPath="$PROJECT_DIR$/MultiThreadTcpClient.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MultiThreadTcpServer.cpp" afterPath="$PROJECT_DIR$/MultiThreadTcpServer.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NonBlockingTcpServer.cpp" afterPath="$PROJECT_DIR$/NonBlockingTcpServer.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Original/Makefile" afterPath="$PROJECT_DIR$/Original/Makefile" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Original/pingpong.c" afterPath="$PROJECT_DIR$/Original/pingpong.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Original/pingpong.h" afterPath="$PROJECT_DIR$/Original/pingpong.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Original/rc_pingpong.c" afterPath="$PROJECT_DIR$/Original/rc_pingpong.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SinglePingPongMaster.c" afterPath="$PROJECT_DIR$/SinglePingPongMaster.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SingleStreamTcpClient.cpp" afterPath="$PROJECT_DIR$/SingleStreamTcpClient.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SingleStreamTcpServer.cpp" afterPath="$PROJECT_DIR$/SingleStreamTcpServer.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Stream.cpp" afterPath="$PROJECT_DIR$/Stream.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Stream.hpp" afterPath="$PROJECT_DIR$/Stream.hpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/VaryingSizeTcpClient.cpp" afterPath="$PROJECT_DIR$/VaryingSizeTcpClient.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/multistreamPPSupport.c" afterPath="$PROJECT_DIR$/multistreamPPSupport.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/multistreamPPSupport.h" afterPath="$PROJECT_DIR$/multistreamPPSupport.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/multistreamTestRunner.c" afterPath="$PROJECT_DIR$/multistreamTestRunner.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pingpong.c" afterPath="$PROJECT_DIR$/pingpong.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pingpong.h" afterPath="$PROJECT_DIR$/pingpong.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rc_pingpong.c" afterPath="$PROJECT_DIR$/rc_pingpong.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rc_pingpong.h" afterPath="$PROJECT_DIR$/rc_pingpong.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/temp/CommonIBUtilFuncs.cpp" afterPath="$PROJECT_DIR$/temp/CommonIBUtilFuncs.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/temp/CommonIBUtilFuncs.hpp" afterPath="$PROJECT_DIR$/temp/CommonIBUtilFuncs.hpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/temp/IbMain.cpp" afterPath="$PROJECT_DIR$/temp/IbMain.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/temp/SimpleIBClient.cpp" afterPath="$PROJECT_DIR$/temp/SimpleIBClient.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/temp/SimpleIBClient.hpp" afterPath="$PROJECT_DIR$/temp/SimpleIBClient.hpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/temp/SimpleIBServer.cpp" afterPath="$PROJECT_DIR$/temp/SimpleIBServer.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/temp/SingleInfiniBandClient.c" afterPath="$PROJECT_DIR$/temp/SingleInfiniBandClient.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/temp/SingleInfiniBandServer.c" afterPath="$PROJECT_DIR$/temp/SingleInfiniBandServer.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/temp/temp.cpp" afterPath="$PROJECT_DIR$/temp/temp.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/temp/temp2.c" afterPath="$PROJECT_DIR$/temp/temp2.c" />
     </list>
     <list id="ed5b0da3-4860-4bf5-a85a-dd6805f11d6b" name="11" comment="" />
     <list id="786bcf74-7ba9-41dc-ad33-e0d7ede81f2a" name="New changelist" comment="" />
@@ -105,29 +64,28 @@
       <file leaf-file-name="multistreamTestRunner.c" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/multistreamTestRunner.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="146">
-              <caret line="37" column="14" selection-start-line="37" selection-start-column="14" selection-end-line="37" selection-end-column="14" />
+            <state relative-caret-position="375">
+              <caret line="431" column="23" selection-start-line="431" selection-start-column="23" selection-end-line="431" selection-end-column="23" />
               <folding>
                 <element signature="e#68#86#0" expanded="true" />
                 <element signature="e#437#497#1" expanded="false" />
-                <element signature="e#891#993#0" expanded="false" />
-                <element signature="e#1005#1091#1" expanded="false" />
-                <element signature="e#1094#2711#0" expanded="false" />
-                <element signature="e#2713#3339#0" expanded="false" />
-                <element signature="e#2851#2907#0" expanded="false" />
-                <element signature="e#3059#3111#0" expanded="false" />
-                <element signature="e#3159#3209#0" expanded="false" />
-                <element signature="e#3341#4831#0" expanded="false" />
-                <element signature="e#4404#4454#0" expanded="false" />
-                <element signature="e#6263#7616#0" expanded="false" />
-                <element signature="e#7920#9709#0" expanded="false" />
-                <element signature="e#14086#14638#0" expanded="false" />
-                <element signature="e#14640#15162#0" expanded="false" />
-                <element signature="e#15165#24989#0" expanded="false" />
-                <element signature="e#24992#29283#0" expanded="false" />
-                <marker date="1493889009874" expanded="false" signature="4992:6219" ph="{...}" />
-                <marker date="1493889009874" expanded="false" signature="7657:7917" ph="{...}" />
-                <marker date="1493889009874" expanded="false" signature="12979:14084" ph="{...}" />
+                <element signature="e#912#1014#0" expanded="false" />
+                <element signature="e#1026#1112#1" expanded="false" />
+                <element signature="e#1115#2732#0" expanded="false" />
+                <element signature="e#2734#3360#0" expanded="false" />
+                <element signature="e#2872#2928#0" expanded="false" />
+                <element signature="e#3080#3132#0" expanded="false" />
+                <element signature="e#3180#3230#0" expanded="false" />
+                <element signature="e#3362#4852#0" expanded="false" />
+                <element signature="e#4425#4475#0" expanded="false" />
+                <element signature="e#6284#7637#0" expanded="false" />
+                <element signature="e#7941#9730#0" expanded="false" />
+                <element signature="e#14499#15051#0" expanded="false" />
+                <element signature="e#15053#15575#0" expanded="false" />
+                <element signature="e#15578#25402#0" expanded="false" />
+                <element signature="e#25405#29696#0" expanded="false" />
+                <marker date="1493890764667" expanded="false" signature="5013:6240" ph="{...}" />
+                <marker date="1493890764667" expanded="false" signature="7678:7938" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -222,8 +180,8 @@
         <option value="$PROJECT_DIR$/Acceptor.hpp" />
         <option value="$PROJECT_DIR$/NonBlockingTcpServer.cpp" />
         <option value="$PROJECT_DIR$/MultiStreamTcpClient.cpp" />
-        <option value="$PROJECT_DIR$/multistreamTestRunner.c" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/multistreamTestRunner.c" />
       </list>
     </option>
   </component>
@@ -560,7 +518,7 @@
       <workItem from="1493451232100" duration="1112000" />
       <workItem from="1493480021576" duration="5603000" />
       <workItem from="1493791225540" duration="32768000" />
-      <workItem from="1493887563650" duration="2992000" />
+      <workItem from="1493887563650" duration="3200000" />
     </task>
     <task id="LOCAL-00001" summary="Added RTT evaluation">
       <created>1489742159010</created>
@@ -779,11 +737,18 @@
       <option name="project" value="LOCAL" />
       <updated>1493888072968</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="fixed size support">
+      <created>1493890626305</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1493890626305</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="214626000" />
+    <option name="totallyTimeSpent" value="214834000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="24" width="960" height="1032" extended-state="4" />
@@ -794,13 +759,13 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25655022" sideWeight="0.4801715" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32688588" sideWeight="0.4960894" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44468784" sideWeight="0.5198285" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3286026" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32858709" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32751092" sideWeight="0.49616122" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29206964" sideWeight="0.4782123" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32751092" sideWeight="0.49040306" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.45564073" sideWeight="0.4978166" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45564073" sideWeight="0.4978166" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -885,7 +850,8 @@
     <MESSAGE value="Ready for client" />
     <MESSAGE value="Remove extern C from metrics" />
     <MESSAGE value="Add metrics to multithread infiniband" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add metrics to multithread infiniband" />
+    <MESSAGE value="fixed size support" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed size support" />
     <option name="PRESELECT_EXISTING_CHANGELIST" value="false" />
   </component>
   <component name="XDebuggerManager">
@@ -893,17 +859,17 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/multistreamTestRunner.c</url>
-          <line>417</line>
+          <line>419</line>
           <option name="timeStamp" value="228" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/multistreamTestRunner.c</url>
-          <line>416</line>
+          <line>418</line>
           <option name="timeStamp" value="229" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/multistreamTestRunner.c</url>
-          <line>418</line>
+          <line>420</line>
           <option name="timeStamp" value="230" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -1232,29 +1198,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/multistreamTestRunner.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="146">
-          <caret line="37" column="14" selection-start-line="37" selection-start-column="14" selection-end-line="37" selection-end-column="14" />
+        <state relative-caret-position="375">
+          <caret line="431" column="23" selection-start-line="431" selection-start-column="23" selection-end-line="431" selection-end-column="23" />
           <folding>
             <element signature="e#68#86#0" expanded="true" />
             <element signature="e#437#497#1" expanded="false" />
-            <element signature="e#891#993#0" expanded="false" />
-            <element signature="e#1005#1091#1" expanded="false" />
-            <element signature="e#1094#2711#0" expanded="false" />
-            <element signature="e#2713#3339#0" expanded="false" />
-            <element signature="e#2851#2907#0" expanded="false" />
-            <element signature="e#3059#3111#0" expanded="false" />
-            <element signature="e#3159#3209#0" expanded="false" />
-            <element signature="e#3341#4831#0" expanded="false" />
-            <element signature="e#4404#4454#0" expanded="false" />
-            <element signature="e#6263#7616#0" expanded="false" />
-            <element signature="e#7920#9709#0" expanded="false" />
-            <element signature="e#14086#14638#0" expanded="false" />
-            <element signature="e#14640#15162#0" expanded="false" />
-            <element signature="e#15165#24989#0" expanded="false" />
-            <element signature="e#24992#29283#0" expanded="false" />
-            <marker date="1493889009874" expanded="false" signature="4992:6219" ph="{...}" />
-            <marker date="1493889009874" expanded="false" signature="7657:7917" ph="{...}" />
-            <marker date="1493889009874" expanded="false" signature="12979:14084" ph="{...}" />
+            <element signature="e#912#1014#0" expanded="false" />
+            <element signature="e#1026#1112#1" expanded="false" />
+            <element signature="e#1115#2732#0" expanded="false" />
+            <element signature="e#2734#3360#0" expanded="false" />
+            <element signature="e#2872#2928#0" expanded="false" />
+            <element signature="e#3080#3132#0" expanded="false" />
+            <element signature="e#3180#3230#0" expanded="false" />
+            <element signature="e#3362#4852#0" expanded="false" />
+            <element signature="e#4425#4475#0" expanded="false" />
+            <element signature="e#6284#7637#0" expanded="false" />
+            <element signature="e#7941#9730#0" expanded="false" />
+            <element signature="e#14499#15051#0" expanded="false" />
+            <element signature="e#15053#15575#0" expanded="false" />
+            <element signature="e#15578#25402#0" expanded="false" />
+            <element signature="e#25405#29696#0" expanded="false" />
+            <marker date="1493890764667" expanded="false" signature="5013:6240" ph="{...}" />
+            <marker date="1493890764667" expanded="false" signature="7678:7938" ph="{...}" />
           </folding>
         </state>
       </provider>
