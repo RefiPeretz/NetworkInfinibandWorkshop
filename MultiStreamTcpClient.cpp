@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
         printf("usage: %s <port> <ip> <number of msgs>\n", argv[0]);
         exit(1);
     }
-//    warmUpServer(atoi(argv[1]));
+    warmUpServer(atoi(argv[1]));
 
     int numMsgs = atoi(argv[3]);
     int len;
@@ -30,8 +30,8 @@ int main(int argc, char **argv) {
     double results[1000] = {0.0};
     int resultIndex = 0;
     int curMsgSize;
-    for (int msgSize = MIN_MSG_SIZE; msgSize <= 4096; msgSize = msgSize * 2){
-        for(int socketNum = 1; socketNum < MAX_CLIENTS; socketNum++){
+    for (int msgSize = MIN_MSG_SIZE; msgSize <= MAX_MSG_SIZE; msgSize = msgSize * 2){
+        for(int socketNum = 1; socketNum <= MAX_CLIENTS; socketNum++){
             t1 = 0.0;
             t2 = 0.0;
             int msgSizes[socketNum] = {0};
@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
                     bytesRead = 0;
                     if (streams[stream]) {
                         streams[stream]->send(msgs[stream], msgSizes[stream]);
-                        printf("sent - %s with sizeof %d\n", msgs[stream], msgSizes[stream]);
+                        printf("Sent %d Bytes\n",  msgSizes[stream]);
                         bytesRead +=  streams[stream]->receive(ack, MAX_MSG_SIZE);
                         //printf("Bytes read before loop %d\n",bytesRead);
                         while(bytesRead < msgSizes[stream]){

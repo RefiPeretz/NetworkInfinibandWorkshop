@@ -13,6 +13,7 @@
 
 #define DEFAULT_THREAD_TIME -1
 #define DEFAULT_NUM_OF_MSGS 1000
+#define MAX_MSG_SIZE 1048576
 
 
 double calcAverageRTT(int numOfSockets,size_t numOfMessages, double totalTime);
@@ -28,6 +29,6 @@ double calcAverageThroughput(size_t numOfMessages, size_t messageSize, double to
 
 double calcAveragePacketRate(size_t numOfMessages, double totalTime);
 
-int saveResults(double rtt,double throughput, double packetRate,int resultIndex,double *results,int numOfSockets,int msgSize,int totalNumOfMsg);
+int saveResults(double rtt,double throughput, double packetRate,int resultIndex,double results[],int numOfSockets,int msgSize,int totalNumOfMsg);
 
 #endif //EX1V2_METRICSIBV_H
