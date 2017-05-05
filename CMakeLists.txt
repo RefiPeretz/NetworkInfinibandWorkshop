@@ -61,7 +61,7 @@ add_executable(SinglePingp ${SinglePingp1} MetricsIBV.c MetricsIBV.h)
 target_link_libraries(SinglePingp "${GCC_COVERAGE_LINK_FLAGS}")
 
 set(MultiStreamIBFiles multistreamPPSupport.c multistreamPPSupport.h
-        multistreamTestRunner.c)
+        multistreamTestRunner.c MetricsIBV.c MetricsIBV.h)
 add_executable(MultiStreamIB ${MultiStreamIBFiles})
 target_link_libraries(MultiStreamIB "${GCC_COVERAGE_LINK_FLAGS}")
 

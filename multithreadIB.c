@@ -914,7 +914,6 @@ int main(int argc, char *argv[])
                        "client - servername\n");
         return 1;
     }
-    //    void *time;
     pthread_t *pthread;
     Commands commands;
 
@@ -1009,17 +1008,17 @@ int main(int argc, char *argv[])
 
             }
             free(pthread);
-            double rtt = calcAverageRTT(1,DEFAULT_NUM_OF_MSGS*numThreads, maxThreadTime);
-            double packetRate = calcAveragePacketRate(DEFAULT_NUM_OF_MSGS*numThreads,maxThreadTime);
-            double throughput = calcAverageThroughput(DEFAULT_NUM_OF_MSGS*numThreads,varsize,maxThreadTime);
+            double rtt = calcAverageRTT(numThreads,DEFAULT_NUM_OF_MSGS, maxThreadTime);
+            double packetRate = calcAveragePacketRate(DEFAULT_NUM_OF_MSGS,maxThreadTime)/numThreads;
+            double throughput = calcAverageThroughput(DEFAULT_NUM_OF_MSGS,varsize,maxThreadTime)/numThreads;
             double numOfSockets = numThreads;
             printf("avgRTT: %g\n", rtt);
             printf("avgPacketRate: %g\n", packetRate);
             printf("avgThroughput: %g\n", throughput);
-            resultIndex = saveResults(rtt,throughput,packetRate,resultIndex,results,numOfSockets,varsize,DEFAULT_NUM_OF_MSGS*numThreads);
+            resultIndex = saveResults(rtt,throughput,packetRate,resultIndex,results,numOfSockets,varsize,DEFAULT_NUM_OF_MSGS);
 
         }
     }
-    char* filename = "infinband.csv";
+    char* filename = "InfinbandMultiSingleThread.csv";
     createCSV(filename,results,1000);
 }

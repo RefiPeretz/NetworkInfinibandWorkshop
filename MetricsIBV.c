@@ -15,6 +15,7 @@
 
 double calcAverageRTT(int numOfSockets,size_t numOfMessages, double totalTime)
 {
+    printf("Calc time diff\n");
     return (totalTime / (double)numOfMessages)/numOfSockets;
 }
 
@@ -37,7 +38,7 @@ double calcAveragePacketRate(size_t numOfMessages, double totalTime)
 }
 
 
-int saveResults(double rtt,double throughput, double packetRate,int resultIndex,double *results,int numOfSockets,int msgSize, int totalNumOfMsg){
+int saveResults(double rtt,double throughput, double packetRate,int resultIndex,double results[],int numOfSockets,int msgSize, int totalNumOfMsg){
     results[resultIndex] = rtt;
     resultIndex++;
     results[resultIndex] = throughput;
@@ -63,7 +64,7 @@ void createCSV(char *filename,double results[],int n){
 
     fp=fopen(filename,"w+");
 
-    fprintf(fp,"Results,Number of Threads/Sockets[Integer],Number Of messages[Integer],Size per message[Bytes],RTT[us],Throughput[Mib/s],Packet Rate[P/s],Packet Size[Bytes]\n");
+    fprintf(fp,"Results,Number of Threads/Sockets[Integer],Number Of messages[Integer],Packet Size[Bytes],Size per message[Bytes],RTT[us],Throughput[Mib/s],Packet Rate[P/s]\n");
 
     for(int i =0; i < n ;i+=6){
         rttIndex = i;
@@ -73,13 +74,14 @@ void createCSV(char *filename,double results[],int n){
         packetSize = i + 4;
         totalNumOfMsgs = i+5;
 
-        fprintf(fp,",%f ",results[numOfSockets]);
-        fprintf(fp,",%f ",results[totalNumOfMsgs]);
-        fprintf(fp,",%f",results[packetSize]/results[numOfSockets]);
-        fprintf(fp,",%f ",results[rttIndex]);
-        fprintf(fp,",%f ",results[throIndex]);
-        fprintf(fp,",%f ",results[pktRate]);
-        fprintf(fp,",%f\n",results[packetSize]);
+        fprintf(fp,",%.0f ",results[numOfSockets]);
+        fprintf(fp,",%.0f ",results[totalNumOfMsgs]);
+        fprintf(fp,",%.0f",results[packetSize]);
+        fprintf(fp,",%.2f",results[packetSize]/results[numOfSockets]);
+        fprintf(fp,",%.2f ",results[rttIndex]);
+        fprintf(fp,",%.2f ",results[throIndex]);
+        fprintf(fp,",%.2f\n",results[pktRate]);
+
 
     }
 
