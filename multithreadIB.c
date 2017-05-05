@@ -713,7 +713,8 @@ void *runPingPong(void *commands1)
             return (void *) 1;
         }
     }
-
+    close(connfd);
+    printf("Closed TCP connection to remote\n");
     ctx->pending = PINGPONG_RECV_WRID;
 
     if (servername)
@@ -910,13 +911,19 @@ int main(int argc, char *argv[])
 
         for (int numThreads = 1; numThreads <= maxThreadNum; numThreads *= 2)
         {
-            int regularSize = (int) floor(varsize / numThreads);
-            printf("Size per regular thread %d\n", regularSize);
-            int leftOverPayloadSize = ((int) varsize - regularSize);
-            printf("Size per first thread %d\n", leftOverPayloadSize);
-
-
             printf("starting round with %d threads\n", (numThreads));
+
+            int *sizePerPeer = calloc(numThreads, sizeof(int));
+            int regularSize = (int) floor(varsize / numThreads);
+            for(int i = 1; i < numThreads; i++) {
+                sizePerPeer[i] = regularSize;
+            }
+            sizePerPeer[0] = (varsize - (regularSize * (numThreads - 1)));
+
+
+            printf("Size per regular thread %d\n", regularSize);
+            printf("Size per first thread %d\n", sizePerPeer[0]);
+
             pthread = (pthread_t *) calloc(numThreads, sizeof(pthread_t));
 
 
@@ -931,11 +938,9 @@ int main(int argc, char *argv[])
                     newCommands = calloc(0, sizeof(Commands));
                     newCommands->port = commands.port;
                     newCommands->servername = commands.servername;
-                    newCommands->size = regularSize;
-                    if(thread == 0 && numThreads != 1){
-                        newCommands->size = leftOverPayloadSize;
-                    }
+                    newCommands->size = sizePerPeer[thread];
                     if(newCommands->size == 0){
+                        printf("Payload size is zero- skipping thread\n");
                         thread++;
                         continue;
                     }
@@ -959,23 +964,25 @@ int main(int argc, char *argv[])
 
                 for (int thread = 0; thread < numThreads; thread++)
                 {
-                    int sockfd = createClientSocketConnection(commands.port,
-                                                                   commands.servername);
-                    if (sockfd== -1) {
-                        fprintf(stderr, "Error creating socket\n");
-                        return 1;
-                    }
+
                     Commands *newCommands;
                     newCommands = calloc(0, sizeof(Commands));
                     newCommands->port = commands.port;
                     newCommands->servername = commands.servername;
-                    newCommands->size = regularSize;
-                    if(thread == 0 && numThreads != 1){
-                        newCommands->size = leftOverPayloadSize;
-                    }
+                    newCommands->size = sizePerPeer[thread];
                     if(newCommands->size == 0){
+                        printf("Payload size is zero- skipping thread\n");
+                        thread++;
                         continue;
                     }
+
+                    int sockfd = createClientSocketConnection(commands.port,
+                                                              commands.servername);
+                    if (sockfd== -1) {
+                        fprintf(stderr, "Error creating socket\n");
+                        return 1;
+                    }
+
                     (*newCommands).connfd = sockfd;
                     printf("new connection fd - %d\n", (*newCommands).connfd);
                     pthread_create(&pthread[thread], NULL, runPingPong,
@@ -1002,6 +1009,7 @@ int main(int argc, char *argv[])
                 }
 
             }
+            free(sizePerPeer);
             free(pthread);
             double rtt = calcAverageRTT(numThreads,DEFAULT_NUM_OF_MSGS, maxThreadTime);
             double packetRate = calcAveragePacketRate(DEFAULT_NUM_OF_MSGS,maxThreadTime)/numThreads;
