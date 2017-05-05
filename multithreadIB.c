@@ -932,7 +932,7 @@ int main(int argc, char *argv[])
                     newCommands->port = commands.port;
                     newCommands->servername = commands.servername;
                     newCommands->size = regularSize;
-                    if(thread == 0 & numThreads != 1){
+                    if(thread == 0 && numThreads != 1){
                         newCommands->size = leftOverPayloadSize;
                     }
                     if(newCommands->size == 0){
@@ -970,7 +970,7 @@ int main(int argc, char *argv[])
                     newCommands->port = commands.port;
                     newCommands->servername = commands.servername;
                     newCommands->size = regularSize;
-                    if(thread == 0 & numThreads != 1){
+                    if(thread == 0 && numThreads != 1){
                         newCommands->size = leftOverPayloadSize;
                     }
                     if(newCommands->size == 0){
