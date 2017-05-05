@@ -29,20 +29,9 @@
     </ADDITIONAL_GENERATION_ENVIRONMENT>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="Add metrics to multithread infiniband">
+    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="fixed size support">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-<<<<<<< Updated upstream
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/multithreadIB.c" afterPath="$PROJECT_DIR$/multithreadIB.c" />
-=======
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Metrics.cpp" afterPath="$PROJECT_DIR$/Metrics.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Metrics.hpp" afterPath="$PROJECT_DIR$/Metrics.hpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MultiStreamTcpClient.cpp" afterPath="$PROJECT_DIR$/MultiStreamTcpClient.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MultiThreadTcpClient.cpp" afterPath="$PROJECT_DIR$/MultiThreadTcpClient.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MultiThreadTcpServer.cpp" afterPath="$PROJECT_DIR$/MultiThreadTcpServer.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NonBlockingTcpServer.cpp" afterPath="$PROJECT_DIR$/NonBlockingTcpServer.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Stream.cpp" afterPath="$PROJECT_DIR$/Stream.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Stream.hpp" afterPath="$PROJECT_DIR$/Stream.hpp" />
->>>>>>> Stashed changes
     </list>
     <list id="ed5b0da3-4860-4bf5-a85a-dd6805f11d6b" name="11" comment="" />
     <list id="786bcf74-7ba9-41dc-ad33-e0d7ede81f2a" name="New changelist" comment="" />
@@ -62,19 +51,33 @@
     <favorites_list name="H_CCW17" />
   </component>
   <component name="FileEditorManager">
-<<<<<<< Updated upstream
-    <splitter split-orientation="horizontal" split-proportion="0.4776198">
+    <splitter split-orientation="horizontal" split-proportion="0.5713533">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file leaf-file-name="multithreadIB.c" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/multithreadIB.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="238">
-                  <caret line="934" column="37" selection-start-line="934" selection-start-column="37" selection-end-line="934" selection-end-column="37" />
+                <state relative-caret-position="1276">
+                  <caret line="977" column="0" selection-start-line="977" selection-start-column="0" selection-end-line="977" selection-end-column="0" />
                   <folding>
-                    <element signature="e#1454#1475#0" expanded="true" />
-                    <element signature="e#29550#29600#0" expanded="false" />
-                    <marker date="1493983899129" expanded="false" signature="1513:1854" ph="..." />
+                    <element signature="e#0#1434#0" expanded="false" />
+                    <element signature="e#1942#2002#1" expanded="false" />
+                    <element signature="e#2027#2316#1" expanded="false" />
+                    <element signature="e#2326#2411#0" expanded="false" />
+                    <element signature="e#2423#2509#1" expanded="false" />
+                    <element signature="e#2512#4140#0" expanded="false" />
+                    <element signature="e#4142#5512#0" expanded="false" />
+                    <element signature="e#5620#6973#0" expanded="false" />
+                    <element signature="e#6975#7400#0" expanded="false" />
+                    <element signature="e#7403#10482#0" expanded="false" />
+                    <element signature="e#10484#12857#0" expanded="false" />
+                    <element signature="e#12859#13744#0" expanded="false" />
+                    <element signature="e#13746#14236#0" expanded="false" />
+                    <element signature="e#14238#14675#0" expanded="false" />
+                    <element signature="e#14678#23009#0" expanded="false" />
+                    <element signature="e#28730#30148#0" expanded="false" />
+                    <element signature="e#29737#29787#0" expanded="false" />
+                    <marker date="1493990669196" expanded="false" signature="1513:1854" ph="..." />
                   </folding>
                 </state>
               </provider>
@@ -97,8 +100,8 @@
           <file leaf-file-name="multistreamTestRunner.c" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/multistreamTestRunner.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="307">
-                  <caret line="380" column="0" selection-start-line="380" selection-start-column="0" selection-end-line="380" selection-end-column="0" />
+                <state relative-caret-position="415">
+                  <caret line="382" column="20" selection-start-line="382" selection-start-column="20" selection-end-line="382" selection-end-column="20" />
                   <folding>
                     <element signature="e#461#521#1" expanded="false" />
                     <element signature="e#547#927#1" expanded="false" />
@@ -109,14 +112,15 @@
                     <element signature="e#2886#2942#0" expanded="false" />
                     <element signature="e#3082#3134#0" expanded="false" />
                     <element signature="e#3182#3232#0" expanded="false" />
+                    <element signature="e#3356#4774#0" expanded="false" />
                     <element signature="e#4363#4413#0" expanded="false" />
+                    <element signature="e#4776#6146#0" expanded="false" />
                     <element signature="e#6190#7503#0" expanded="false" />
                     <element signature="e#7505#7800#0" expanded="false" />
                     <element signature="e#7803#9573#0" expanded="false" />
                     <element signature="e#12781#13865#0" expanded="false" />
                     <element signature="e#13867#14538#0" expanded="false" />
                     <element signature="e#14540#15199#0" expanded="false" />
-                    <element signature="e#15202#25218#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -125,118 +129,6 @@
         </leaf>
       </split-second>
     </splitter>
-=======
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="NonBlockingTcpServer.cpp" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/NonBlockingTcpServer.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="22" column="21" selection-start-line="22" selection-start-column="21" selection-end-line="22" selection-end-column="21" />
-              <folding>
-                <element signature="e#40#58#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="multistreamTestRunner.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/multistreamTestRunner.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="637">
-              <caret line="981" column="43" selection-start-line="981" selection-start-column="43" selection-end-line="981" selection-end-column="43" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MultiThreadTcpClient.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MultiThreadTcpClient.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="463">
-              <caret line="124" column="39" selection-start-line="124" selection-start-column="39" selection-end-line="124" selection-end-column="39" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Stream.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Stream.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Metrics.hpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Metrics.hpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="8" column="18" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="18" />
-              <folding>
-                <element signature="e#312#330#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MultiStreamTcpClient.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MultiStreamTcpClient.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1098">
-              <caret line="79" column="25" selection-start-line="79" selection-start-column="25" selection-end-line="79" selection-end-column="25" />
-              <folding>
-                <element signature="e#40#58#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Metrics.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Metrics.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="397">
-              <caret line="83" column="5" selection-start-line="83" selection-start-column="5" selection-end-line="83" selection-end-column="5" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MultiThreadTcpServer.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MultiThreadTcpServer.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="669">
-              <caret line="57" column="45" selection-start-line="57" selection-start-column="45" selection-end-line="57" selection-end-column="45" />
-              <folding>
-                <element signature="e#40#58#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="sched.h" pinned="false" current-in-tab="false">
-        <entry file="file:///usr/include/sched.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="79" column="9" selection-start-line="79" selection-start-column="9" selection-end-line="79" selection-end-column="9" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Stream.hpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Stream.hpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="21" column="22" selection-start-line="21" selection-start-column="22" selection-end-line="21" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
->>>>>>> Stashed changes
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -280,7 +172,6 @@
   <component name="Git.Settings">
     <option name="PUSH_AUTO_UPDATE" value="true" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RESET_MODE" value="HARD" />
     <option name="PUSH_TAGS">
       <GitPushTagMode />
     </option>
@@ -295,6 +186,7 @@
         <option value="$PROJECT_DIR$/Accept.hpp" />
         <option value="$PROJECT_DIR$/Server.cpp" />
         <option value="$PROJECT_DIR$/Connector.hpp" />
+        <option value="$PROJECT_DIR$/Connector.cpp" />
         <option value="$PROJECT_DIR$/main.cpp" />
         <option value="$PROJECT_DIR$/Client.cpp" />
         <option value="$PROJECT_DIR$/MultiStreamSizeClient.cpp" />
@@ -308,33 +200,27 @@
         <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/SimpleIBServer.cpp" />
         <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/CommonIBUtilFuncs.cpp" />
         <option value="$PROJECT_DIR$/CommonIBUtilFuncs.cpp" />
-        <option value="$PROJECT_DIR$/../../../../+/usr/refi950/H_CCW17/rc_pingpong.c" />
-        <option value="$PROJECT_DIR$/../../../../+/usr/refi950/H_CCW17/MetricsIBV.c" />
-        <option value="$PROJECT_DIR$/Connector.cpp" />
-        <option value="$PROJECT_DIR$/Acceptor.hpp" />
-        <option value="$PROJECT_DIR$/Acceptor.cpp" />
-        <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/SingleStreamTcpServer.cpp" />
+        <option value="$PROJECT_DIR$/Metrics.cpp" />
+        <option value="$PROJECT_DIR$/MultiThreadTcpClient.cpp" />
         <option value="$PROJECT_DIR$/MetricsIBV.h" />
-        <option value="$PROJECT_DIR$/multistreamTestRunner.c" />
+        <option value="$PROJECT_DIR$/../../../../+/usr/refi950/H_CCW17/rc_pingpong.c" />
         <option value="$PROJECT_DIR$/MetricsIBV.c" />
         <option value="$PROJECT_DIR$/rc_pingpong.c" />
-        <option value="$PROJECT_DIR$/Metrics.cpp" />
-        <option value="$PROJECT_DIR$/SingleStreamTcpServer.cpp" />
-        <option value="$PROJECT_DIR$/SingleStreamTcpClient.cpp" />
-        <option value="$PROJECT_DIR$/Stream.cpp" />
+        <option value="$PROJECT_DIR$/../../../../+/usr/refi950/H_CCW17/MetricsIBV.c" />
         <option value="$PROJECT_DIR$/Stream.hpp" />
+        <option value="$PROJECT_DIR$/Stream.cpp" />
         <option value="$PROJECT_DIR$/MultiThreadTcpServer.cpp" />
+        <option value="$PROJECT_DIR$/SingleStreamTcpClient.cpp" />
         <option value="$PROJECT_DIR$/Metrics.hpp" />
-        <option value="$PROJECT_DIR$/MultiThreadTcpClient.cpp" />
+        <option value="$PROJECT_DIR$/Acceptor.cpp" />
+        <option value="$PROJECT_DIR$/Acceptor.hpp" />
+        <option value="$PROJECT_DIR$/NonBlockingTcpServer.cpp" />
         <option value="$PROJECT_DIR$/MultiStreamTcpClient.cpp" />
-<<<<<<< Updated upstream
         <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/multistreamTestRunner.c" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/multistreamTestRunner.c" />
         <option value="$PROJECT_DIR$/multithreadIB.c" />
-=======
-        <option value="$PROJECT_DIR$/NonBlockingTcpServer.cpp" />
->>>>>>> Stashed changes
       </list>
     </option>
   </component>
@@ -346,38 +232,10 @@
   </component>
   <component name="OCFindUsagesOptions" text="false" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds">
-    <option name="x" value="-4" />
+    <option name="x" value="-3" />
     <option name="y" value="24" />
-    <option name="width" value="1928" />
+    <option name="width" value="1926" />
     <option name="height" value="1035" />
-  </component>
-  <component name="ProjectInspectionProfilesVisibleTreeState">
-    <entry key="Project Default">
-      <profile-state>
-        <expanded-state>
-          <State>
-            <id />
-          </State>
-          <State>
-            <id>Data flow issuesJavaScript</id>
-          </State>
-          <State>
-            <id>Error handlingJavaScript</id>
-          </State>
-          <State>
-            <id>JavaScript</id>
-          </State>
-          <State>
-            <id>JavaScript validity issuesJavaScript</id>
-          </State>
-        </expanded-state>
-        <selected-state>
-          <State>
-            <id>C/C++</id>
-          </State>
-        </selected-state>
-      </profile-state>
-    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -397,7 +255,7 @@
       <showLibraryContents />
       <hideEmptyPackages />
       <abbreviatePackageNames />
-      <autoscrollToSource />
+      <autoscrollToSource ProjectPane="true" />
       <autoscrollFromSource />
       <sortByType />
       <manualOrder />
@@ -405,31 +263,14 @@
     </navigator>
     <panes>
       <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="H_CCW17" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="H_CCW17" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="H_CCW17" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
+        <subPane />
       </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../+/usr/fimak/temp1/RDMA-Tutorial" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="Debugger.ObjectiveC" />
     <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/SingleStreamTcpServer.cpp" />
     <property name="nodejs_interpreter_path" value="/usr/local/bin/node" />
     <property name="js.eslint.eslintPackage" value="" />
@@ -441,7 +282,6 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-<<<<<<< Updated upstream
   <component name="RestoreUpdateTree" date="Moments ago" ActionInfo="_Update">
     <UpdatedFiles>
       <FILE-GROUP>
@@ -456,17 +296,15 @@
           <option name="mySupportsDeletion" value="false" />
           <option name="myCanBeAbsent" value="false" />
           <option name="myId" value="UPDATED" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/Acceptor.cpp</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/Acceptor.hpp</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/CMakeLists.txt</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/.idea/workspace.xml</PATH>
           <PATH vcs="Git" revision="">$PROJECT_DIR$/Metrics.cpp</PATH>
           <PATH vcs="Git" revision="">$PROJECT_DIR$/Metrics.hpp</PATH>
           <PATH vcs="Git" revision="">$PROJECT_DIR$/MultiStreamTcpClient.cpp</PATH>
           <PATH vcs="Git" revision="">$PROJECT_DIR$/MultiThreadTcpClient.cpp</PATH>
           <PATH vcs="Git" revision="">$PROJECT_DIR$/MultiThreadTcpServer.cpp</PATH>
           <PATH vcs="Git" revision="">$PROJECT_DIR$/NonBlockingTcpServer.cpp</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/SingleStreamTcpServer.cpp</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/rc_pingpong.c</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/Stream.cpp</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/Stream.hpp</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
           <option name="myUpdateName" value="Created" />
@@ -563,9 +401,6 @@
     </UpdatedFiles>
   </component>
   <component name="RunManager" selected="Application.multithreadIB">
-=======
-  <component name="RunManager" selected="Application.MultiStreamTcpClient">
->>>>>>> Stashed changes
     <configuration default="true" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="" symbolFile="" sysroot="">
       <method />
     </configuration>
@@ -730,11 +565,7 @@
       <option name="USE_KEYWORD" value="false" />
       <method />
     </configuration>
-    <configuration default="false" name="Unnamed (1)" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="SinglePingp" EXPLICIT_BUILD_TARGET_NAME="all">
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="false" name="SingleStreamTcpClient" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="8081 127.0.0.1  200" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="SingleStreamTcpClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="SingleStreamTcpClient">
+    <configuration default="false" name="SingleStreamTcpClient" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="8081 127.0.0.1 200" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="SingleStreamTcpClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="SingleStreamTcpClient">
       <envs />
       <method />
     </configuration>
@@ -742,11 +573,11 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="SingleStreamTcpServer" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="8081" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="SingleStreamTcpServer" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="SingleStreamTcpServer">
+    <configuration default="false" name="SingleStreamTcpServer" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="8081 127.0.0.1" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="SingleStreamTcpServer" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="SingleStreamTcpServer">
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="MultiStreamTcpClient" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="15666 10 localhost" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="MultiStreamTcpClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="MultiStreamTcpClient">
+    <configuration default="false" name="MultiStreamTcpClient" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="8081 localhost 10" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="MultiStreamTcpClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="MultiStreamTcpClient">
       <envs />
       <method />
     </configuration>
@@ -754,15 +585,15 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="MultiThreadTcpServer" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="15666 127.0.0.1" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="MultiThreadTcpServer" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="MultiThreadTcpServer">
+    <configuration default="false" name="MultiThreadTcpServer" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="8081 127.0.0.1 3" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="MultiThreadTcpServer" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="MultiThreadTcpServer">
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="NonBlockingTcpServer" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="15666" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="NonBlockingTcpServer" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="NonBlockingTcpServer">
+    <configuration default="false" name="NonBlockingTcpServer" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="8081 127.0.0.1" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="NonBlockingTcpServer" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="NonBlockingTcpServer">
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="MultiThreadTcpClient" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="15666 100 localhost" WORKING_DIR="file://$PROJECT_DIR$/../../../../+/usr/refi950/H_CCW17/Debug" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="MultiThreadTcpClient" CONFIG_NAME="Release" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="MultiThreadTcpClient">
+    <configuration default="false" name="MultiThreadTcpClient" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="100" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="MultiThreadTcpClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="MultiThreadTcpClient">
       <envs />
       <method />
     </configuration>
@@ -782,15 +613,14 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="Unnamed" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="mlx-stud-01:8081" symbolFile="$PROJECT_DIR$/pingp" sysroot="">
-      <pathMapping remote=":~/safe/H_CCW17" local="~/safe/H_CCW17" />
+    <configuration default="false" name="mlx-stud-01:8081" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="mlx-stud-01:8081" symbolFile="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/mspp" sysroot="">
+      <pathMapping remote=":/cs/+/usr/fimak/H_CCW17/" local="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/" />
       <method />
     </configuration>
-    <configuration default="false" name="Unnamed (1)" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="mlx-stud-01:8081" symbolFile="$PROJECT_DIR$/../temp/pingp" sysroot="">
-      <pathMapping remote=":/cs/usr/fimak/safe/temp/" local="$PROJECT_DIR$/../temp/" />
+    <configuration default="false" name="mlx-stud-02:8080" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="mlx-stud-02:8080" symbolFile="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/mspp" sysroot="">
+      <pathMapping remote=":/cs/+/usr/fimak/H_CCW17/" local="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/" />
       <method />
     </configuration>
-<<<<<<< Updated upstream
     <configuration default="false" name="multithreadIB" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="multithreadIB" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="multithreadIB">
       <envs />
       <method />
@@ -811,24 +641,6 @@
       <item index="12" class="java.lang.String" itemvalue="GDB Remote Debug.mlx-stud-01:8081" />
       <item index="13" class="java.lang.String" itemvalue="GDB Remote Debug.mlx-stud-02:8080" />
       <item index="14" class="java.lang.String" itemvalue="Application.multithreadIB" />
-=======
-    <list size="15">
-      <item index="0" class="java.lang.String" itemvalue="Application.Unnamed (1)" />
-      <item index="1" class="java.lang.String" itemvalue="Application.SingleStreamTcpClient" />
-      <item index="2" class="java.lang.String" itemvalue="Application.Unnamed" />
-      <item index="3" class="java.lang.String" itemvalue="Application.SingleStreamTcpServer" />
-      <item index="4" class="java.lang.String" itemvalue="Application.MultiStreamTcpClient" />
-      <item index="5" class="java.lang.String" itemvalue="Application.VaryingSizeTcpClient" />
-      <item index="6" class="java.lang.String" itemvalue="Application.MultiThreadTcpServer" />
-      <item index="7" class="java.lang.String" itemvalue="Application.NonBlockingTcpServer" />
-      <item index="8" class="java.lang.String" itemvalue="Application.MultiThreadTcpClient" />
-      <item index="9" class="java.lang.String" itemvalue="Application.SimpleIBClient" />
-      <item index="10" class="java.lang.String" itemvalue="Application.SimpleIBServer" />
-      <item index="11" class="java.lang.String" itemvalue="Application.SinglePingp" />
-      <item index="12" class="java.lang.String" itemvalue="Application.MultiStreamIB" />
-      <item index="13" class="java.lang.String" itemvalue="GDB Remote Debug.Unnamed" />
-      <item index="14" class="java.lang.String" itemvalue="GDB Remote Debug.Unnamed (1)" />
->>>>>>> Stashed changes
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
@@ -869,13 +681,9 @@
       <workItem from="1493451232100" duration="1112000" />
       <workItem from="1493480021576" duration="5603000" />
       <workItem from="1493791225540" duration="32768000" />
-<<<<<<< Updated upstream
       <workItem from="1493887563650" duration="10207000" />
       <workItem from="1493903723367" duration="3904000" />
-      <workItem from="1493968809926" duration="4759000" />
-=======
-      <workItem from="1493968720861" duration="20725000" />
->>>>>>> Stashed changes
+      <workItem from="1493968809926" duration="10839000" />
     </task>
     <task id="LOCAL-00001" summary="Added RTT evaluation">
       <created>1489742159010</created>
@@ -1088,20 +896,47 @@
       <updated>1493808448436</updated>
     </task>
     <task id="LOCAL-00031" summary="Add metrics to multithread infiniband">
-      <created>1493907678600</created>
+      <created>1493888072968</created>
       <option name="number" value="00031" />
       <option name="presentableId" value="LOCAL-00031" />
       <option name="project" value="LOCAL" />
-      <updated>1493907678600</updated>
+      <updated>1493888072968</updated>
     </task>
-    <task id="LOCAL-00032" summary="Update Metrics for multistream">
-      <created>1493979763881</created>
+    <task id="LOCAL-00032" summary="fixed size support">
+      <created>1493890626305</created>
       <option name="number" value="00032" />
       <option name="presentableId" value="LOCAL-00032" />
       <option name="project" value="LOCAL" />
-      <updated>1493979763881</updated>
+      <updated>1493890626305</updated>
     </task>
-<<<<<<< Updated upstream
+    <task id="LOCAL-00033" summary="fixed size support">
+      <created>1493890768249</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1493890768249</updated>
+    </task>
+    <task id="LOCAL-00034" summary="fixed size support">
+      <created>1493904808850</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1493904808850</updated>
+    </task>
+    <task id="LOCAL-00035" summary="fixed size support">
+      <created>1493906869759</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1493906869759</updated>
+    </task>
+    <task id="LOCAL-00036" summary="fixed size support">
+      <created>1493906956851</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1493906956851</updated>
+    </task>
     <task id="LOCAL-00037" summary="fixed size support">
       <created>1493907312163</created>
       <option name="number" value="00037" />
@@ -1130,48 +965,33 @@
       <option name="project" value="LOCAL" />
       <updated>1493983859126</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="fixed size support">
+      <created>1493983901765</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1493983901765</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="230504000" />
-=======
-    <option name="localTasksCounter" value="33" />
-    <servers />
-  </component>
-  <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="240800000" />
->>>>>>> Stashed changes
+    <option name="totallyTimeSpent" value="236584000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-4" y="24" width="1928" height="1035" extended-state="6" />
+    <frame x="-3" y="24" width="1926" height="1035" extended-state="6" />
     <editor active="true" />
     <layout>
-<<<<<<< Updated upstream
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17746182" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2521834" sideWeight="0.4801715" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3264192" sideWeight="0.4960894" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44468784" sideWeight="0.5198285" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32751092" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3264192" sideWeight="0.49616122" order="3" side_tool="false" content_ui="tabs" />
-=======
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30068457" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37417942" sideWeight="0.4801715" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32603937" sideWeight="0.4960894" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44468784" sideWeight="0.5198285" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19803064" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32821077" sideWeight="0.49616122" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29102844" sideWeight="0.4782123" order="7" side_tool="false" content_ui="tabs" />
->>>>>>> Stashed changes
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3264192" sideWeight="0.49616122" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32788375" sideWeight="0.49040306" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32751092" sideWeight="0.49040306" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-<<<<<<< Updated upstream
-=======
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4059081" sideWeight="0.4978166" order="8" side_tool="false" content_ui="tabs" />
->>>>>>> Stashed changes
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1258,15 +1078,14 @@
     <MESSAGE value="Ready for client" />
     <MESSAGE value="Remove extern C from metrics" />
     <MESSAGE value="Add metrics to multithread infiniband" />
-    <MESSAGE value="Update Metrics for multistream" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update Metrics for multistream" />
+    <MESSAGE value="fixed size support" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed size support" />
     <option name="PRESELECT_EXISTING_CHANGELIST" value="false" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-<<<<<<< Updated upstream
           <url>file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/multistreamTestRunner.c</url>
           <line>409</line>
           <option name="timeStamp" value="231" />
@@ -1283,7 +1102,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/MultiThreadTcpClient.cpp</url>
-          <line>23</line>
+          <line>27</line>
           <option name="timeStamp" value="234" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -1363,27 +1182,16 @@
           <line>620</line>
           <option name="timeStamp" value="259" />
         </line-breakpoint>
-=======
-          <url>file://$PROJECT_DIR$/MultiThreadTcpClient.cpp</url>
-          <line>42</line>
-          <option name="timeStamp" value="237" />
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/multithreadIB.c</url>
+          <line>926</line>
+          <option name="timeStamp" value="260" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/MultiStreamTcpClient.cpp</url>
-          <line>69</line>
-          <option name="timeStamp" value="240" />
+          <url>file://$PROJECT_DIR$/multithreadIB.c</url>
+          <line>971</line>
+          <option name="timeStamp" value="261" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Metrics.hpp</url>
-          <line>15</line>
-          <option name="timeStamp" value="244" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/MultiThreadTcpClient.cpp</url>
-          <line>23</line>
-          <option name="timeStamp" value="245" />
-        </line-breakpoint>
->>>>>>> Stashed changes
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
@@ -1395,20 +1203,19 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="246" />
+      <option name="time" value="262" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="CLion_Remote">
-        <watch expression="connection" />
+        <watch expression="routs_arr[1]" language="ObjectiveC" />
+        <watch expression="routs_arr[4]" language="ObjectiveC" />
+        <watch expression="((int)(routs_arr[0]))" />
+        <watch expression="k" />
       </configuration>
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-<<<<<<< Updated upstream
-    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/temp1/RDMA-Tutorial/server.c" />
     <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/temp1/RDMA-Tutorial/setup_ib.h" />
-=======
->>>>>>> Stashed changes
     <entry file="file:///usr/include/unistd.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="157">
@@ -1458,13 +1265,6 @@
     <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/CommonIBUtilFuncs.cpp" />
     <entry file="file://$PROJECT_DIR$/CommonIBUtilFuncs.cpp" />
     <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/SimpleIBServer.cpp" />
-    <entry file="file:///usr/include/infiniband/verbs.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16192">
-          <caret line="704" column="24" selection-start-line="704" selection-start-column="24" selection-end-line="704" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/CommonIBUtilFuncs.hpp" />
     <entry file="file://$PROJECT_DIR$/temp/temp2.c">
       <provider selected="true" editor-type-id="text-editor">
@@ -1501,17 +1301,33 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../+/usr/refi950/H_CCW17/rc_pingpong.c">
+    <entry file="file://$PROJECT_DIR$/../../../../+/usr/refi950/H_CCW17/rc_pingpong.c" />
+    <entry file="file://$PROJECT_DIR$/MetricsIBV.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="1022" column="9" selection-start-line="1022" selection-start-column="9" selection-end-line="1022" selection-end-column="9" />
+        <state relative-caret-position="680">
+          <caret line="87" column="41" selection-start-line="87" selection-start-column="41" selection-end-line="87" selection-end-column="41" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../+/usr/refi950/H_CCW17/MetricsIBV.c">
+    <entry file="file://$PROJECT_DIR$/../../../../+/usr/refi950/H_CCW17/MetricsIBV.c" />
+    <entry file="file://$PROJECT_DIR$/MetricsIBV.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="90" column="0" selection-start-line="90" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
+        <state relative-caret-position="414">
+          <caret line="23" column="54" selection-start-line="23" selection-start-column="54" selection-end-line="23" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Connector.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="26" column="15" selection-start-line="26" selection-start-column="15" selection-end-line="26" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Stream.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="23" column="21" selection-start-line="23" selection-start-column="21" selection-end-line="23" selection-end-column="21" />
         </state>
       </provider>
     </entry>
@@ -1519,7 +1335,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
           <caret line="9" column="6" selection-start-line="9" selection-start-column="6" selection-end-line="9" selection-end-column="6" />
-          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MultiThreadTcpServer.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="98">
+          <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
         </state>
       </provider>
     </entry>
@@ -1530,6 +1352,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/SingleStreamTcpClient.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="759">
+          <caret line="33" column="41" selection-start-line="33" selection-start-column="41" selection-end-line="33" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Metrics.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3358">
+          <caret line="146" column="0" selection-start-line="146" selection-start-column="0" selection-end-line="146" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file:///usr/include/x86_64-linux-gnu/sys/socket.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="246">
@@ -1537,157 +1373,86 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.cache/.fr-OwgMkB/rc_pingpong_multi.c" />
-    <entry file="file://$PROJECT_DIR$/Connector.cpp">
+    <entry file="file://$PROJECT_DIR$/Stream.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="16" column="2" selection-start-line="16" selection-start-column="2" selection-end-line="16" selection-end-column="2" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/x86_64-linux-gnu/bits/time.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="29" column="7" selection-start-line="29" selection-start-column="7" selection-end-line="29" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Acceptor.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="469">
-          <caret line="30" column="6" selection-start-line="30" selection-start-column="6" selection-end-line="30" selection-end-column="6" />
-          <folding />
+        <state relative-caret-position="1426">
+          <caret line="62" column="3" selection-start-line="62" selection-start-column="3" selection-end-line="62" selection-end-column="3" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Acceptor.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="39" column="40" selection-start-line="39" selection-start-column="40" selection-end-line="39" selection-end-column="40" />
-          <folding>
-            <element signature="e#40#58#0" expanded="false" />
-            <marker date="1493907646783" expanded="true" signature="276:328" ph="{...}" />
-            <marker date="1493907646783" expanded="true" signature="354:403" ph="{...}" />
-          </folding>
+        <state relative-caret-position="529">
+          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Desktop/new file">
+    <entry file="file://$PROJECT_DIR$/Acceptor.hpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-198">
-          <caret line="31" column="74" selection-start-line="31" selection-start-column="74" selection-end-line="31" selection-end-column="74" />
+        <state relative-caret-position="552">
+          <caret line="24" column="17" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rc_pingpong.h">
+    <entry file="file://$PROJECT_DIR$/Metrics.hpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="33" selection-start-line="20" selection-start-column="33" selection-end-line="20" selection-end-column="33" />
-          <folding />
+        <state relative-caret-position="805">
+          <caret line="35" column="21" selection-start-line="35" selection-start-column="7" selection-end-line="35" selection-end-column="21" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="236">
-          <caret line="47" column="25" selection-start-line="47" selection-start-column="25" selection-end-line="47" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SinglePingPongMaster.c">
+    <entry file="file://$PROJECT_DIR$/NonBlockingTcpServer.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <caret line="26" column="5" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="5" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/multistreamPPSupport.c">
+    <entry file="file://$USER_HOME$/.cache/.fr-OwgMkB/rc_pingpong_multi.c" />
+    <entry file="file://$PROJECT_DIR$/MultiStreamTcpClient.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="39" column="0" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="438">
+          <caret line="31" column="24" selection-start-line="31" selection-start-column="24" selection-end-line="31" selection-end-column="24" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MetricsIBV.h">
+    <entry file="file:///usr/include/x86_64-linux-gnu/sys/param.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="195">
+          <caret line="92" column="9" selection-start-line="92" selection-start-column="9" selection-end-line="92" selection-end-column="22" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/InfinbandMultiStream.csv">
+    <entry file="file:///usr/include/x86_64-linux-gnu/bits/mathcalls.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="14" column="76" selection-start-line="14" selection-start-column="76" selection-end-line="14" selection-end-column="76" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MetricsIBV.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="402">
-          <caret line="82" column="33" selection-start-line="82" selection-start-column="33" selection-end-line="82" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rc_pingpong.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="542">
-          <caret line="1017" column="46" selection-start-line="1017" selection-start-column="46" selection-end-line="1017" selection-end-column="46" />
-          <folding>
-            <element signature="e#15168#23424#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="217">
+          <caret line="183" column="50" selection-start-line="183" selection-start-column="50" selection-end-line="183" selection-end-column="50" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/SingleStreamTcpServer.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="12" column="39" selection-start-line="12" selection-start-column="39" selection-end-line="12" selection-end-column="39" />
-          <folding>
-            <element signature="e#40#58#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="425">
+          <caret line="32" column="42" selection-start-line="32" selection-start-column="10" selection-end-line="32" selection-end-column="42" />
         </state>
       </provider>
     </entry>
-<<<<<<< Updated upstream
     <entry file="file:///usr/include/infiniband/verbs.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="16146">
           <caret line="702" column="12" selection-start-line="702" selection-start-column="7" selection-end-line="702" selection-end-column="14" />
-=======
-    <entry file="file://$PROJECT_DIR$/SingleStreamTcpClient.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="774">
-          <caret line="48" column="24" selection-start-line="48" selection-start-column="24" selection-end-line="48" selection-end-column="34" />
->>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
-<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/MultiThreadTcpClient.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="608">
           <caret line="35" column="13" selection-start-line="35" selection-start-column="13" selection-end-line="35" selection-end-column="13" />
-=======
-    <entry file="file://$PROJECT_DIR$/Stream.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
->>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
-<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/multistreamTestRunner.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="505">
@@ -1700,59 +1465,38 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="841">
           <caret line="520" column="33" selection-start-line="520" selection-start-column="33" selection-end-line="520" selection-end-column="33" />
-=======
-    <entry file="file:///usr/include/sched.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="79" column="9" selection-start-line="79" selection-start-column="9" selection-end-line="79" selection-end-column="9" />
->>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Stream.hpp">
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< Updated upstream
         <state relative-caret-position="243">
           <caret line="45" column="79" selection-start-line="45" selection-start-column="79" selection-end-line="45" selection-end-column="79" />
-=======
-        <state relative-caret-position="324">
-          <caret line="21" column="22" selection-start-line="21" selection-start-column="22" selection-end-line="21" selection-end-column="22" />
->>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
-<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/multithreadIB.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="188">
           <caret line="23" column="43" selection-start-line="23" selection-start-column="32" selection-end-line="23" selection-end-column="43" />
-=======
-    <entry file="file://$PROJECT_DIR$/Metrics.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="397">
-          <caret line="83" column="5" selection-start-line="83" selection-start-column="5" selection-end-line="83" selection-end-column="5" />
->>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MultiThreadTcpServer.cpp">
+    <entry file="file://$PROJECT_DIR$/temp/SimpleIBServer.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="669">
-          <caret line="57" column="45" selection-start-line="57" selection-start-column="45" selection-end-line="57" selection-end-column="45" />
-          <folding>
-            <element signature="e#40#58#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="300">
+          <caret line="387" column="63" selection-start-line="387" selection-start-column="63" selection-end-line="387" selection-end-column="63" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/multistreamTestRunner.c">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< Updated upstream
-        <state relative-caret-position="307">
-          <caret line="380" column="0" selection-start-line="380" selection-start-column="0" selection-end-line="380" selection-end-column="0" />
+        <state relative-caret-position="415">
+          <caret line="382" column="20" selection-start-line="382" selection-start-column="20" selection-end-line="382" selection-end-column="20" />
           <folding>
             <element signature="e#461#521#1" expanded="false" />
             <element signature="e#547#927#1" expanded="false" />
@@ -1763,68 +1507,42 @@
             <element signature="e#2886#2942#0" expanded="false" />
             <element signature="e#3082#3134#0" expanded="false" />
             <element signature="e#3182#3232#0" expanded="false" />
+            <element signature="e#3356#4774#0" expanded="false" />
             <element signature="e#4363#4413#0" expanded="false" />
+            <element signature="e#4776#6146#0" expanded="false" />
             <element signature="e#6190#7503#0" expanded="false" />
             <element signature="e#7505#7800#0" expanded="false" />
             <element signature="e#7803#9573#0" expanded="false" />
             <element signature="e#12781#13865#0" expanded="false" />
             <element signature="e#13867#14538#0" expanded="false" />
             <element signature="e#14540#15199#0" expanded="false" />
-            <element signature="e#15202#25218#0" expanded="false" />
-=======
-        <state relative-caret-position="637">
-          <caret line="981" column="43" selection-start-line="981" selection-start-column="43" selection-end-line="981" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Metrics.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" column="18" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="18" />
-          <folding>
-            <element signature="e#312#330#0" expanded="true" />
->>>>>>> Stashed changes
           </folding>
         </state>
       </provider>
     </entry>
-<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/multithreadIB.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="934" column="37" selection-start-line="934" selection-start-column="37" selection-end-line="934" selection-end-column="37" />
+        <state relative-caret-position="1276">
+          <caret line="977" column="0" selection-start-line="977" selection-start-column="0" selection-end-line="977" selection-end-column="0" />
           <folding>
-            <element signature="e#1454#1475#0" expanded="true" />
-            <element signature="e#29550#29600#0" expanded="false" />
-            <marker date="1493983899129" expanded="false" signature="1513:1854" ph="..." />
-          </folding>
-=======
-    <entry file="file://$PROJECT_DIR$/MultiThreadTcpClient.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="463">
-          <caret line="124" column="39" selection-start-line="124" selection-start-column="39" selection-end-line="124" selection-end-column="39" />
-          <folding />
->>>>>>> Stashed changes
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MultiStreamTcpClient.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1098">
-          <caret line="79" column="25" selection-start-line="79" selection-start-column="25" selection-end-line="79" selection-end-column="25" />
-          <folding>
-            <element signature="e#40#58#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/NonBlockingTcpServer.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="22" column="21" selection-start-line="22" selection-start-column="21" selection-end-line="22" selection-end-column="21" />
-          <folding>
-            <element signature="e#40#58#0" expanded="true" />
+            <element signature="e#0#1434#0" expanded="false" />
+            <element signature="e#1942#2002#1" expanded="false" />
+            <element signature="e#2027#2316#1" expanded="false" />
+            <element signature="e#2326#2411#0" expanded="false" />
+            <element signature="e#2423#2509#1" expanded="false" />
+            <element signature="e#2512#4140#0" expanded="false" />
+            <element signature="e#4142#5512#0" expanded="false" />
+            <element signature="e#5620#6973#0" expanded="false" />
+            <element signature="e#6975#7400#0" expanded="false" />
+            <element signature="e#7403#10482#0" expanded="false" />
+            <element signature="e#10484#12857#0" expanded="false" />
+            <element signature="e#12859#13744#0" expanded="false" />
+            <element signature="e#13746#14236#0" expanded="false" />
+            <element signature="e#14238#14675#0" expanded="false" />
+            <element signature="e#14678#23009#0" expanded="false" />
+            <element signature="e#28730#30148#0" expanded="false" />
+            <element signature="e#29737#29787#0" expanded="false" />
+            <marker date="1493990669196" expanded="false" signature="1513:1854" ph="..." />
           </folding>
         </state>
       </provider>
