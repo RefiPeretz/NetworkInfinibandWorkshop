@@ -55,10 +55,10 @@ SET(GCC_COVERAGE_LINK_FLAGS "-g -libverbs")
 #add_executable(SimpleIBServer ${IBSS})
 #target_link_libraries(SimpleIBServer "${GCC_COVERAGE_LINK_FLAGS}")
 
-set(SinglePingp1 multithreadIB.c multithreadIB.h multithreadIBSupport.h
+set(multithreadIB multithreadIB.c multithreadIB.h multithreadIBSupport.h
         multithreadIBSupport.c MetricsIBV.c MetricsIBV.h)
-add_executable(SinglePingp ${SinglePingp1} MetricsIBV.c MetricsIBV.h)
-target_link_libraries(SinglePingp "${GCC_COVERAGE_LINK_FLAGS}")
+add_executable(multithreadIB ${multithreadIB})
+target_link_libraries(multithreadIB "${GCC_COVERAGE_LINK_FLAGS}")
 
 set(MultiStreamIBFiles multistreamPPSupport.c multistreamPPSupport.h
         multistreamTestRunner.c MetricsIBV.c MetricsIBV.h)

@@ -52,6 +52,7 @@
 #include "multithreadIBSupport.h"
 #include "MetricsIBV.h"
 
+#define CLIENT_TO_SERVER_RETRY_TIMEOUT 64 //Timeout to connect from client to server
 
 enum
 {
@@ -135,51 +136,12 @@ static int pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn,
 
 static struct pingpong_dest *
 pp_client_exch_dest(const char *servername, int port,
-                    const struct pingpong_dest *my_dest)
-{
-    struct addrinfo *res, *t;
-    struct addrinfo
-            hints = {.ai_family   = AF_INET, .ai_socktype = SOCK_STREAM};
-    char *service;
+                    const struct pingpong_dest *my_dest, int connectionId) {
     char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
-    int n;
-    int sockfd = -1;
     struct pingpong_dest *rem_dest = NULL;
     char gid[33];
 
-    if (asprintf(&service, "%d", port) < 0)
-    {
-        return NULL;
-    }
-
-    n = getaddrinfo(servername, service, &hints, &res);
-
-    if (n < 0)
-    {
-        fprintf(stderr, "%s for %s:%d\n", gai_strerror(n), servername, port);
-        free(service);
-        return NULL;
-    }
-
-    for (t = res; t; t = t->ai_next)
-    {
-        sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
-        if (sockfd >= 0)
-        {
-            if (!connect(sockfd, t->ai_addr, t->ai_addrlen))
-            {
-                break;
-            }
-            close(sockfd);
-            sockfd = -1;
-        }
-    }
-
-    freeaddrinfo(res);
-    free(service);
-
-    if (sockfd < 0)
-    {
+    if (connectionId < 0) {
         fprintf(stderr, "Couldn't connect to %s:%d\n", servername, port);
         return NULL;
     }
@@ -187,38 +149,40 @@ pp_client_exch_dest(const char *servername, int port,
     gid_to_wire_gid(&my_dest->gid, gid);
     sprintf(msg, "%04x:%06x:%06x:%s", my_dest->lid, my_dest->qpn, my_dest->psn,
             gid);
-    if (write(sockfd, msg, sizeof msg) != sizeof msg)
-    {
+    if (write(connectionId, msg, sizeof msg) != sizeof msg) {
         fprintf(stderr, "Couldn't send local address\n");
         goto out;
     }
+    printf("Wrote msg to server: %s\n", msg);
 
-    if (read(sockfd, msg, sizeof msg) != sizeof msg)
-    {
+    if (read(connectionId, msg, sizeof msg) != sizeof msg) {
         perror("client read");
         fprintf(stderr, "Couldn't read remote address\n");
         goto out;
     }
+    printf("Got msg from server: %s\n", msg);
 
-    write(sockfd, "done", sizeof "done");
-
+    write(connectionId, "done", sizeof "done");
+    printf("Wrote Done to server\n");
     rem_dest = malloc(sizeof *rem_dest);
-    if (!rem_dest)
-    {
+    if (!rem_dest) {
         goto out;
     }
 
     sscanf(msg, "%x:%x:%x:%s", &rem_dest->lid, &rem_dest->qpn, &rem_dest->psn,
            gid);
     wire_gid_to_gid(gid, &rem_dest->gid);
+    printf("got msg from server: %s\n", msg);
 
     out:
-    close(sockfd);
     return rem_dest;
 }
 
 
+
 int acceptClientConnection(int sockfd);
+
+int createClientSocketConnection(int port, char *servername);
 
 static int createServerConnection(int port)
 {
@@ -725,7 +689,7 @@ void *runPingPong(void *commands1)
 
     if (servername)
     {
-        rem_dest = pp_client_exch_dest(servername, port, &my_dest);
+        rem_dest = pp_client_exch_dest(servername, port, &my_dest, connfd);
     } else
     {
         rem_dest =
@@ -939,42 +903,51 @@ int main(int argc, char *argv[])
     }
     double results[1000] = {0.0};
     int resultIndex = 0;
-    for (int varsize = 8; varsize <= 16; varsize *= 2)
+    for (int varsize = 1; varsize <= MAX_MSG_SIZE; varsize *= 2)
     {
         printf("starting round with size- %d\n", varsize);
 
 
-        for (int numThreads = 1; numThreads <= maxThreadNum; numThreads++)
+        for (int numThreads = 1; numThreads <= maxThreadNum; numThreads *= 2)
         {
-            commands.size = varsize/numThreads;
-            int sockfd;
-            if(is_server){
-                sockfd = createServerConnection(commands.port);
-                printf("started server bind\n");
+            int regularSize = (int) floor(varsize / numThreads);
+            printf("Size per regular thread %d\n", regularSize);
+            int leftOverPayloadSize = ((int) varsize - regularSize);
+            printf("Size per first thread %d\n", leftOverPayloadSize);
 
-            }
 
             printf("starting round with %d threads\n", (numThreads));
-
-            pthread = malloc(numThreads * sizeof(pthread_t));
+            pthread = (pthread_t *) calloc(numThreads, sizeof(pthread_t));
 
 
             if (is_server)
             {
+                int sockfd;
+                sockfd = createServerConnection(commands.port);
+                printf("started server bind\n");
                 int thread = 0;
                 while(thread < numThreads){
                     Commands *newCommands;
                     newCommands = calloc(0, sizeof(Commands));
-                    (*newCommands).port = commands.port;
-                    (*newCommands).servername = commands.servername;
-                    (*newCommands).size = commands.size;
-
-                    (*newCommands).connfd = acceptClientConnection(sockfd);
+                    newCommands->port = commands.port;
+                    newCommands->servername = commands.servername;
+                    newCommands->size = regularSize;
+                    if(thread == 0 & numThreads != 1){
+                        newCommands->size = leftOverPayloadSize;
+                    }
+                    if(newCommands->size == 0){
+                        thread++;
+                        continue;
+                    }
+                    newCommands->connfd = acceptClientConnection(sockfd);
                     printf("new confd - %d\n", (*newCommands).connfd);
                     if((*newCommands).connfd >= 0){
                         pthread_create(&pthread[thread], NULL, runPingPong,
                                       newCommands);
                         thread++;
+                    } else {
+                        fprintf(stderr, "Failed creating connection\n");
+                        return 1;
                     }
                 }
                 printf("Close FD\n");
@@ -983,11 +956,30 @@ int main(int argc, char *argv[])
 
             } else
             {
-                sleep(10);
+
                 for (int thread = 0; thread < numThreads; thread++)
                 {
+                    int sockfd = createClientSocketConnection(commands.port,
+                                                                   commands.servername);
+                    if (sockfd== -1) {
+                        fprintf(stderr, "Error creating socket\n");
+                        return 1;
+                    }
+                    Commands *newCommands;
+                    newCommands = calloc(0, sizeof(Commands));
+                    newCommands->port = commands.port;
+                    newCommands->servername = commands.servername;
+                    newCommands->size = regularSize;
+                    if(thread == 0 & numThreads != 1){
+                        newCommands->size = leftOverPayloadSize;
+                    }
+                    if(newCommands->size == 0){
+                        continue;
+                    }
+                    (*newCommands).connfd = sockfd;
+                    printf("new connection fd - %d\n", (*newCommands).connfd);
                     pthread_create(&pthread[thread], NULL, runPingPong,
-                                   (void *) &commands);
+                                   newCommands);
 
                 }
 
@@ -999,6 +991,9 @@ int main(int argc, char *argv[])
             for (int thread = 0; thread < numThreads; thread++)
             {
                 double curTime = 0.0;
+                if(pthread[thread] == NULL){
+                    continue;
+                }
                 pthread_join(pthread[thread], &result);
                 curTime = *((double *)result);
                 printf("Time: %f\n",curTime);
@@ -1021,4 +1016,61 @@ int main(int argc, char *argv[])
     }
     char* filename = "InfinbandMultiSingleThread.csv";
     createCSV(filename,results,1000);
+}
+
+int createClientSocketConnection(int port, char *servername)
+{
+    struct addrinfo *res, *t;
+    struct addrinfo
+            hints = {.ai_family   = AF_INET, .ai_socktype = SOCK_STREAM};
+    char *service;
+    int n;
+    int sockfd = -1;
+
+    if (asprintf(&service, "%d", port) < 0) {
+        return -1;
+    }
+
+    n = getaddrinfo(servername, service, &hints, &res);
+
+    if (n < 0) {
+        fprintf(stderr, "%s for %s:%d\n", gai_strerror(n), servername, port);
+        free(service);
+        return -1;
+    }
+
+    for (int numsec = 1; numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT; numsec <<= 1) {
+
+        for (t = res; t; t = t->ai_next) {
+            sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
+            if (sockfd >= 0) {
+                if (!connect(sockfd, t->ai_addr, t->ai_addrlen)) {
+                    break;
+                }
+                close(sockfd);
+                sockfd = -1;
+            }
+        }
+
+        if (sockfd >= 0) {
+            break;
+        }
+
+        /*
+        * Delay before trying again.
+        */
+        if (numsec <= CLIENT_TO_SERVER_RETRY_TIMEOUT) {
+            sleep(numsec);
+            printf("Retrying to connect to server after %d sec\n", numsec);
+        }
+    }
+
+
+    freeaddrinfo(res);
+    free(service);
+    if (sockfd < 0) {
+        fprintf(stderr, "Couldn't connect to %s:%d\n", servername, port);
+        return -1;
+    }
+    return sockfd;
 }

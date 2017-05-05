@@ -376,25 +376,9 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
     int sizePerPeer = (int) floor(size / ctx->peerNum);
     for (int i = 1; i < ctx->peerNum; i++) {
         ctx->sizePerQP[i] = sizePerPeer;
-//        ctx->buf_arr[i] = malloc(roundup(ctx->sizePerQP[i], page_size));
-//            if (!ctx->buf_arr[i])
-//        {
-//            fprintf(stderr, "Couldn't allocate (%d) qp work buf.\n",i);
-//            return NULL;
-//        }
-
     }
-    ctx->sizePerQP[0] = size - (sizePerPeer * (ctx->peerNum - 1));
-//    ctx->buf_arr[0] = malloc(roundup(sizePerPeer, page_size));
-//    if (!ctx->buf_arr[0])
-//    {
-//        fprintf(stderr, "Couldn't allocate (%d) qp work buf.\n",0);
-//        return NULL;
-//    }
-//
-//    for(int i=0; i<ctx->peerNum; i++){
-//        memset( ctx->buf_arr[i], 0x7b + is_server, ctx->sizePerQP[i]);
-//    }
+    ctx->sizePerQP[0] = (size - (sizePerPeer * (ctx->peerNum - 1)));
+
     ctx->buf = malloc(roundup(size, page_size));
     if (!ctx->buf) {
         fprintf(stderr, "Couldn't allocate (%d) qp work buf.\n", 0);
