@@ -49,7 +49,7 @@
 #include <sys/param.h>
 #include <pthread.h>
 
-#include "pingpong.h"
+#include "multithreadIBSupport.h"
 #include "MetricsIBV.h"
 
 
