@@ -10,7 +10,7 @@
 #include "Acceptor.hpp"
 #include "Metrics.hpp"
 
-//void join_all(std::vector<std::thread>& v);
+
 void ConnectionHandler(Stream *stream);
 
 int main(int argc, char **argv) {
@@ -28,24 +28,34 @@ int main(int argc, char **argv) {
         acceptor = new Acceptor(atoi(argv[1]));
     }
     acceptor->start();
+    int threadNum = 0;
     while (1) {
+
         stream = acceptor->accept();
+        stream->stream_id = threadNum % MAX_CORE;
         if (stream != NULL) {
             std::thread v1(ConnectionHandler, stream);
             v1.detach();
         }
+        threadNum++;
     }
-    perror("Could not start the server");
-    exit(-1);
 }
 
 void ConnectionHandler(Stream *stream) {
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    CPU_SET(stream->stream_id, &cpuset);
+    int rc = pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+    if (rc != 0) {
+        perror("pthread_setaffinity_np");
+        exit(-1);
+    }
     int len;
     char line[MAX_PACKET_SIZE];
     while ((len = stream->receive(line, sizeof(line))) > 0) {
         line[len] = '\0';
         stream->send(line, len);
-        printf("received - %s\n", line);
+        printf("Recevied - %d Bytes\n", len);
 
     }
     delete stream;

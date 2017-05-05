@@ -21,7 +21,7 @@ Stream::~Stream()
 
 ssize_t Stream::send(const char *buffer, int len)
 {
-    printf("send: %s , in size: %d\n",buffer,len);
+
   return write(m_sd, buffer, len);
 }
 

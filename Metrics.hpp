@@ -4,16 +4,18 @@
 
 #ifndef EX1V2_METRICS_H
 #define EX1V2_METRICS_H
-#define MAX_MSG_SIZE 1048576//TODO
+#define MAX_MSG_SIZE 1048576
 #define MAX_PACKET_SIZE 131072
-#define MAX_CORE 8//TODO
+#define MAX_CORE 4
 #define SERVER_ADDRESS "localhost"
 #define SERVER_PORT 8081
 #define MIN_MSG_SIZE 1
 #define MAX_CLIENTS 10
+#define DEFAULT_NUMBER_OF_MSGS 1000
 
 #include <sstream>
 #include <math.h>
+#include <sched.h>
 #include "Connector.hpp"
 
 
@@ -23,6 +25,8 @@ typedef struct{
     char baseWord = 'w';
     char* msg;
     int msgSize;
+    int serverPort;
+    char* serverName;
 }socketData;
 
 void createResultFile(int resultLength,char* nameOfFile,double* results);

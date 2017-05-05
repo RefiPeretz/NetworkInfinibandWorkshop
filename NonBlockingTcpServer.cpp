@@ -15,7 +15,12 @@
 
 
 int main(int argc, char *argv[]) {
-    int  addrlen, new_socket, clients[10],
+    if (argc != 2) {
+        printf("usage: %s <port>\n", argv[0]);
+        exit(1);
+    }
+    int serverPort = atoi(argv[1]);
+    int  addrlen, new_socket, clients[MAX_CLIENTS],
             status, i, bytesRead, cur_sd;
 
     Stream *stream = NULL;
@@ -25,7 +30,7 @@ int main(int argc, char *argv[]) {
         clients[i] = 0;
     }
 
-    Acceptor *acceptor = new Acceptor(SERVER_PORT, SERVER_ADDRESS);
+    Acceptor *acceptor = new Acceptor(serverPort, SERVER_ADDRESS);
     struct sockaddr_in address = acceptor->start();
 
 
@@ -72,7 +77,6 @@ int main(int argc, char *argv[]) {
             cur_sd = clients[i];
             if (FD_ISSET(cur_sd, &acceptor->fds)) {
                 if ((bytesRead = read(cur_sd, buffer, 1024)) == 0) {
-                    printf("received - %s\n", buffer);
                     close(cur_sd);
                     clients[i] = 0;
                 }

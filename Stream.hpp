@@ -19,6 +19,7 @@ class Stream
   int     m_peerPort;
 
  public:
+	int stream_id = 0;
   int     m_sd;
   friend class Acceptor;
   friend class Connect;

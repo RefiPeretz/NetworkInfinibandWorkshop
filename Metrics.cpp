@@ -31,7 +31,7 @@ void createResultFile(int resultLength,char* nameOfFile,double* results){
     ofstream myFile;
     myFile.open(nameOfFile);
     myFile << "Results\n";
-    myFile << "Number of Threads/Sockets[Integer],Number Of messages[Integer],Size per message[Bytes],RTT[us],Throughput[Mib/s],Packet Rate[P/s],Packet Size[Bytes]\n";
+    myFile << "Number of Threads/Sockets[Integer],Number Of messages[Integer],Packet Size[Bytes],Size per message[Bytes],RTT[us],Throughput[Mib/s],Packet Rate[P/s]\n";
     for(int i = 0 ; i < resultLength; i+=6) {
         rttIndex = i;
         throIndex = i + 1;
@@ -53,7 +53,7 @@ void createResultFile(int resultLength,char* nameOfFile,double* results){
         totalNumOfMsgsSS << setprecision(5) <<  results[totalNumOfMsgs] << endl;
         std::stringstream msgSizeSS(stringstream::in | stringstream::out);
         msgSizeSS << setprecision(5) <<  (int)results[packetSize]/results[numOfSockets] << endl;
-        std::string writeToFile = numOfSocketsSS.str()+","+totalNumOfMsgsSS.str()+","+msgSizeSS.str()+","+rttSS.str() +","+throughputSS.str()+","+packetRateSS.str()+","+packetSizeSS.str();
+        std::string writeToFile = numOfSocketsSS.str()+","+totalNumOfMsgsSS.str()+","+packetSizeSS.str()+","+msgSizeSS.str()+","+rttSS.str() +","+throughputSS.str()+","+packetRateSS.str();
         writeToFile.erase(std::remove(writeToFile.begin(), writeToFile.end(), '\n'), writeToFile.end());
         myFile << writeToFile+"\n";
     }
@@ -111,22 +111,11 @@ double calcAverageRTT(int numOfSockets,size_t numOfMessages, double totalTime)
 {
     return (totalTime / (double)numOfMessages)/numOfSockets;
 }
-//
-//double calcAverageThroughput(size_t numOfMessages, size_t messageSize, double totalTime)
-//{
-//    return (2 * numOfMessages * messageSize) / totalTime;
-//}
-//
-//double calcAveragePacketRate(size_t numOfMessages, double totalTime)
-//{
-//    return (double) 2 * numOfMessages / totalTime; //messages per second
-//}
 
 double timeDifference(timeval time1, timeval time2)
 {
     double res =  ((time2.tv_sec - time1.tv_sec) * SEC_TO_MICRO)
-                  + ((time2.tv_usec - time1.tv_usec)); //TODO change to seconds
-    // return abs of difference
+                  + ((time2.tv_usec - time1.tv_usec));
     return res < 0 ? (-1)*res : res;
 }
 
@@ -138,7 +127,7 @@ double calcAverageThroughput(size_t numOfMessages, size_t messageSize, double to
 
 double calcAveragePacketRate(size_t numOfMessages, double totalTime)
 {
-    return (double) 2 * numOfMessages / (totalTime * MICRO_TO_SEC); //messages per second
+    return (double) 2 * numOfMessages / (totalTime * MICRO_TO_SEC);
 }
 
 

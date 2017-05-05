@@ -16,12 +16,12 @@ using namespace std;
 
 int main(int argc, char **argv) {
     if (argc != 4) {
-        printf("usage: %s <port> <ip> <number of msgs>\n", argv[0]);
+        printf("usage: %s <port> <number of msgs> <server>\n", argv[0]);
         exit(1);
     }
-    warmUpServer(atoi(argv[1]));
-
-    int numMsgs = atoi(argv[3]);
+    int serverPort = atoi(argv[1]);
+    warmUpServer(serverPort,DEFAULT_NUMBER_OF_MSGS,argv[3]);
+    int numMsgs = atoi(argv[2]);
     int len;
     int bytesRead;
     char ack[MAX_MSG_SIZE];
@@ -31,10 +31,12 @@ int main(int argc, char **argv) {
     int resultIndex = 0;
     int curMsgSize;
     for (int msgSize = MIN_MSG_SIZE; msgSize <= MAX_MSG_SIZE; msgSize = msgSize * 2){
-        for(int socketNum = 1; socketNum <= MAX_CLIENTS; socketNum++){
+        for(int socketNum = 1; socketNum < MAX_CLIENTS; socketNum++){
+            printf("=====Run on %d size with %d =====",msgSize,socketNum);
             t1 = 0.0;
             t2 = 0.0;
             int msgSizes[socketNum] = {0};
+            //Prepearedata
             char* msgs[socketNum];
             if(msgSize < socketNum){
                 createMsg(msgSize,'w',&msgs[0]);
@@ -59,7 +61,6 @@ int main(int argc, char **argv) {
 
             }
 
-//            Connector *connectors[socketNum] = {new Connector()};
             Connector connector;
             Stream *streams[socketNum];
             if (gettimeofday(&start, NULL)) {
@@ -67,19 +68,16 @@ int main(int argc, char **argv) {
                 exit(1);
             }
             for(int stream = 0; stream < socketNum;stream++){
-//                streams[stream] = connectors[stream]->connect(SERVER_ADDRESS, SERVER_PORT, 5);
-                streams[stream] = connector.connect(SERVER_ADDRESS, SERVER_PORT);
+                streams[stream] = connector.connect(argv[3], serverPort);
                 for(int i = 0 ; i < numMsgs; i++){
                     bytesRead = 0;
                     if (streams[stream]) {
                         streams[stream]->send(msgs[stream], msgSizes[stream]);
-                        printf("Sent %d Bytes\n",  msgSizes[stream]);
                         bytesRead +=  streams[stream]->receive(ack, MAX_MSG_SIZE);
                         //printf("Bytes read before loop %d\n",bytesRead);
                         while(bytesRead < msgSizes[stream]){
                             bytesRead +=  streams[stream]->receive(ack, MAX_MSG_SIZE);
                         }
-                        printf("received - %d Bytes\n", bytesRead);
 
 
                     }
