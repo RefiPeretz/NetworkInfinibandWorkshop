@@ -69,6 +69,7 @@ int main(int argc, char **argv) {
             }
             for(int stream = 0; stream < socketNum;stream++){
                 streams[stream] = connector.connect(argv[3], serverPort);
+                //Sending messages for each size.
                 for(int i = 0 ; i < numMsgs; i++){
                     bytesRead = 0;
                     if (streams[stream]) {
@@ -88,6 +89,7 @@ int main(int argc, char **argv) {
                 printf("time failed\n");
                 exit(1);
             }
+            //Save results.
             double totalTime = timeDifference(start,end);
             double rtt = calcAverageRTT(1,socketNum*numMsgs, totalTime);
             double packetRate = calcAveragePacketRate(socketNum*numMsgs,totalTime);
@@ -97,6 +99,7 @@ int main(int argc, char **argv) {
             printf("avgPacketRate: %g\n", packetRate);
             printf("avgThroughput: %g\n", throughput);
             resultIndex = saveResults(rtt,throughput,packetRate,resultIndex,results,socketNum,msgSize,numMsgs*socketNum);
+            //Close sockets.
             for(int stream = 0; stream < socketNum;stream++){
                 delete(streams[stream]);
                 free(msgs[stream]);

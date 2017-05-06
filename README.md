@@ -6,10 +6,31 @@ Stream.cpp/.hpp - Socket wrapper class
 Connector.cpp/.hpp - Socket Tcp connect wrapper
 Acceptor.cpp/.hpp - Socket Tcp Accept wrapper
 
-MultiStreamTcpClient.cpp 	- Spawn multiple clients and simple messages to the server.
-SingleStreamTcpClient.cpp - Simple tcp client with one Connection.
-SingleStreamTcpServer.cpp - Simple tcp server that can support once socket.
-VaryingSizeTcpClient.cpp - Enables to send messages with varying increasing size.
+MultiStreamTcpClient.cpp 	- Spawn multiple clients and simple messages to the server. Multiple sockets one thread.
+The client send varying size form byte to 1 MB and from 1 socket to 10  sockets, each iteration the message splits between
+the sockets. In the end the program yields CSV metrics file.
+the current amount of sockets.
+
+USEAGE: <port> <number of messages> <server name>
+NonBlockingTcpServer.cpp 	- Server which is able to handle mutliclients without multithreading.
+USEAGE: <server port>
+
+MultiThreadTcpClient - Spwan multiple clients using multithreading each thread is a client which send multiple messages
+to a server.
+The client send varying size form byte to 1 MB and from 1 thread to 8  threads, each operates a different socket and
+splits between them the data.
+the sockets. In the end the program yields CSV metrics file.
+USEAGE: <port> <number of messages per thread> po
+MultiThreadServer - A server which is able to sereve multiple clients using multithread system.
+USEAGE: <port>
+
+multiStreamTestRunner.c - A server/client using inifiniband hardware. When active a server across client, the client
+sent messages from size of byte to 1MB and form 1 QP to 10. For each iteration the QPs split between them the data
+when the client terminate it yields a metrics CSV.
+USEAGE SERVER MODE: <port> <Number of threads choose 1> <number of QPs>
+USEAGE SERVER MODE: <port> <Number of threads choose 1> <number of QPs> <server to connect to>
+
+
 
 Parts(with status):
 General - Missing support for InfiniBand (QP) and measure throughput.

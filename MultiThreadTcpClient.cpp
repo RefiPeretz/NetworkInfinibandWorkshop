@@ -22,15 +22,15 @@ int main(int argc, char **argv)
         exit(1);
     }
     int serverPort = atoi(argv[1]);
-    warmUpServer(serverPort,1000,argv[3]);
+    warmUpServer(serverPort,DEFAULT_NUMBER_OF_MSGS,argv[3]);
     struct timeval start, end;
     double t1, t2;
     unsigned int counter = 0;
+    //Prepare threads shared data.
     socketData* data = new socketData;
     int msgNum = atoi(argv[2]);
     data->msgNum = msgNum;
     data->serverPort = serverPort;
-    std::string server = "localhost";
     data->baseWord = 'w';
     data->serverName = argv[3];
     int resultSize = ((int)((log2(MAX_MSG_SIZE/MIN_MSG_SIZE) + 1) * 6))*4;
