@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     char ack[MAX_MSG_SIZE];
     struct timeval start, end;
     double t1, t2;
-    double results[1000] = {0.0};
+    double results[5000] = {0.0};
     int resultIndex = 0;
     int curMsgSize;
     for (int msgSize = MIN_MSG_SIZE; msgSize <= MAX_MSG_SIZE; msgSize = msgSize * 2){
@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
 
 
     }
-    createResultFile(1000,"MultiStreamResults.csv",results);
+    createResultFile(5000,"MultiStreamResults.csv",results);
 
 
 }
