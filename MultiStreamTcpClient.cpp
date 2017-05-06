@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     int resultIndex = 0;
     int curMsgSize;
     for (int msgSize = MIN_MSG_SIZE; msgSize <= MAX_MSG_SIZE; msgSize = msgSize * 2){
-        for(int socketNum = 1; socketNum < MAX_CLIENTS; socketNum++){
+        for(int socketNum = 1; socketNum <= MAX_CLIENTS; socketNum++){
             printf("=====Run on %d size with %d =====",msgSize,socketNum);
             t1 = 0.0;
             t2 = 0.0;
