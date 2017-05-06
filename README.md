@@ -25,10 +25,17 @@ MultiThreadServer - A server which is able to sereve multiple clients using mult
 USEAGE: <port>
 
 multiStreamTestRunner.c - A server/client using inifiniband hardware. When active a server across client, the client
-sent messages from size of byte to 1MB and form 1 QP to 10. For each iteration the QPs split between them the data
+send messages from size of byte to 1MB and form 1 QP to 10. For each iteration the QPs split between them the data
 when the client terminate it yields a metrics CSV.
-USEAGE SERVER MODE: <port> <Number of threads choose 1> <number of QPs>
-USEAGE SERVER MODE: <port> <Number of threads choose 1> <number of QPs> <server to connect to>
+USEAGE SERVER MODE: <Number of threads choose 1> <port> <number of QPs>
+USEAGE SERVER MODE: <Number of threads choose 1> <port> <number of QPs> <server to connect to>
+
+multithreadIB.c - A server/client using inifiniband hardware. When active a server across client, the client
+send messages from size of byte to 1MB and form 1 thread to 8.Each thread is actually a whole client with 1 QOP
+For each iteration the threads split between them the data we need to send.
+when the client terminate it yields a metrics CSV.
+USEAGE SERVER MODE: <Number of threads choose 1> <port>
+USEAGE SERVER MODE: <Number of threads choose 1> <port> <server to connect to>
 
 
 
