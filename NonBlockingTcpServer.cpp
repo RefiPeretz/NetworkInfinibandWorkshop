@@ -12,6 +12,25 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <fcntl.h>
+
+
+int sendVerifier(int s, char *buf, int len){
+  int total = 0;        // how many bytes we've sent
+  int bytesleft = len; // how many we have left to send
+  int n;
+
+  while(total < len) {
+	n = send(s, buf+total, bytesleft, 0);
+	if (n == -1) { break; }
+	total += n;
+	bytesleft -= n;
+  }
+
+  len = total; // return number actually sent here
+
+  return n==-1?-1:0; // return -1 on failure, 0 on success
+}
 
 
 int main(int argc, char *argv[]) {
@@ -63,7 +82,6 @@ int main(int argc, char *argv[]) {
                 perror("accept");
                 exit(-1);
             }
-
             for (i = 0; i < MAX_CLIENTS; i++) {
                 //if position is empty
                 if (clients[i] == 0) {
@@ -76,13 +94,21 @@ int main(int argc, char *argv[]) {
         for (i = 0; i < MAX_CLIENTS; i++) {
             cur_sd = clients[i];
             if (FD_ISSET(cur_sd, &acceptor->fds)) {
-                if ((bytesRead = read(cur_sd, buffer, 1024)) == 0) {
+                if ((bytesRead = read(cur_sd, buffer, MAX_PACKET_SIZE)) == 0) {
                     close(cur_sd);
                     clients[i] = 0;
                 }
-                else {
+                else if(bytesRead == -1)
+				{
+					perror("Failed reading from socket\n");
+				  return 1;
+				}else {
                     buffer[bytesRead] = '\0';
-                    send(cur_sd, buffer, strlen(buffer), 0);
+                    //send(cur_sd, buffer, strlen(buffer), 0);
+				  if(sendVerifier(cur_sd, buffer, strlen(buffer)) < 0){
+					std::cerr<<"Full send failed - sent only partial"<<std::endl;
+					return 1;
+				  };
                 }
             }
         }
