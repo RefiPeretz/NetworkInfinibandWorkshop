@@ -23,7 +23,7 @@ int sendVerifier(int s, char *buf, int len){
   std::cout << "len to be sent: " << len<<std::endl;
 
   while(total < len) {
-	n = send(s, buf+total, bytesleft, 0);
+	n = write(s, buf+total, bytesleft);
 	if (n == -1) { break; }
 	total += n;
 	bytesleft -= n;

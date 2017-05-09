@@ -124,11 +124,16 @@ int main(int argc, char **argv)
             int ackedPeersForMsgRound = 0;
             while (ackedPeersForMsgRound < socketNumTrue)
             {
-                for (int stream = 0; stream < socketNumTrue; stream++)
+                for (int streamId = 0; streamId < socketNumTrue; streamId++)
                 {
-                        sentData[stream] =
-                                send(streams[stream]->m_sd, msgs[stream],
-                                     msgSizes[stream], 0);
+
+//                    int bytesSent = send(streams[streamId]->m_sd, msgs[streamId],
+//                                         msgSizes[streamId], 0);
+                    int bytesSent = streams[streamId]->send(msgs[streamId], msgSizes[streamId]);
+                    if(bytesSent == -1){
+                        perror("Error sending!");
+                    }
+                    sentData[streamId] =bytesSent;
                 }
 
                 int max_sd = 0;
