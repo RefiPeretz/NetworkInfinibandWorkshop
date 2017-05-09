@@ -100,7 +100,7 @@ void warmUpServer(int port,int numOfMsgs = 1000,std::string server = "localhost"
 
 
     }
-    printf("====Warmup is done=====\n",numOfMsgs);
+    printf("====Warmup is done for =====\n");
 
 }
 

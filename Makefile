@@ -21,7 +21,7 @@ Connector: Connector.cpp Connector.hpp
 Stream: Stream.cpp Stream.hpp
 	g++ Stream.cpp Stream.hpp $(CPPFlags) -c
 	
-Metrics: Metrics.cpp Metrics.hpp
+Metrics: Metrics.o
 	g++ Metrics.cpp Metrics.hpp $(CPPFlags) -c
 
 MultistreamPPSupport: multistreamPPSupport.c multistreamPPSupport.h

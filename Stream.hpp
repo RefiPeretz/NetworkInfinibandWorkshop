@@ -32,7 +32,7 @@ class Stream
 
   ~Stream();
 
-  ssize_t send(const char *buffer, int len);
+  ssize_t send(const char *buffer, ssize_t len);
   ssize_t receive(char *buffer, size_t len, int timeout = 0);
 
   string getPeerIP();

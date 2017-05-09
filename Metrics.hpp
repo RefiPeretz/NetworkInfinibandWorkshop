@@ -5,7 +5,7 @@
 #ifndef EX1V2_METRICS_H
 #define EX1V2_METRICS_H
 #define MAX_MSG_SIZE 1048576
-#define MAX_PACKET_SIZE 1048576
+#define MAX_PACKET_SIZE 131072
 #define MAX_CORE 8
 #define SERVER_ADDRESS "localhost"
 #define SERVER_PORT 8081

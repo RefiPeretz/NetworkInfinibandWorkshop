@@ -11,6 +11,7 @@
 #include "Metrics.hpp"
 #include <algorithm>
 #include <vector>
+#include <fcntl.h>
 
 
 using namespace std;
@@ -49,7 +50,7 @@ int main(int argc, char **argv)
     int numMsgs = atoi(argv[2]);
     int len;
     int bytesRead;
-    char ack[MAX_MSG_SIZE];
+    char ack[MAX_PACKET_SIZE];
     struct timeval start, end;
     double t1, t2;
     double results[3000] = {0.0};
@@ -58,9 +59,9 @@ int main(int argc, char **argv)
     for (int msgSize = MIN_MSG_SIZE; msgSize <= MAX_MSG_SIZE;
          msgSize = msgSize * 2)
     {
-        for (int socketNum = 1; socketNum < MAX_CLIENTS; socketNum++)
+        for (int socketNum = 1; socketNum <= MAX_CLIENTS; socketNum++)
         {
-            printf("=====Run on %d size with %d =====\n", msgSize, socketNum);
+
             t1 = 0.0;
             t2 = 0.0;
             int msgSizes[socketNum] = {0};
@@ -93,12 +94,15 @@ int main(int argc, char **argv)
             }
 
             int socketNumTrue = socketNum;
-            std::vector<int> msgSizesTrue;
-            for(int i = 0; i < socketNum; i++){
-                if(msgSizes[i] <= 0){
+            std::vector<int> msgSizesTrue2;
+            for (int i = 0; i < socketNum; i++)
+            {
+                if (msgSizes[i] <= 0)
+                {
                     socketNumTrue--;
-                } else {
-                    msgSizesTrue.push_back(msgSizes[i]);
+                } else
+                {
+                    msgSizesTrue2.push_back(msgSizes[i]);
                 }
             }
 
@@ -111,103 +115,113 @@ int main(int argc, char **argv)
                 exit(1);
             }
 
-            for (int stream = 0; stream < socketNum; stream++)
+            for (int stream = 0; stream < socketNumTrue; stream++)
             {
                 streams[stream] = connector.connect(argv[3], serverPort);
+                fcntl(streams[stream]->m_sd, O_NONBLOCK);
             }
 
-            int sentData[socketNum] = {0};
+            int sentData[socketNumTrue] = {0};
 
-
-            //            for (int i = 0; i < numMsgs; i++)
-            //            {
-            int ackedPeersForMsgRound = 0;
-            while (ackedPeersForMsgRound < socketNumTrue)
+            printf("=====Run on %d size with %d and %d msgs=====\n", msgSize,
+                   socketNum, numMsgs);
+            for (int i = 1; i <= numMsgs; i++)
             {
-                for (int streamId = 0; streamId < socketNumTrue; streamId++)
+
+                std::vector<int> msgSizesTrue = msgSizesTrue2;
+                int ackedPeersForMsgRound = 0;
+                while (ackedPeersForMsgRound < socketNumTrue)
                 {
-
-//                    int bytesSent = send(streams[streamId]->m_sd, msgs[streamId],
-//                                         msgSizes[streamId], 0);
-                    int bytesSent = streams[streamId]->send(msgs[streamId], msgSizes[streamId]);
-                    if(bytesSent == -1){
-                        perror("Error sending!");
-                    }
-                    sentData[streamId] =bytesSent;
-                }
-
-                int max_sd = 0;
-                int sd = 0;
-                fd_set readfds;
-                int ret = 0;
-                int ackedPeers = 0;
-                int tempMsgSizes[socketNum] = {0};
-
-                while (ackedPeers < socketNumTrue)
-                {
-                    FD_ZERO(&readfds);
-                    for (int stream = 0; stream < socketNumTrue; stream++)
+                    for (int streamId = 0; streamId < socketNumTrue; streamId++)
                     {
-                        FD_SET(streams[stream]->m_sd, &readfds);
-                        max_sd = (max_sd > streams[stream]->m_sd) ? max_sd
-                                                                  : streams[stream]
-                                         ->m_sd;
+                        ssize_t bytesSent = streams[streamId]
+                                ->send(msgs[streamId],
+                                       ((msgSizesTrue[streamId] >
+                                         MAX_PACKET_SIZE) ? MAX_PACKET_SIZE
+                                                          : msgSizesTrue[streamId]));
+                        if (bytesSent == -1)
+                        {
+                            perror("Error sending!");
+                        }
+                        sentData[streamId] = bytesSent;
                     }
 
-                    ret = select(max_sd + 1, &readfds, NULL, NULL, NULL);
-                    if (ret < 0)
-                    {
-                        printf("select failed\n ");
-                        return -1;
-                    }
+                    int max_sd = 0;
+                    int sd = 0;
+                    fd_set readfds;
+                    int ret = 0;
+                    int ackedPeers = 0;
+                    int tempMsgSizes[socketNumTrue] = {0};
 
-                    for (int stream = 0; stream < socketNumTrue; stream++)
+                    while (ackedPeers < socketNumTrue)
                     {
+                        FD_ZERO(&readfds);
+                        for (int stream = 0; stream < socketNumTrue; stream++)
+                        {
+                            FD_SET(streams[stream]->m_sd, &readfds);
+                            max_sd = (max_sd > streams[stream]->m_sd) ? max_sd
+                                                                      : streams[stream]
+                                             ->m_sd;
+                        }
 
+                        ret = select(max_sd + 1, &readfds, NULL, NULL, NULL);
+                        if (ret < 0)
+                        {
+                            printf("select failed\n ");
+                            return -1;
+                        }
+
+                        for (int stream = 0; stream < socketNumTrue; stream++)
+                        {
                             sd = streams[stream]->m_sd;
                             if (FD_ISSET(sd, &readfds))
                             {
-                                do{
-                                    int bytesRead = 0;
-                                bytesRead = streams[stream]
-                                        ->receive(ack, MAX_MSG_SIZE);
-                                if (bytesRead >= 0)
+                                int bytesRead;
+                                do
                                 {
-                                    tempMsgSizes[stream] += bytesRead;
-                                    if (bytesRead == 0 ||
-                                        tempMsgSizes[stream] >=
-                                        sentData[stream])
-                                    {
-                                        msgSizesTrue[stream] -=
-                                                sentData[stream];
-                                        ackedPeers++;
-                                        break;
-                                    }
                                     bytesRead = 0;
-
-                                } else
-                                {
-                                    std::cerr << "Error in read" << std::endl;
-                                    return 1;
-                                }
-                                } while (bytesRead <= 0);
+                                    bytesRead = streams[stream]->receive(ack,
+                                                                         (msgSizesTrue[stream] >
+                                                                          MAX_PACKET_SIZE
+                                                                          ? MAX_PACKET_SIZE
+                                                                          : msgSizesTrue[stream]));
+                                    if (bytesRead >= 0)
+                                    {
+                                        tempMsgSizes[stream] += bytesRead;
+                                        if (bytesRead == 0 ||
+                                            tempMsgSizes[stream] >=
+                                            sentData[stream])
+                                        {
+                                            msgSizesTrue[stream] -=
+                                                    sentData[stream];
+                                            ackedPeers++;
+                                            break;
+                                        }
+                                    } else
+                                    {
+                                        std::cerr << "Error in read"
+                                                  << std::endl;
+                                        return 1;
+                                    }
+                                } while (bytesRead > 0);
 
                             }
 
-                        if (msgSizesTrue[stream] == 0)
-                        {
-                            ackedPeersForMsgRound++;
+                            if (msgSizesTrue[stream] <= 0)
+                            {
+                                ackedPeersForMsgRound++;
+
+                            }
+
                         }
+
 
                     }
 
 
                 }
 
-
             }
-
-            //	  }
 
 
             if (gettimeofday(&end, NULL))
@@ -216,11 +230,14 @@ int main(int argc, char **argv)
                 exit(1);
             }
             double totalTime = timeDifference(start, end);
+            std::cout << "Metric parameters: Socket: " << socketNum << " NM: "
+                      << numMsgs << " TT: " << totalTime << msgSize
+                      << std::endl;
             double rtt = calcAverageRTT(1, socketNum * numMsgs, totalTime);
             double packetRate =
                     calcAveragePacketRate(socketNum * numMsgs, totalTime);
             double throughput =
-                    calcAverageThroughput(socketNum * numMsgs, msgSize,
+                    calcAverageThroughput(socketNum * numMsgs, msgSizes[0],
                                           totalTime);
             double numOfSockets = 1;
             printf("avgRTT: %g\n", rtt);
@@ -229,7 +246,7 @@ int main(int argc, char **argv)
             resultIndex = saveResults(rtt, throughput, packetRate, resultIndex,
                                       results, socketNum, msgSize,
                                       numMsgs * socketNum);
-            for (int stream = 0; stream < socketNum; stream++)
+            for (int stream = 0; stream < socketNumTrue; stream++)
             {
                 delete (streams[stream]);
                 if (msgSizes[stream] != 0)

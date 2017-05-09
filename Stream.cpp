@@ -19,7 +19,7 @@ Stream::~Stream()
   close(m_sd);
 }
 
-ssize_t Stream::send(const char *buffer, int len)
+ssize_t Stream::send(const char *buffer, ssize_t len)
 {
 
   return write(m_sd, buffer, len);
