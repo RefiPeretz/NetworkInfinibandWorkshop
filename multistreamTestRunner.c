@@ -13,6 +13,7 @@
 #include <time.h>
 #include <sys/param.h>
 #include <pthread.h>
+#include <math.h>
 #include "multistreamPPSupport.h"
 #include "MetricsIBV.h"
 
