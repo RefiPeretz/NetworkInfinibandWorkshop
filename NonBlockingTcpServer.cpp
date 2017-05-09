@@ -20,8 +20,6 @@ int sendVerifier(int s, char *buf, int len){
   int bytesleft = len; // how many we have left to send
   int n;
 
-  std::cout << "len to be sent: " << len<<std::endl;
-
   while(total < len) {
 	n = write(s, buf+total, bytesleft);
 	if (n == -1) { break; }
@@ -30,7 +28,6 @@ int sendVerifier(int s, char *buf, int len){
   }
 
   len = total; // return number actually sent here
-    std::cout << "total sent: " << total<<std::endl;
   return n==-1?-1:0; // return -1 on failure, 0 on success
 }
 
@@ -91,6 +88,7 @@ int main(int argc, char *argv[]) {
                     break;
                 }
             }
+
         }
 
         for (i = 0; i < MAX_CLIENTS; i++) {

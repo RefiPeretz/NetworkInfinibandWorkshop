@@ -552,9 +552,18 @@ static int pp_post_send(struct pingpong_context *ctx)
     return ibv_post_send(ctx->qp, &wr, &bad_wr);
 }
 
-
 void *runPingPong(void *commands1)
 {
+    int threadNum = ((Commands *) (commands1))->threadNum;
+    printf("threadNum:%d\n",threadNum);
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    CPU_SET(threadNum, &cpuset);
+    int rc = pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+    if (rc != 0) {
+        perror("pthread_setaffinity_np");
+        exit(-1);
+    }
     struct ibv_device **dev_list;
     struct ibv_device *ib_dev;
     struct pingpong_context *ctx;
@@ -585,26 +594,16 @@ void *runPingPong(void *commands1)
     {
         return (void *) 1;
     }
-    printf("new port - %d\n", port);
 
-    printf(" size param - %d\n", ((Commands *) (commands1))->size);
 
     size = ((Commands *) (commands1))->size;
     printf("new size - %d\n", size);
 
     servername = ((Commands *) (commands1))->servername;
-    printf("commands - %x\n", *((Commands *) (commands1)));
+
 
     int connfd = ((Commands *) (commands1))->connfd;
-    cpu_set_t cpuset;
-    CPU_ZERO(&cpuset);
-    CPU_SET(((Commands *) (commands1))->threadNum, &cpuset);
-    int rc = pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
-    if (rc != 0) {
-        perror("pthread_setaffinity_np");
-        exit(-1);
-    }
-    printf("new connection id - %d\n", connfd);
+
 
 
     page_size = sysconf(_SC_PAGESIZE);
@@ -693,8 +692,7 @@ void *runPingPong(void *commands1)
     my_dest.qpn = ctx->qp->qp_num;
     my_dest.psn = lrand48() & 0xffffff;
     inet_ntop(AF_INET6, &my_dest.gid, gid, sizeof gid);
-    printf("  local address:  LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n",
-           my_dest.lid, my_dest.qpn, my_dest.psn, gid);
+
 
 
     if (servername)
@@ -713,8 +711,7 @@ void *runPingPong(void *commands1)
     }
 
     inet_ntop(AF_INET6, &rem_dest->gid, gid, sizeof gid);
-    printf("  remote address: LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n",
-           rem_dest->lid, rem_dest->qpn, rem_dest->psn, gid);
+
 
     if (servername)
     {
@@ -724,7 +721,6 @@ void *runPingPong(void *commands1)
         }
     }
     close(connfd);
-    printf("Closed TCP connection to remote\n");
     ctx->pending = PINGPONG_RECV_WRID;
 
     if (servername)
@@ -949,6 +945,7 @@ int main(int argc, char *argv[])
                     newCommands->port = commands.port;
                     newCommands->servername = commands.servername;
                     newCommands->size = sizePerPeer[thread];
+                    newCommands->threadNum = thread;
                     if(newCommands->size == 0){
                         printf("Payload size is zero- skipping thread\n");
                         thread++;
@@ -980,7 +977,7 @@ int main(int argc, char *argv[])
                     newCommands->port = commands.port;
                     newCommands->servername = commands.servername;
                     newCommands->size = sizePerPeer[thread];
-                    newCommands->threadNum = 0;
+                    newCommands->threadNum = thread;
                     if(newCommands->size == 0){
                         printf("Payload size is zero- skipping thread\n");
                         thread++;
@@ -1020,19 +1017,20 @@ int main(int argc, char *argv[])
                 }
 
             }
-            free(sizePerPeer);
+
             free(pthread);
             double rtt = calcAverageRTT(1,DEFAULT_NUM_OF_MSGS*numThreads, maxThreadTime);
             double packetRate = calcAveragePacketRate(DEFAULT_NUM_OF_MSGS*numThreads,
                                                       maxThreadTime);
             double throughput = calcAverageThroughput(DEFAULT_NUM_OF_MSGS*numThreads,
-                                                      varsize,maxThreadTime);
+                                                      sizePerPeer[0],maxThreadTime);
             double numOfSockets = numThreads;
             printf("avgRTT: %g\n", rtt);
             printf("avgPacketRate: %g\n", packetRate);
             printf("avgThroughput: %g\n", throughput);
             resultIndex = saveResults(rtt,throughput,packetRate,resultIndex,
                                       results,numOfSockets,varsize,numThreads*DEFAULT_NUM_OF_MSGS);
+            free(sizePerPeer);
 
         }
     }
