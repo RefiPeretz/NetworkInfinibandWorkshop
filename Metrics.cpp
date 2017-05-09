@@ -105,8 +105,6 @@ void warmUpServer(int port,int numOfMsgs = 1000,std::string server = "localhost"
 }
 
 
-
-
 double calcAverageRTT(int numOfSockets,size_t numOfMessages, double totalTime)
 {
     return (totalTime / (double)numOfMessages)/numOfSockets;
