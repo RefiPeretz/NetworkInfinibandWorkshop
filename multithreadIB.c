@@ -1034,8 +1034,12 @@ int main(int argc, char *argv[])
 
         }
     }
+
+	if(!is_server){
     char* filename = "InfinbandMultiSingleThread.csv";
     createCSV(filename,results,1000);
+	}
+
 }
 
 int createClientSocketConnection(int port, char *servername)
