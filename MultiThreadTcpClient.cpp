@@ -99,7 +99,7 @@ int main(int argc, char **argv)
             double totalTime = timeDifference(start,end);
             double rtt = calcAverageRTT(1,data->msgNum*coreCount, totalTime);
             double packetRate = calcAveragePacketRate(data->msgNum*coreCount,totalTime);
-            double throughput = calcAverageThroughput(data->msgNum*coreCount,msgSize,totalTime);
+            double throughput = calcAverageThroughput(data->msgNum*coreCount,msgSizes[0],totalTime);
             double numOfSockets = coreCount;
             printf("avgRTT: %g\n", rtt);
             printf("avgPacketRate: %g\n", packetRate);
