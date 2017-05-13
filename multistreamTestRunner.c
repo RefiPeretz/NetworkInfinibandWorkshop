@@ -960,7 +960,7 @@ int main(int argc, char *argv[]) {
             printf("Time: %f\n", curTime);
             free(newCommands);
             free(pthread);
-            double rtt = calcAverageRTT(numOfQps,DEFAULT_NUM_OF_MSGS, curTime);
+            double rtt = calcAverageRTT(1,DEFAULT_NUM_OF_MSGS, curTime);
             double packetRate = calcAveragePacketRate(DEFAULT_NUM_OF_MSGS,curTime)/numOfQps;
             double throughput = calcAverageThroughput(DEFAULT_NUM_OF_MSGS,varsize,curTime)/numOfQps;
             double numOfSockets = numOfQps;
