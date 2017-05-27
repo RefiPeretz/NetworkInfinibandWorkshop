@@ -48,6 +48,8 @@ struct pingpong_dest
     union ibv_gid gid;
 };
 
+
+
 static int pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn,
                           enum ibv_mtu mtu, int sl, struct pingpong_dest *dest,
                           int sgid_idx)
@@ -371,7 +373,6 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
     return ctx;
 }
 
-void processClientCmd(char *msg);
 
 int pp_close_ctx(struct pingpong_context *ctx)
 {
@@ -384,12 +385,6 @@ int pp_close_ctx(struct pingpong_context *ctx)
     if (ibv_destroy_cq(ctx->cq))
     {
         fprintf(stderr, "Couldn't destroy CQ\n");
-        return 1;
-    }
-
-    if (ibv_dereg_mr(ctx->mr))
-    {
-        fprintf(stderr, "Couldn't deregister MR\n");
         return 1;
     }
 
@@ -497,8 +492,65 @@ typedef struct handle
     struct pingpong_dest my_dest;
     struct pingpong_dest *rem_dest;
     char gid[33];
-    kvMsg kvMsg[];
+    kvMsg **kvMsgDict;
 } handle;
+
+int getFromStore(handle *store, const char *key, char **value)
+{
+    int listSize = store->kvListSize;
+    for(int i=0; i < listSize; i++){
+        if(strcmp(store->kvMsgDict[i]->key, key) == 0){
+            *value = malloc(strlen(store->kvMsgDict[i]->value)+1);
+            memcpy(*value, store->kvMsgDict[i]->value, strlen
+                    (store->kvMsgDict[i]->value)+1);
+            return 0;
+        }
+    }
+
+    return 1; // Didn't find any suitable key
+}
+void addElement(const char* key, char* value,struct handle* curHandle)
+{
+
+    if (!curHandle->kvListSize)
+    {
+        struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
+        curMsg->key = malloc(strlen(key) + 1);
+        curMsg->value = malloc(strlen(value) + 1);
+
+        strcpy(curMsg->key, key);
+        strcpy(curMsg->value, value);
+        curHandle->kvMsgDict = malloc(sizeof(kvMsg) * 1);
+        curHandle->kvMsgDict[0] = curMsg;
+        curHandle->kvListSize++;
+    } else
+    {
+        for (int i = 0; i < curHandle->kvListSize; i++)
+        {
+            if (strcmp(curHandle->kvMsgDict[i]->key, key))
+            {
+                strcpy(curHandle->kvMsgDict[i]->value, value);
+                return;
+            }
+        }
+        struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
+        curMsg->key = malloc(strlen(key) + 1);
+        curMsg->value = malloc(strlen(value) + 1);
+        strcpy(curMsg->key, key);
+        strcpy(curMsg->value, value);
+        curHandle->kvListSize++;
+
+
+        struct kvMsg **newList = malloc(sizeof(kvMsg) * curHandle->kvListSize);
+        for (int i = 0; i < curHandle->kvListSize - 1; i++)
+        {
+            newList[i] = curHandle->kvMsgDict[i];
+        }
+        newList[curHandle->kvListSize - 1] = curMsg;
+        free(curHandle->kvMsgDict);
+        curHandle->kvMsgDict = newList;
+    }
+}
 
 int kv_open(char *servername, void **kv_handle)
 {
@@ -859,10 +911,6 @@ int main(int argc, char *argv[])
 
     if (servername)
     {
-        //		if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, kvHandle->ctx->buf, sizeof(kvHandle->ctx->buf))) {
-        //			fprintf(stderr, "Couldn't post send\n");
-        //			return 1;
-        //		}
         if (kv_set(kvHandle, key, value))
         {
             fprintf(stderr, "Couldn't post send\n");
@@ -898,7 +946,7 @@ int main(int argc, char *argv[])
             return 1;
         }
         printf("Got msg: %s\n", recvMsg);
-        processClientCmd(recvMsg);
+        processClientCmd(kvHandle, recvMsg);
         free(recvMsg);
 
 
@@ -950,7 +998,7 @@ int main(int argc, char *argv[])
                                 return 1;
                             }
                             printf("Got msg: %s\n", recvMsg);
-                            processClientCmd(recvMsg);
+                            processClientCmd(kvHandle, recvMsg);
                             ++rcnt;
                             break;
 
@@ -988,30 +1036,84 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void processClientCmd(char *msg)
+int processClientCmd(handle *kv_handle, char *msg)
 {
     printf("Processing message %s\n", msg);
+    if(strlen(msg) == 0){
+        fprintf(stderr, "Msg is empty!: %s\n",msg);
+        return  0;
+    }
     int cmd = 0;
-    char key[4096];
-    char value[4096];
-    sscanf(msg, "%d:%s:%s", &cmd, key, value);
+    char *key;
+    char *value;
+    char *delim = ":";
+    cmd = atoi(strtok(msg, delim));
+    key = strtok(NULL, delim);
+    value = strtok(NULL, delim);
+
+
+
     if (cmd == SET_CMD)
     {
+        addElement(key, value, kv_handle);
 
     } else if (cmd == GET_CMD)
     {
+        char **retValue = malloc(sizeof(char*));
+
+        int ret =  getFromStore(kv_handle, key, retValue);
+        if(ret){
+            fprintf(stderr, "Error in fetching value! no\n");
+            return 1;
+        }
+        printf("Sending value after 'get' msg: %s\n", *retValue);
+        if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, *retValue,
+                           strlen(*retValue) + 1))
+        {
+            perror("Couldn't post send: ");
+            return 1;
+        }
+//        int scnt = 0;
+//        while (scnt == 0)
+//        {
+//            struct ibv_wc wc[2];
+//            int ne;
+//            do
+//            {
+//                ne = ibv_poll_cq(kv_handle->ctx->cq, 2, wc);
+//                if (ne < 0)
+//                {
+//                    fprintf(stderr, "poll CQ failed %d\n", ne);
+//                    return 1;
+//                }
+//
+//            } while (ne < 1);
+//
+//            for (int i = 0; i < ne; ++i)
+//            {
+//                if (wc[i].wr_id == PINGPONG_SEND_WRID && wc[i].status !=
+//                            IBV_WC_SUCCESS)
+//                {
+//                    fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
+//                            ibv_wc_status_str(wc[i].status), wc[i].status,
+//                            (int) wc[i].wr_id);
+//                    return 1;
+//                }
+//                if (wc[i].wr_id == PINGPONG_SEND_WRID)
+//                {
+//                    scnt++;
+//                    free(*retValue);//Irrelevant sending!
+//                    free(retValue);//Irrelevant sending!
+//                    break;
+//                }
+//            }
+//        }
 
     } else
     {
         fprintf(stderr, "Coudln't decide what's the msg! MsgCmd - %d\n", cmd);
     }
 
+    return 0;
 }
 
-void addToStore(const char *key, const char *value){
-
-}
-
-void getFromStore(const char *key, const char *value){
-
-}
