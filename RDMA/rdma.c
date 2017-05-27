@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 		.ib_dev     		= NULL
 		
 	};
-
+	struct rdma_cm_id;
 	if(argc == 2){
 		data.servername = argv[1];
 	}
@@ -157,15 +157,22 @@ int main(int argc, char *argv[])
 
 		// For now, the message to be written into the clients buffer can be edited here
 		char *chPtr = ctx->buf;
-		strcpy(chPtr,"Saluton Teewurst. UiUi");
-
+		realloc(chPtr,2);
+		strcpy(chPtr,"k");
+        printf("Writing to %lu\n'", data.remote_connection->vaddr);
 		rdma_write(ctx, &data);
+        realloc(chPtr,2);
+        strcpy(chPtr,"b");
+        data.remote_connection->vaddr += 2;
+        printf("Writing to %lu\n'", data.remote_connection->vaddr);
+        rdma_write(ctx, &data);
 		
 	}else{
 		/* Client - Read local buffer */
 		printf("Client. Reading Local-Buffer (Buffer that was registered with MR)\n");
-		
-		char *chPtr = (char *)data.local_connection.vaddr;
+        printf("Reading from %lu\n'", data.local_connection.vaddr);
+        printf("Reading from %s\n'", (char *)data.local_connection.vaddr);
+		char *chPtr = (char *)(data.local_connection.vaddr +2);
 			
 		while(1){
 			if(strlen(chPtr) > 0){
