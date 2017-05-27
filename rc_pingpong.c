@@ -34,10 +34,8 @@ struct pingpong_context
     struct ibv_mr *mr;
     struct ibv_cq *cq;
     struct ibv_qp *qp;
-    void *buf;
     int size;
     int rx_depth;
-    int pending;
     struct ibv_port_attr portinfo;
 
 };
@@ -306,12 +304,7 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
     ctx->size = size;
     ctx->rx_depth = rx_depth;
 
-    ctx->buf = malloc(roundup(size, page_size));
-    if (!ctx->buf)
-    {
-        fprintf(stderr, "Couldn't allocate work buf.\n");
-        return NULL;
-    }
+
 
     ctx->context = ibv_open_device(ib_dev);
     if (!ctx->context)
@@ -341,12 +334,7 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
         return NULL;
     }
 
-    ctx->mr = ibv_reg_mr(ctx->pd, ctx->buf, size, IBV_ACCESS_LOCAL_WRITE);
-    if (!ctx->mr)
-    {
-        fprintf(stderr, "Couldn't register MR\n");
-        return NULL;
-    }
+
 
     ctx->cq = ibv_create_cq(ctx->context, rx_depth + 1, NULL, ctx->channel, 0);
     if (!ctx->cq)
@@ -357,7 +345,7 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
 
     {
         struct ibv_qp_init_attr attr = {.send_cq = ctx->cq, .recv_cq = ctx
-                ->cq, .cap     = {.max_send_wr  = 1, .max_recv_wr  = rx_depth, .max_send_sge = 1, .max_recv_sge = 1}, .qp_type = IBV_QPT_RC};
+                ->cq, .cap     = {.max_send_wr  = rx_depth, .max_recv_wr  = rx_depth, .max_send_sge = 1, .max_recv_sge = 1}, .qp_type = IBV_QPT_RC};
 
         ctx->qp = ibv_create_qp(ctx->pd, &attr);
         if (!ctx->qp)
@@ -382,6 +370,8 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
 
     return ctx;
 }
+
+void processClientCmd(char *msg);
 
 int pp_close_ctx(struct pingpong_context *ctx)
 {
@@ -424,7 +414,6 @@ int pp_close_ctx(struct pingpong_context *ctx)
         return 1;
     }
 
-    free(ctx->buf);
     free(ctx);
 
     return 0;
@@ -544,10 +533,9 @@ int kv_set(void *kv_handle, const char *key, const char *value)
 {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = SET_CMD;
-
     char *msg = malloc(roundup(kvHandle->defMsgSize, page_size));
     sprintf(msg, "%d:%s:%s", cmd, key, value);
-    printf("Sending msg: %s\n", msg);
+    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
 
     if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg,
                        strlen(msg) + 1))
@@ -556,29 +544,40 @@ int kv_set(void *kv_handle, const char *key, const char *value)
         return 1;
     }
 
-    struct ibv_wc wc[2];
-    int ne = -666;
-    do
-    {
-        ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
-        if (ne < 0)
-        {
-            fprintf(stderr, "poll CQ failed %d\n", ne);
-            return 1;
-        }
 
-    } while (ne < 1);
-
-    for (int i = 0; i < ne; ++i)
+    int scnt = 0;
+    while (scnt == 0)
     {
-        if (wc[i].status != IBV_WC_SUCCESS)
+        struct ibv_wc wc[2];
+        int ne;
+        do
         {
-            fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
-                    ibv_wc_status_str(wc[i].status), wc[i].status,
-                    (int) wc[i].wr_id);
-            return 1;
+            ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
+            if (ne < 0)
+            {
+                fprintf(stderr, "poll CQ failed %d\n", ne);
+                return 1;
+            }
+
+        } while (ne < 1);
+
+        for (int i = 0; i < ne; ++i)
+        {
+            if (wc[i].status != IBV_WC_SUCCESS)
+            {
+                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
+                        ibv_wc_status_str(wc[i].status), wc[i].status,
+                        (int) wc[i].wr_id);
+                return 1;
+            }
+            if (wc[i].wr_id == PINGPONG_SEND_WRID)
+            {
+                scnt++;
+                break;
+            }
         }
     }
+
 
     return 0;
 };
@@ -588,7 +587,7 @@ int kv_get(void *kv_handle, const char *key, char **value)
     handle *kvHandle = kv_handle;
     kv_cmd cmd = GET_CMD;
     char *vmsg = malloc(roundup(kvHandle->defMsgSize, page_size));
-    sprintf(vmsg, "%d:%s:%s", cmd, key, "0");
+    sprintf(vmsg, "%d:%s:%s", cmd, key, "");
     printf("Sending get msg: %s\n", vmsg);
     if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, vmsg,
                        strlen(vmsg) + 1))
@@ -597,14 +596,12 @@ int kv_get(void *kv_handle, const char *key, char **value)
         return 1;
     }
     printf("Pooling for result value \n");
-    char *recvMsg = malloc(roundup(kvHandle->defMsgSize,
-                                   page_size));
+    char *recv2Msg;
     int scnt = 1, recved = 1;
     while (scnt && recved)
     {
         struct ibv_wc wc[2];
         int ne;
-
         do
         {
             ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
@@ -626,21 +623,21 @@ int kv_get(void *kv_handle, const char *key, char **value)
                 return 1;
             }
 
+            recv2Msg = malloc(roundup(kvHandle->defMsgSize, page_size));
             switch ((int) wc[i].wr_id)
             {
                 case PINGPONG_SEND_WRID:
                     scnt--;
                     break;
 
-                    int ret;
                 case PINGPONG_RECV_WRID:
                     if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp,
-                                       recvMsg, strlen(recvMsg) + 1)) < 0)
+                                        recv2Msg, roundup(kvHandle->defMsgSize, page_size))) < 0)
                     {
                         fprintf(stderr, "Couldn't post receive \n");
                         return 1;
                     }
-                    printf("Got msg: %s\n", recvMsg);
+                    printf("Got msg: %s\n", recv2Msg);
 
                     recved--;
                     break;
@@ -651,13 +648,12 @@ int kv_get(void *kv_handle, const char *key, char **value)
                     return 1;
             }
 
-            kvHandle->ctx->pending &= ~(int) wc[i].wr_id;
         }
 
     }
 
-    memcpy(value, recvMsg, strlen(recvMsg) + 1);
-    free(recvMsg);
+    memcpy(value, recv2Msg, strlen(recv2Msg) + 1);
+    free(recv2Msg);
     return 0;
 };
 
@@ -688,7 +684,6 @@ int main(int argc, char *argv[])
     enum ibv_mtu mtu = IBV_MTU_1024;
     int iters = 1000;
     int use_event = 0;
-    int routs;
     int rcnt, scnt;
     int num_cq_events = 0;
     int sl = 0;
@@ -787,13 +782,7 @@ int main(int argc, char *argv[])
     page_size = sysconf(_SC_PAGESIZE);
     kv_open(servername, (void **) p_kvHandle);
 
-    int ret = cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp,
-                             kvHandle->ctx->buf, 4096);
-    if (ret < 0)
-    {
-        fprintf(stderr, "Couldn't post receive \n");
-        return 1;
-    }
+
 
     if (pp_get_port_info(kvHandle->ctx->context, ib_port,
                          &kvHandle->ctx->portinfo))
@@ -863,7 +852,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    kvHandle->ctx->pending = PINGPONG_RECV_WRID;
 
     //first Test
     char key[4] = "red";
@@ -881,42 +869,56 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-        kvHandle->ctx->pending |= PINGPONG_SEND_WRID;
 
-        char *recvMsg = malloc(roundup(kvHandle->defMsgSize,
-                                       page_size));
-        if(kv_get(kvHandle, key, &recvMsg)){
+        char *recvMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
+        if (kv_get(kvHandle, key, &recvMsg))
+        {
             fprintf(stderr, "Couldn't kv get the requested key\n");
             return 1;
         }
     }
 
-    if(!servername)
+    if (!servername)
     {
+        char *recvMsg = NULL;
         if (gettimeofday(&start, NULL))
         {
             perror("gettimeofday");
             return 1;
         }
+        recvMsg = malloc(roundup(kvHandle->defMsgSize,
+                                 page_size));
+
+        if ((cstm_post_recv(kvHandle->ctx->pd,
+                            kvHandle->ctx->qp, recvMsg,
+                            roundup(kvHandle->defMsgSize,
+                                    page_size))) < 0)
+        {
+            perror("Couldn't post receive:");
+            return 1;
+        }
+        printf("Got msg: %s\n", recvMsg);
+        processClientCmd(recvMsg);
+        free(recvMsg);
 
 
         rcnt = scnt = 0;
         while (rcnt < iters || scnt < iters)
         {
-            {
-                struct ibv_wc wc[2];
+
+                struct ibv_wc wc[4];
                 int ne, i;
 
                 do
                 {
-                    ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
+                    ne = ibv_poll_cq(kvHandle->ctx->cq, 4, wc);
                     if (ne < 0)
                     {
                         fprintf(stderr, "poll CQ failed %d\n", ne);
                         return 1;
                     }
 
-                } while (!use_event && ne < 1);
+                } while (ne < 1);
 
                 for (i = 0; i < ne; ++i)
                 {
@@ -927,7 +929,7 @@ int main(int argc, char *argv[])
                                 (int) wc[i].wr_id);
                         return 1;
                     }
-
+                    char *recvMsg = NULL;
                     switch ((int) wc[i].wr_id)
                     {
                         case PINGPONG_SEND_WRID:
@@ -935,24 +937,20 @@ int main(int argc, char *argv[])
                             break;
 
                         case PINGPONG_RECV_WRID:
-                            if (--routs <= 1)
+
+                            recvMsg = malloc(roundup(kvHandle->defMsgSize,
+                                                     page_size));
+
+                            if ((cstm_post_recv(kvHandle->ctx->pd,
+                                                kvHandle->ctx->qp, recvMsg,
+                                                roundup(kvHandle->defMsgSize,
+                                                        page_size))) < 0)
                             {
-
-                                int ret = cstm_post_recv(kvHandle->ctx->pd,
-                                                         kvHandle->ctx->qp,
-                                                         kvHandle->ctx->buf,
-                                                         4096);
-                                printf("Got msg: %s\n",
-                                       (char *) kvHandle->ctx->buf);
-                                if (ret < 0)
-                                {
-                                    fprintf(stderr,
-                                            "Couldn't post receive (%d)\n",
-                                            routs);
-                                    return 1;
-                                }
+                                perror("Couldn't post receive:");
+                                return 1;
                             }
-
+                            printf("Got msg: %s\n", recvMsg);
+                            processClientCmd(recvMsg);
                             ++rcnt;
                             break;
 
@@ -961,22 +959,9 @@ int main(int argc, char *argv[])
                                     (int) wc[i].wr_id);
                             return 1;
                     }
-
-                    kvHandle->ctx->pending &= ~(int) wc[i].wr_id;
-//                    if (scnt < iters && !kvHandle->ctx->pending)
-//                    {
-//                        if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp,
-//                                           kvHandle->ctx->buf,
-//                                           sizeof(kvHandle->ctx->buf)))
-//                        {
-//                            fprintf(stderr, "Couldn't post send\n");
-//                            return 1;
-//                        }
-//                        kvHandle->ctx->pending =
-//                                PINGPONG_RECV_WRID | PINGPONG_SEND_WRID;
-//                    }
+                    free(recvMsg);
                 }
-            }
+
         }
 
         if (gettimeofday(&end, NULL))
@@ -985,20 +970,40 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-    {
-        float usec = (end.tv_sec - start.tv_sec) * 1000000 +
-                     (end.tv_usec - start.tv_usec);
-        long long bytes = (long long) size * iters * 2;
+        {
+            float usec = (end.tv_sec - start.tv_sec) * 1000000 +
+                         (end.tv_usec - start.tv_usec);
+            long long bytes = (long long) size * iters * 2;
 
-        printf("%lld bytes in %.2f seconds = %.2f Mbit/sec\n", bytes,
-               usec / 1000000., bytes * 8. / usec);
-        printf("%d iters in %.2f seconds = %.2f usec/iter\n", iters,
-               usec / 1000000., usec / iters);
-    }
+            printf("%lld bytes in %.2f seconds = %.2f Mbit/sec\n", bytes,
+                   usec / 1000000., bytes * 8. / usec);
+            printf("%d iters in %.2f seconds = %.2f usec/iter\n", iters,
+                   usec / 1000000., usec / iters);
+        }
     }
     ibv_ack_cq_events(kvHandle->ctx->cq, num_cq_events);
 
     kv_close(kvHandle);
 
     return 0;
+}
+
+void processClientCmd(char *msg)
+{
+    printf("Processing message %s\n", msg);
+    int cmd = 0;
+    char key[4096];
+    char value[4096];
+    sscanf(msg, "%d:%s:%s", &cmd, key, value);
+    if (cmd == SET_CMD)
+    {
+
+    } else if (cmd == GET_CMD)
+    {
+
+    } else
+    {
+        fprintf(stderr, "Coudln't decide what's the msg! MsgCmd - %d\n", cmd);
+    }
+
 }
