@@ -433,13 +433,16 @@ int pp_close_ctx(struct pingpong_context *ctx)
 static int
 cstm_post_send(struct ibv_pd *pd, struct ibv_qp *qp, char *buf, int length)
 {
-
     struct ibv_mr *mr = ibv_reg_mr(pd, buf, length, IBV_ACCESS_LOCAL_WRITE);
-
+    if (!mr)
+    {
+        fprintf(stderr, "Couldn't register MR\n");
+        return 1;
+    }
     struct ibv_sge list =
             {.addr    = (uintptr_t) buf, .length = length, .lkey    = mr->lkey};
     struct ibv_send_wr wr =
-            {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode     = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,};
+            {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,};
     struct ibv_send_wr *bad_wr;
 
     return ibv_post_send(qp, &wr, &bad_wr);
@@ -448,10 +451,12 @@ cstm_post_send(struct ibv_pd *pd, struct ibv_qp *qp, char *buf, int length)
 static int
 cstm_post_recv(struct ibv_pd *pd, struct ibv_qp *qp, char *buf, int length)
 {
-
-    struct ibv_sge sge;
     struct ibv_mr *mr = ibv_reg_mr(pd, buf, length, IBV_ACCESS_LOCAL_WRITE);
-
+    if (!mr)
+    {
+        fprintf(stderr, "Couldn't register MR\n");
+        return 1;
+    }
     struct ibv_sge list =
             {.addr    = (uintptr_t) buf, .length = length, .lkey    = mr->lkey};
     struct ibv_recv_wr wr =
@@ -550,6 +555,31 @@ int kv_set(void *kv_handle, const char *key, const char *value)
         perror("Couldn't post send: ");
         return 1;
     }
+
+    struct ibv_wc wc[2];
+    int ne = -666;
+    do
+    {
+        ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
+        if (ne < 0)
+        {
+            fprintf(stderr, "poll CQ failed %d\n", ne);
+            return 1;
+        }
+
+    } while (ne < 1);
+
+    for (int i = 0; i < ne; ++i)
+    {
+        if (wc[i].status != IBV_WC_SUCCESS)
+        {
+            fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
+                    ibv_wc_status_str(wc[i].status), wc[i].status,
+                    (int) wc[i].wr_id);
+            return 1;
+        }
+    }
+
     return 0;
 };
 
@@ -933,18 +963,18 @@ int main(int argc, char *argv[])
                     }
 
                     kvHandle->ctx->pending &= ~(int) wc[i].wr_id;
-                    if (scnt < iters && !kvHandle->ctx->pending)
-                    {
-                        if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp,
-                                           kvHandle->ctx->buf,
-                                           sizeof(kvHandle->ctx->buf)))
-                        {
-                            fprintf(stderr, "Couldn't post send\n");
-                            return 1;
-                        }
-                        kvHandle->ctx->pending =
-                                PINGPONG_RECV_WRID | PINGPONG_SEND_WRID;
-                    }
+//                    if (scnt < iters && !kvHandle->ctx->pending)
+//                    {
+//                        if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp,
+//                                           kvHandle->ctx->buf,
+//                                           sizeof(kvHandle->ctx->buf)))
+//                        {
+//                            fprintf(stderr, "Couldn't post send\n");
+//                            return 1;
+//                        }
+//                        kvHandle->ctx->pending =
+//                                PINGPONG_RECV_WRID | PINGPONG_SEND_WRID;
+//                    }
                 }
             }
         }
