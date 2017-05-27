@@ -1007,3 +1007,11 @@ void processClientCmd(char *msg)
     }
 
 }
+
+void addToStore(const char *key, const char *value){
+
+}
+
+void getFromStore(const char *key, const char *value){
+
+}

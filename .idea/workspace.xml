@@ -28,7 +28,7 @@
     </ADDITIONAL_GENERATION_ENVIRONMENT>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="Remove extern C from metrics">
+    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rc_pingpong.c" afterPath="$PROJECT_DIR$/rc_pingpong.c" />
     </list>
@@ -56,8 +56,8 @@
           <file leaf-file-name="rc_pingpong.c" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/rc_pingpong.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="397">
-                  <caret line="488" column="0" selection-start-line="488" selection-start-column="0" selection-end-line="488" selection-end-column="0" />
+                <state relative-caret-position="696">
+                  <caret line="1015" column="0" selection-start-line="1015" selection-start-column="0" selection-end-line="1015" selection-end-column="0" />
                   <folding>
                     <element signature="e#446#704#1" expanded="false" />
                     <element signature="e#2426#4447#0" expanded="false" />
@@ -65,7 +65,6 @@
                     <element signature="e#9208#10073#0" expanded="false" />
                     <element signature="e#10075#10693#0" expanded="false" />
                     <element signature="e#10695#11257#0" expanded="false" />
-                    <element signature="e#12377#12437#0" expanded="false" />
                     <element signature="e#12762#13424#0" expanded="false" />
                     <element signature="e#13428#14748#0" expanded="false" />
                     <element signature="e#14751#16953#0" expanded="false" />
@@ -73,13 +72,13 @@
                     <element signature="e#16992#17225#0" expanded="false" />
                     <element signature="e#17228#26407#0" expanded="false" />
                     <element signature="e#26409#26767#0" expanded="false" />
-                    <marker date="1495900322439" expanded="false" signature="77:358" ph="..." />
-                    <marker date="1495900322439" expanded="false" signature="365:420" ph="{...}" />
-                    <marker date="1495900322439" expanded="false" signature="728:793" ph="{...}" />
-                    <marker date="1495900322439" expanded="false" signature="994:2424" ph="{...}" />
-                    <marker date="1495900322439" expanded="false" signature="4669:7146" ph="{...}" />
-                    <marker date="1495900322439" expanded="false" signature="11296:12304" ph="{...}" />
-                    <marker date="1495900322439" expanded="false" signature="12326:12359" ph="{...}" />
+                    <marker date="1495900634455" expanded="false" signature="77:358" ph="..." />
+                    <marker date="1495900634455" expanded="false" signature="365:420" ph="{...}" />
+                    <marker date="1495900634455" expanded="false" signature="728:793" ph="{...}" />
+                    <marker date="1495900634455" expanded="false" signature="994:2424" ph="{...}" />
+                    <marker date="1495900634455" expanded="false" signature="4669:7146" ph="{...}" />
+                    <marker date="1495900634455" expanded="false" signature="11296:12304" ph="{...}" />
+                    <marker date="1495900634455" expanded="false" signature="12326:12359" ph="{...}" />
                   </folding>
                 </state>
               </provider>
@@ -92,8 +91,8 @@
           <file leaf-file-name="rc_pingpong.c" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rc_pingpong.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-1732">
-                  <caret line="562" column="5" selection-start-line="562" selection-start-column="5" selection-end-line="562" selection-end-column="5" />
+                <state relative-caret-position="-2031">
+                  <caret line="549" column="5" selection-start-line="549" selection-start-column="5" selection-end-line="549" selection-end-column="5" />
                   <folding>
                     <element signature="e#18#39#0" expanded="true" />
                     <element signature="e#68#86#0" expanded="true" />
@@ -516,7 +515,7 @@
       <workItem from="1495522028026" duration="1228000" />
       <workItem from="1495523848315" duration="580000" />
       <workItem from="1495529232017" duration="2400000" />
-      <workItem from="1495867749085" duration="30550000" />
+      <workItem from="1495867749085" duration="30760000" />
     </task>
     <task id="LOCAL-00001" summary="Added RTT evaluation">
       <created>1489742159010</created>
@@ -840,11 +839,18 @@
       <option name="project" value="LOCAL" />
       <updated>1495892073181</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="Remove extern C from metrics">
+      <created>1495900426237</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1495900426237</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="299469000" />
+    <option name="totallyTimeSpent" value="299679000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -969,7 +975,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rc_pingpong.c</url>
-          <line>553</line>
+          <line>540</line>
           <option name="timeStamp" value="306" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -1223,8 +1229,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rc_pingpong.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1732">
-          <caret line="562" column="5" selection-start-line="562" selection-start-column="5" selection-end-line="562" selection-end-column="5" />
+        <state relative-caret-position="-2031">
+          <caret line="549" column="5" selection-start-line="549" selection-start-column="5" selection-end-line="549" selection-end-column="5" />
           <folding>
             <element signature="e#18#39#0" expanded="true" />
             <element signature="e#68#86#0" expanded="true" />
@@ -1234,8 +1240,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/rc_pingpong.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="397">
-          <caret line="488" column="0" selection-start-line="488" selection-start-column="0" selection-end-line="488" selection-end-column="0" />
+        <state relative-caret-position="696">
+          <caret line="1015" column="0" selection-start-line="1015" selection-start-column="0" selection-end-line="1015" selection-end-column="0" />
           <folding>
             <element signature="e#446#704#1" expanded="false" />
             <element signature="e#2426#4447#0" expanded="false" />
@@ -1243,7 +1249,6 @@
             <element signature="e#9208#10073#0" expanded="false" />
             <element signature="e#10075#10693#0" expanded="false" />
             <element signature="e#10695#11257#0" expanded="false" />
-            <element signature="e#12377#12437#0" expanded="false" />
             <element signature="e#12762#13424#0" expanded="false" />
             <element signature="e#13428#14748#0" expanded="false" />
             <element signature="e#14751#16953#0" expanded="false" />
@@ -1251,13 +1256,13 @@
             <element signature="e#16992#17225#0" expanded="false" />
             <element signature="e#17228#26407#0" expanded="false" />
             <element signature="e#26409#26767#0" expanded="false" />
-            <marker date="1495900322439" expanded="false" signature="77:358" ph="..." />
-            <marker date="1495900322439" expanded="false" signature="365:420" ph="{...}" />
-            <marker date="1495900322439" expanded="false" signature="728:793" ph="{...}" />
-            <marker date="1495900322439" expanded="false" signature="994:2424" ph="{...}" />
-            <marker date="1495900322439" expanded="false" signature="4669:7146" ph="{...}" />
-            <marker date="1495900322439" expanded="false" signature="11296:12304" ph="{...}" />
-            <marker date="1495900322439" expanded="false" signature="12326:12359" ph="{...}" />
+            <marker date="1495900634455" expanded="false" signature="77:358" ph="..." />
+            <marker date="1495900634455" expanded="false" signature="365:420" ph="{...}" />
+            <marker date="1495900634455" expanded="false" signature="728:793" ph="{...}" />
+            <marker date="1495900634455" expanded="false" signature="994:2424" ph="{...}" />
+            <marker date="1495900634455" expanded="false" signature="4669:7146" ph="{...}" />
+            <marker date="1495900634455" expanded="false" signature="11296:12304" ph="{...}" />
+            <marker date="1495900634455" expanded="false" signature="12326:12359" ph="{...}" />
           </folding>
         </state>
       </provider>
