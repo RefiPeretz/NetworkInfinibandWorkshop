@@ -726,6 +726,88 @@ int kv_close(void *kv_handle)
     return 0;
 };
 
+int processClientCmd(handle *kv_handle, char *msg)
+{
+    printf("Processing message %s\n", msg);
+    if(strlen(msg) == 0){
+        fprintf(stderr, "Msg is empty!: %s\n",msg);
+        return  0;
+    }
+    int cmd = 0;
+    char *key;
+    char *value;
+    char *delim = ":";
+    cmd = atoi(strtok(msg, delim));
+    key = strtok(NULL, delim);
+    value = strtok(NULL, delim);
+
+
+
+    if (cmd == SET_CMD)
+    {
+        addElement(key, value, kv_handle);
+
+    } else if (cmd == GET_CMD)
+    {
+        char **retValue = malloc(sizeof(char*));
+
+        int ret =  getFromStore(kv_handle, key, retValue);
+        if(ret){
+            fprintf(stderr, "Error in fetching value! no\n");
+            return 1;
+        }
+        printf("Sending value after 'get' msg: %s\n", *retValue);
+        if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, *retValue,
+                           strlen(*retValue) + 1))
+        {
+            perror("Couldn't post send: ");
+            return 1;
+        }
+        //        int scnt = 0;
+        //        while (scnt == 0)
+        //        {
+        //            struct ibv_wc wc[2];
+        //            int ne;
+        //            do
+        //            {
+        //                ne = ibv_poll_cq(kv_handle->ctx->cq, 2, wc);
+        //                if (ne < 0)
+        //                {
+        //                    fprintf(stderr, "poll CQ failed %d\n", ne);
+        //                    return 1;
+        //                }
+        //
+        //            } while (ne < 1);
+        //
+        //            for (int i = 0; i < ne; ++i)
+        //            {
+        //                if (wc[i].wr_id == PINGPONG_SEND_WRID && wc[i].status !=
+        //                            IBV_WC_SUCCESS)
+        //                {
+        //                    fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
+        //                            ibv_wc_status_str(wc[i].status), wc[i].status,
+        //                            (int) wc[i].wr_id);
+        //                    return 1;
+        //                }
+        //                if (wc[i].wr_id == PINGPONG_SEND_WRID)
+        //                {
+        //                    scnt++;
+        //                    free(*retValue);//Irrelevant sending!
+        //                    free(retValue);//Irrelevant sending!
+        //                    break;
+        //                }
+        //            }
+        //        }
+
+    } else
+    {
+        fprintf(stderr, "Coudln't decide what's the msg! MsgCmd - %d\n", cmd);
+    }
+
+    return 0;
+}
+
+
 int main(int argc, char *argv[])
 {
     struct timeval start, end;
@@ -954,12 +1036,12 @@ int main(int argc, char *argv[])
         while (rcnt < iters || scnt < iters)
         {
 
-                struct ibv_wc wc[4];
+                struct ibv_wc wc[2];
                 int ne, i;
 
                 do
                 {
-                    ne = ibv_poll_cq(kvHandle->ctx->cq, 4, wc);
+                    ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
                     if (ne < 0)
                     {
                         fprintf(stderr, "poll CQ failed %d\n", ne);
@@ -985,7 +1067,6 @@ int main(int argc, char *argv[])
                             break;
 
                         case PINGPONG_RECV_WRID:
-
                             recvMsg = malloc(roundup(kvHandle->defMsgSize,
                                                      page_size));
 
@@ -1009,7 +1090,6 @@ int main(int argc, char *argv[])
                     }
                     free(recvMsg);
                 }
-
         }
 
         if (gettimeofday(&end, NULL))
@@ -1036,84 +1116,4 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-int processClientCmd(handle *kv_handle, char *msg)
-{
-    printf("Processing message %s\n", msg);
-    if(strlen(msg) == 0){
-        fprintf(stderr, "Msg is empty!: %s\n",msg);
-        return  0;
-    }
-    int cmd = 0;
-    char *key;
-    char *value;
-    char *delim = ":";
-    cmd = atoi(strtok(msg, delim));
-    key = strtok(NULL, delim);
-    value = strtok(NULL, delim);
-
-
-
-    if (cmd == SET_CMD)
-    {
-        addElement(key, value, kv_handle);
-
-    } else if (cmd == GET_CMD)
-    {
-        char **retValue = malloc(sizeof(char*));
-
-        int ret =  getFromStore(kv_handle, key, retValue);
-        if(ret){
-            fprintf(stderr, "Error in fetching value! no\n");
-            return 1;
-        }
-        printf("Sending value after 'get' msg: %s\n", *retValue);
-        if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, *retValue,
-                           strlen(*retValue) + 1))
-        {
-            perror("Couldn't post send: ");
-            return 1;
-        }
-//        int scnt = 0;
-//        while (scnt == 0)
-//        {
-//            struct ibv_wc wc[2];
-//            int ne;
-//            do
-//            {
-//                ne = ibv_poll_cq(kv_handle->ctx->cq, 2, wc);
-//                if (ne < 0)
-//                {
-//                    fprintf(stderr, "poll CQ failed %d\n", ne);
-//                    return 1;
-//                }
-//
-//            } while (ne < 1);
-//
-//            for (int i = 0; i < ne; ++i)
-//            {
-//                if (wc[i].wr_id == PINGPONG_SEND_WRID && wc[i].status !=
-//                            IBV_WC_SUCCESS)
-//                {
-//                    fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
-//                            ibv_wc_status_str(wc[i].status), wc[i].status,
-//                            (int) wc[i].wr_id);
-//                    return 1;
-//                }
-//                if (wc[i].wr_id == PINGPONG_SEND_WRID)
-//                {
-//                    scnt++;
-//                    free(*retValue);//Irrelevant sending!
-//                    free(retValue);//Irrelevant sending!
-//                    break;
-//                }
-//            }
-//        }
-
-    } else
-    {
-        fprintf(stderr, "Coudln't decide what's the msg! MsgCmd - %d\n", cmd);
-    }
-
-    return 0;
-}
 
