@@ -509,6 +509,7 @@ int getFromStore(handle *store, const char *key, char **value)
 
     return 1; // Didn't find any suitable key
 }
+
 void addElement(const char* key, char* value,struct handle* curHandle)
 {
 
@@ -527,7 +528,7 @@ void addElement(const char* key, char* value,struct handle* curHandle)
     {
         for (int i = 0; i < curHandle->kvListSize; i++)
         {
-            if (strcmp(curHandle->kvMsgDict[i]->key, key))
+            if (strcmp(curHandle->kvMsgDict[i]->key, key) == 0)
             {
                 strcpy(curHandle->kvMsgDict[i]->value, value);
                 return;
@@ -634,6 +635,7 @@ int kv_set(void *kv_handle, const char *key, const char *value)
     return 0;
 };
 
+
 int kv_get(void *kv_handle, const char *key, char **value)
 {
     handle *kvHandle = kv_handle;
@@ -647,10 +649,21 @@ int kv_get(void *kv_handle, const char *key, char **value)
         perror("Couldn't post send: ");
         return 1;
     }
+    char *recv2Msg1;
+    recv2Msg1 = malloc(roundup(kvHandle->defMsgSize,
+                             page_size));
+    if ((cstm_post_recv(kvHandle->ctx->pd,
+                        kvHandle->ctx->qp, recv2Msg1,
+                        roundup(kvHandle->defMsgSize,
+                                page_size))) < 0)
+    {
+        perror("Couldn't post receive:");
+        return 1;
+    }
     printf("Pooling for result value \n");
     char *recv2Msg;
     int scnt = 1, recved = 1;
-    while (scnt && recved)
+    while (scnt || recved)
     {
         struct ibv_wc wc[2];
         int ne;
@@ -683,13 +696,8 @@ int kv_get(void *kv_handle, const char *key, char **value)
                     break;
 
                 case PINGPONG_RECV_WRID:
-                    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp,
-                                        recv2Msg, roundup(kvHandle->defMsgSize, page_size))) < 0)
-                    {
-                        fprintf(stderr, "Couldn't post receive \n");
-                        return 1;
-                    }
-                    printf("Got msg: %s\n", recv2Msg);
+
+                    printf("Got msg: %s\n", recv2Msg1);
 
                     recved--;
                     break;
@@ -763,42 +771,6 @@ int processClientCmd(handle *kv_handle, char *msg)
             perror("Couldn't post send: ");
             return 1;
         }
-        //        int scnt = 0;
-        //        while (scnt == 0)
-        //        {
-        //            struct ibv_wc wc[2];
-        //            int ne;
-        //            do
-        //            {
-        //                ne = ibv_poll_cq(kv_handle->ctx->cq, 2, wc);
-        //                if (ne < 0)
-        //                {
-        //                    fprintf(stderr, "poll CQ failed %d\n", ne);
-        //                    return 1;
-        //                }
-        //
-        //            } while (ne < 1);
-        //
-        //            for (int i = 0; i < ne; ++i)
-        //            {
-        //                if (wc[i].wr_id == PINGPONG_SEND_WRID && wc[i].status !=
-        //                            IBV_WC_SUCCESS)
-        //                {
-        //                    fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
-        //                            ibv_wc_status_str(wc[i].status), wc[i].status,
-        //                            (int) wc[i].wr_id);
-        //                    return 1;
-        //                }
-        //                if (wc[i].wr_id == PINGPONG_SEND_WRID)
-        //                {
-        //                    scnt++;
-        //                    free(*retValue);//Irrelevant sending!
-        //                    free(retValue);//Irrelevant sending!
-        //                    break;
-        //                }
-        //            }
-        //        }
-
     } else
     {
         fprintf(stderr, "Coudln't decide what's the msg! MsgCmd - %d\n", cmd);
@@ -1006,6 +978,24 @@ int main(int argc, char *argv[])
             fprintf(stderr, "Couldn't kv get the requested key\n");
             return 1;
         }
+
+        //first Test
+        char key2[5] = "blue";
+        char value2[10] = "wedding2";
+
+        if (kv_set(kvHandle, key2, value2))
+        {
+            fprintf(stderr, "Couldn't post send\n");
+            return 1;
+        }
+
+
+        char *recvMsg1 = malloc(roundup(kvHandle->defMsgSize, page_size));
+        if (kv_get(kvHandle, key2, &recvMsg1))
+        {
+            fprintf(stderr, "Couldn't kv get the requested key\n");
+            return 1;
+        }
     }
 
     if (!servername)
@@ -1036,12 +1026,12 @@ int main(int argc, char *argv[])
         while (rcnt < iters || scnt < iters)
         {
 
-                struct ibv_wc wc[2];
+                struct ibv_wc wc[5];
                 int ne, i;
 
                 do
                 {
-                    ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
+                    ne = ibv_poll_cq(kvHandle->ctx->cq, 5, wc);
                     if (ne < 0)
                     {
                         fprintf(stderr, "poll CQ failed %d\n", ne);
