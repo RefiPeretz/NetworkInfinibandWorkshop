@@ -54,3 +54,10 @@ void gid_to_wire_gid(const union ibv_gid *gid, char wgid[])
 	for (i = 0; i < 4; ++i)
 		sprintf(&wgid[i * 8], "%08x", htonl(*(uint32_t *)(gid->raw + i * 4)));
 }
+
+
+void exceptioExit(const char *reason)
+{
+	fprintf(stderr, "%s\n", reason);
+	exit(EXIT_FAILURE);
+}

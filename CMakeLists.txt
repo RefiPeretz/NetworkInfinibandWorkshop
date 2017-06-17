@@ -12,3 +12,6 @@ set(ex2_1 rc_pingpong.c pingpong.c pingpong.h stack.c stack.h)
 add_executable(eager ${ex2_1})
 target_link_libraries(eager "${GCC_COVERAGE_LINK_FLAGS}")
 
+set(ex2_2 rdma_pp.c pingpong.c pingpong.h stack.c stack.h)
+add_executable(rand ${ex2_2})
+target_link_libraries(rand "${GCC_COVERAGE_LINK_FLAGS}")

@@ -24,6 +24,17 @@ enum
     PINGPONG_RECV_WRID = 1, PINGPONG_SEND_WRID = 2,
 };
 
+struct message {
+    enum {
+        MSG_PREPARE,
+        MSG_DONE
+    } type;
+
+    union {
+        struct ibv_mr mr;
+    } data;
+};
+
 static int page_size;
 
 struct pingpong_context
@@ -38,6 +49,29 @@ struct pingpong_context
     int rx_depth;
     struct ibv_port_attr portinfo;
 
+    struct ibv_mr *rdma_local_mr;
+    struct ibv_mr *rdma_remote_mr;
+
+    struct ibv_mr peer_mr;
+
+    struct message *recv_msg;
+    struct message *send_msg;
+
+    char *rdma_local_region;
+    char *rdma_remote_region;
+
+    enum {
+        SS_INIT,
+        SS_MR_SENT,
+        SS_RDMA_SENT,
+        SS_DONE_SENT
+    } send_data_state;
+
+    enum {
+        RS_INIT,
+        RS_MR_RECV,
+        RS_DONE_RECV
+    } recv_data_state;
 };
 
 struct pingpong_dest
@@ -306,8 +340,6 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
     ctx->size = size;
     ctx->rx_depth = rx_depth;
 
-
-
     ctx->context = ibv_open_device(ib_dev);
     if (!ctx->context)
     {
@@ -369,6 +401,24 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
             return NULL;
         }
     }
+
+    conn->send_state = SS_INIT;
+    conn->recv_state = RS_INIT;
+
+    conn->send_msg = malloc(sizeof(struct message));
+    conn->recv_msg = malloc(sizeof(struct message));
+
+    TEST_Z(conn->send_mr = ibv_reg_mr(
+            s_ctx->pd,
+            conn->send_msg,
+            sizeof(struct message),
+            IBV_ACCESS_LOCAL_WRITE));
+
+    TEST_Z(conn->recv_mr = ibv_reg_mr(
+            s_ctx->pd,
+            conn->recv_msg,
+            sizeof(struct message),
+            IBV_ACCESS_LOCAL_WRITE | ((s_mode == M_WRITE) ? IBV_ACCESS_REMOTE_WRITE : IBV_ACCESS_REMOTE_READ)));
 
     return ctx;
 }
@@ -502,7 +552,7 @@ int getFromStore(handle *store, const char *key, char **value)
         if(strcmp(store->kvMsgDict[i]->key, key) == 0){
             *value = malloc(strlen(store->kvMsgDict[i]->value)+1);
             memcpy(*value, store->kvMsgDict[i]->value, strlen
-                    (store->kvMsgDict[i]->value)+1);
+                                                               (store->kvMsgDict[i]->value)+1);
             return 0;
         }
     }
@@ -651,7 +701,7 @@ int kv_get(void *kv_handle, const char *key, char **value)
     }
     char *recv2Msg1;
     recv2Msg1 = malloc(roundup(kvHandle->defMsgSize,
-                             page_size));
+                               page_size));
     if ((cstm_post_recv(kvHandle->ctx->pd,
                         kvHandle->ctx->qp, recv2Msg1,
                         roundup(kvHandle->defMsgSize,
@@ -719,7 +769,9 @@ int kv_get(void *kv_handle, const char *key, char **value)
 
 void kv_release(char *value)
 {
-
+    if(value != NULL){
+        free(value);
+    }
 };
 
 int kv_close(void *kv_handle)
@@ -959,12 +1011,14 @@ int main(int argc, char *argv[])
     }
 
 
-    //first Test
-    char key[4] = "red";
-    char value[10] = "wedding";
+
 
     if (servername)
     {
+        //first Test
+        char key[4] = "red";
+        char value[10] = "wedding";
+
         if (kv_set(kvHandle, key, value))
         {
             fprintf(stderr, "Couldn't post send\n");
@@ -972,14 +1026,17 @@ int main(int argc, char *argv[])
         }
 
 
-        char *recvMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
-        if (kv_get(kvHandle, key, &recvMsg))
+        char *returnedVal = malloc(roundup(kvHandle->defMsgSize, page_size));
+        if (kv_get(kvHandle, key, &returnedVal))
         {
             fprintf(stderr, "Couldn't kv get the requested key\n");
             return 1;
         }
 
-        //first Test
+        kv_release(returnedVal);
+
+
+        //second Test
         char key2[5] = "blue";
         char value2[10] = "wedding2";
 
@@ -996,6 +1053,9 @@ int main(int argc, char *argv[])
             fprintf(stderr, "Couldn't kv get the requested key\n");
             return 1;
         }
+
+        kv_release(recvMsg1);
+
     }
 
     if (!servername)
@@ -1026,60 +1086,60 @@ int main(int argc, char *argv[])
         while (rcnt < iters || scnt < iters)
         {
 
-                struct ibv_wc wc[5];
-                int ne, i;
+            struct ibv_wc wc[5];
+            int ne, i;
 
-                do
+            do
+            {
+                ne = ibv_poll_cq(kvHandle->ctx->cq, 5, wc);
+                if (ne < 0)
                 {
-                    ne = ibv_poll_cq(kvHandle->ctx->cq, 5, wc);
-                    if (ne < 0)
-                    {
-                        fprintf(stderr, "poll CQ failed %d\n", ne);
-                        return 1;
-                    }
+                    fprintf(stderr, "poll CQ failed %d\n", ne);
+                    return 1;
+                }
 
-                } while (ne < 1);
+            } while (ne < 1);
 
-                for (i = 0; i < ne; ++i)
+            for (i = 0; i < ne; ++i)
+            {
+                if (wc[i].status != IBV_WC_SUCCESS)
                 {
-                    if (wc[i].status != IBV_WC_SUCCESS)
-                    {
-                        fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
-                                ibv_wc_status_str(wc[i].status), wc[i].status,
+                    fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
+                            ibv_wc_status_str(wc[i].status), wc[i].status,
+                            (int) wc[i].wr_id);
+                    return 1;
+                }
+                char *recvMsg = NULL;
+                switch ((int) wc[i].wr_id)
+                {
+                    case PINGPONG_SEND_WRID:
+                        ++scnt;
+                        break;
+
+                    case PINGPONG_RECV_WRID:
+                        recvMsg = malloc(roundup(kvHandle->defMsgSize,
+                                                 page_size));
+
+                        if ((cstm_post_recv(kvHandle->ctx->pd,
+                                            kvHandle->ctx->qp, recvMsg,
+                                            roundup(kvHandle->defMsgSize,
+                                                    page_size))) < 0)
+                        {
+                            perror("Couldn't post receive:");
+                            return 1;
+                        }
+                        printf("Got msg: %s\n", recvMsg);
+                        processClientCmd(kvHandle, recvMsg);
+                        ++rcnt;
+                        break;
+
+                    default:
+                        fprintf(stderr, "Completion for unknown wr_id %d\n",
                                 (int) wc[i].wr_id);
                         return 1;
-                    }
-                    char *recvMsg = NULL;
-                    switch ((int) wc[i].wr_id)
-                    {
-                        case PINGPONG_SEND_WRID:
-                            ++scnt;
-                            break;
-
-                        case PINGPONG_RECV_WRID:
-                            recvMsg = malloc(roundup(kvHandle->defMsgSize,
-                                                     page_size));
-
-                            if ((cstm_post_recv(kvHandle->ctx->pd,
-                                                kvHandle->ctx->qp, recvMsg,
-                                                roundup(kvHandle->defMsgSize,
-                                                        page_size))) < 0)
-                            {
-                                perror("Couldn't post receive:");
-                                return 1;
-                            }
-                            printf("Got msg: %s\n", recvMsg);
-                            processClientCmd(kvHandle, recvMsg);
-                            ++rcnt;
-                            break;
-
-                        default:
-                            fprintf(stderr, "Completion for unknown wr_id %d\n",
-                                    (int) wc[i].wr_id);
-                            return 1;
-                    }
-                    free(recvMsg);
                 }
+                free(recvMsg);
+            }
         }
 
         if (gettimeofday(&end, NULL))
