@@ -24,18 +24,22 @@ enum
     PINGPONG_RECV_WRID = 1, PINGPONG_SEND_WRID = 2,
 };
 
-struct message {
-    enum {
-        MSG_PREPARE,
-        MSG_DONE
-    } type;
-
-    union {
-        struct ibv_mr mr;
-    } data;
+struct message
+{
+    uint32_t mr_rkey;
+    uintptr_t addr;
 };
 
 static int page_size;
+typedef enum send_state
+{
+    SS_INIT, SS_MR_SENT, SS_RDMA_SENT, SS_DONE_SENT
+} send_state;
+
+typedef enum recv_state
+{
+    RS_INIT, RS_MR_RECV, RS_DONE_RECV
+} recv_state;
 
 struct pingpong_context
 {
@@ -49,6 +53,9 @@ struct pingpong_context
     int rx_depth;
     struct ibv_port_attr portinfo;
 
+    struct ibv_mr *recv_mr;
+    struct ibv_mr *send_mr;
+
     struct ibv_mr *rdma_local_mr;
     struct ibv_mr *rdma_remote_mr;
 
@@ -60,18 +67,9 @@ struct pingpong_context
     char *rdma_local_region;
     char *rdma_remote_region;
 
-    enum {
-        SS_INIT,
-        SS_MR_SENT,
-        SS_RDMA_SENT,
-        SS_DONE_SENT
-    } send_data_state;
+    recv_state ctx_recv_state;
+    send_state ctx_send_state;
 
-    enum {
-        RS_INIT,
-        RS_MR_RECV,
-        RS_DONE_RECV
-    } recv_data_state;
 };
 
 struct pingpong_dest
@@ -81,7 +79,6 @@ struct pingpong_dest
     int psn;
     union ibv_gid gid;
 };
-
 
 
 static int pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn,
@@ -369,7 +366,6 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
     }
 
 
-
     ctx->cq = ibv_create_cq(ctx->context, rx_depth + 1, NULL, ctx->channel, 0);
     if (!ctx->cq)
     {
@@ -402,23 +398,23 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
         }
     }
 
-    conn->send_state = SS_INIT;
-    conn->recv_state = RS_INIT;
+    ctx->ctx_send_state = SS_INIT;
+    ctx->ctx_recv_state = RS_INIT;
 
-    conn->send_msg = malloc(sizeof(struct message));
-    conn->recv_msg = malloc(sizeof(struct message));
+    ctx->send_msg = malloc(sizeof(struct message));
+    ctx->recv_msg = malloc(sizeof(struct message));
 
-    TEST_Z(conn->send_mr = ibv_reg_mr(
-            s_ctx->pd,
-            conn->send_msg,
-            sizeof(struct message),
-            IBV_ACCESS_LOCAL_WRITE));
-
-    TEST_Z(conn->recv_mr = ibv_reg_mr(
-            s_ctx->pd,
-            conn->recv_msg,
-            sizeof(struct message),
-            IBV_ACCESS_LOCAL_WRITE | ((s_mode == M_WRITE) ? IBV_ACCESS_REMOTE_WRITE : IBV_ACCESS_REMOTE_READ)));
+    //    TEST_Z(ctx->send_mr = ibv_reg_mr(
+    //            ctx->pd,
+    //            ctx->send_msg,
+    //            sizeof(struct message),
+    //            IBV_ACCESS_LOCAL_WRITE));
+    //
+    //    TEST_Z(ctx->recv_mr = ibv_reg_mr(
+    //            ctx->pd,
+    //            ctx->recv_msg,
+    //            sizeof(struct message),
+    //            IBV_ACCESS_LOCAL_WRITE | ((s_mode == M_WRITE) ? IBV_ACCESS_REMOTE_WRITE : IBV_ACCESS_REMOTE_READ)));
 
     return ctx;
 }
@@ -526,8 +522,8 @@ typedef enum kv_cmd
 
 typedef struct kvMsg
 {
-    const char *key;
-    const char *value;
+     char *key;
+     char *value;
 } kvMsg;
 
 typedef struct handle
@@ -548,11 +544,13 @@ typedef struct handle
 int getFromStore(handle *store, const char *key, char **value)
 {
     int listSize = store->kvListSize;
-    for(int i=0; i < listSize; i++){
-        if(strcmp(store->kvMsgDict[i]->key, key) == 0){
-            *value = malloc(strlen(store->kvMsgDict[i]->value)+1);
-            memcpy(*value, store->kvMsgDict[i]->value, strlen
-                                                               (store->kvMsgDict[i]->value)+1);
+    for (int i = 0; i < listSize; i++)
+    {
+        if (strcmp(store->kvMsgDict[i]->key, key) == 0)
+        {
+            *value = malloc(strlen(store->kvMsgDict[i]->value) + 1);
+            memcpy(*value, store->kvMsgDict[i]->value,
+                   strlen(store->kvMsgDict[i]->value) + 1);
             return 0;
         }
     }
@@ -560,7 +558,7 @@ int getFromStore(handle *store, const char *key, char **value)
     return 1; // Didn't find any suitable key
 }
 
-void addElement(const char* key, char* value,struct handle* curHandle)
+void addElement(const char *key, char *value, struct handle *curHandle)
 {
 
     if (!curHandle->kvListSize)
@@ -580,10 +578,13 @@ void addElement(const char* key, char* value,struct handle* curHandle)
         {
             if (strcmp(curHandle->kvMsgDict[i]->key, key) == 0)
             {
+                free(curHandle->kvMsgDict[i]->value);
+                curHandle->kvMsgDict[i]->value = malloc(strlen(value) + 1);
                 strcpy(curHandle->kvMsgDict[i]->value, value);
                 return;
             }
         }
+
         struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
         curMsg->key = malloc(strlen(key) + 1);
         curMsg->value = malloc(strlen(value) + 1);
@@ -602,6 +603,55 @@ void addElement(const char* key, char* value,struct handle* curHandle)
         curHandle->kvMsgDict = newList;
     }
 }
+
+
+char *
+allocateNewElement(const char *key, size_t valueSize, struct handle *curHandle)
+{
+
+    if (!curHandle->kvListSize)
+    {
+        struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
+        curMsg->key = malloc(strlen(key) + 1);
+        curMsg->value = calloc(1,valueSize * sizeof(char));
+
+        strcpy(curMsg->key, key);
+        curHandle->kvMsgDict = malloc(sizeof(kvMsg) * 1);
+        curHandle->kvMsgDict[0] = curMsg;
+        curHandle->kvListSize++;
+        return curMsg->value;
+    } else
+    {
+        for (int i = 0; i < curHandle->kvListSize; i++)
+        {
+            if (strcmp(curHandle->kvMsgDict[i]->key, key) == 0)
+            {
+                curHandle->kvMsgDict[i]->value =
+                        realloc(curHandle->kvMsgDict[i]->value, valueSize + 1);
+                return curHandle->kvMsgDict[i]->value;
+            }
+        }
+        struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
+        curMsg->key = malloc(strlen(key) + 1);
+        curMsg->value = calloc(1, valueSize);
+        strcpy(curMsg->key, key);
+        curHandle->kvListSize++;
+
+
+        struct kvMsg **newList = malloc(sizeof(kvMsg) * curHandle->kvListSize);
+        for (int i = 0; i < curHandle->kvListSize - 1; i++)
+        {
+            newList[i] = curHandle->kvMsgDict[i];
+        }
+        newList[curHandle->kvListSize - 1] = curMsg;
+        free(curHandle->kvMsgDict);
+        curHandle->kvMsgDict = newList;
+        return curMsg->value;
+    }
+
+    return NULL;
+}
+
 
 int kv_open(char *servername, void **kv_handle)
 {
@@ -636,8 +686,15 @@ int kv_set(void *kv_handle, const char *key, const char *value)
 {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = SET_CMD;
-    char *msg = malloc(roundup(kvHandle->defMsgSize, page_size));
-    sprintf(msg, "%d:%s:%s", cmd, key, value);
+
+    //first send msg to server with size and MR to read from.
+    size_t actualMsgSize = roundup(strlen(value) + 1, page_size);
+    char *actualMsg = (char *) malloc(actualMsgSize);
+    sprintf(actualMsg, "%d:%s:%s", cmd, key, value);
+
+    //first send msg to server with size and MR to read from.
+    char *msg = (char *) malloc(roundup(kvHandle->defMsgSize, page_size));
+    sprintf(msg, "%d:%d:%s", cmd, strlen(value) + 1, key);
     printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
 
     if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg,
@@ -646,10 +703,17 @@ int kv_set(void *kv_handle, const char *key, const char *value)
         perror("Couldn't post send: ");
         return 1;
     }
+    char *remoteMrMsg;
+    remoteMrMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
+    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, remoteMrMsg,
+                        roundup(kvHandle->defMsgSize, page_size))) < 0)
+    {
+        perror("Couldn't post receive:");
+        return 1;
+    }
 
-
-    int scnt = 0;
-    while (scnt == 0)
+    int scnt = 1, rcvd = 1;
+    while (scnt || rcvd)
     {
         struct ibv_wc wc[2];
         int ne;
@@ -675,8 +739,20 @@ int kv_set(void *kv_handle, const char *key, const char *value)
             }
             if (wc[i].wr_id == PINGPONG_SEND_WRID)
             {
-                scnt++;
-                break;
+                scnt--;
+            }
+            else if (wc[i].wr_id == PINGPONG_RECV_WRID)
+            {
+                //now we should have gotten his the server MR and we should 
+                // write our actual message
+                printf("Got msg: %s\n", remoteMrMsg);
+                processServerRdmaWriteResponseCmd(kv_handle, remoteMrMsg,
+                                                  value);
+                rcvd--;
+            } else{
+                fprintf(stderr, "Wrong wr_id %d\n",
+                        (int) wc[i].wr_id);
+                return 1;
             }
         }
     }
@@ -700,18 +776,14 @@ int kv_get(void *kv_handle, const char *key, char **value)
         return 1;
     }
     char *recv2Msg1;
-    recv2Msg1 = malloc(roundup(kvHandle->defMsgSize,
-                               page_size));
-    if ((cstm_post_recv(kvHandle->ctx->pd,
-                        kvHandle->ctx->qp, recv2Msg1,
-                        roundup(kvHandle->defMsgSize,
-                                page_size))) < 0)
+    recv2Msg1 = malloc(roundup(kvHandle->defMsgSize, page_size));
+    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, recv2Msg1,
+                        roundup(kvHandle->defMsgSize, page_size))) < 0)
     {
         perror("Couldn't post receive:");
         return 1;
     }
     printf("Pooling for result value \n");
-    char *recv2Msg;
     int scnt = 1, recved = 1;
     while (scnt || recved)
     {
@@ -738,7 +810,6 @@ int kv_get(void *kv_handle, const char *key, char **value)
                 return 1;
             }
 
-            recv2Msg = malloc(roundup(kvHandle->defMsgSize, page_size));
             switch ((int) wc[i].wr_id)
             {
                 case PINGPONG_SEND_WRID:
@@ -746,9 +817,10 @@ int kv_get(void *kv_handle, const char *key, char **value)
                     break;
 
                 case PINGPONG_RECV_WRID:
-
+                    //here we get the server MR address and rkey to read from.
                     printf("Got msg: %s\n", recv2Msg1);
-
+                    //parse recv2Msg1 to size, MR addresses
+                    processServerGetReqResponseCmd()
                     recved--;
                     break;
 
@@ -762,14 +834,15 @@ int kv_get(void *kv_handle, const char *key, char **value)
 
     }
 
-    memcpy(value, recv2Msg, strlen(recv2Msg) + 1);
-    free(recv2Msg);
+    memcpy(value, recv2Msg1, strlen(recv2Msg1) + 1);
+    free(recv2Msg1);
     return 0;
 };
 
 void kv_release(char *value)
 {
-    if(value != NULL){
+    if (value != NULL)
+    {
         free(value);
     }
 };
@@ -786,33 +859,88 @@ int kv_close(void *kv_handle)
     return 0;
 };
 
+int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg,
+                                      char *actualMessage)
+{
+    printf("Processing server message: %s\n", msg);
+    if (strlen(msg) == 0)
+    {
+        fprintf(stderr, "Msg is empty!\n");
+        return 0;
+    }
+
+    struct message
+            *mr_msg = (struct message *) calloc(1, sizeof(struct message));
+    char *delim = ":";
+    mr_msg->addr = atoi(strtok(msg, delim));
+    mr_msg->mr_rkey = atoi(strtok(NULL, delim));
+
+    struct ibv_sge list = {.addr    = (uintptr_t) actualMessage, .length =
+    strlen(actualMessage) + 1};
+    struct ibv_send_wr wr =
+            {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_RDMA_WRITE, .send_flags = IBV_SEND_SIGNALED, .wr.rdma.remote_addr = (uintptr_t) mr_msg
+                    ->addr, .wr.rdma.rkey = mr_msg->mr_rkey};
+    struct ibv_send_wr *bad_wr;
+
+    TEST_NZ(ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr));
+
+    return 0;
+}
+int processServerGetReqResponseCmd(handle *kv_handle, char *msg,
+                                      char *actualMessage)
+{
+    printf("Processing server message: %s\n", msg);
+    if (strlen(msg) == 0)
+    {
+        fprintf(stderr, "Msg is empty!\n");
+        return 0;
+    }
+
+    struct message
+            *mr_msg = (struct message *) calloc(1, sizeof(struct message));
+    char *delim = ":";
+    mr_msg->addr = atoi(strtok(msg, delim));
+    mr_msg->mr_rkey = atoi(strtok(NULL, delim));
+
+    struct ibv_sge list = {.addr    = (uintptr_t) actualMessage, .length =
+    strlen(actualMessage) + 1};
+    struct ibv_send_wr wr =
+            {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_RDMA_READ, .send_flags = IBV_SEND_SIGNALED, .wr.rdma.remote_addr = (uintptr_t) mr_msg
+                    ->addr, .wr.rdma.rkey = mr_msg->mr_rkey};
+    struct ibv_send_wr *bad_wr;
+
+    TEST_NZ(ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr));
+
+    return 0;
+}
 int processClientCmd(handle *kv_handle, char *msg)
 {
     printf("Processing message %s\n", msg);
-    if(strlen(msg) == 0){
-        fprintf(stderr, "Msg is empty!: %s\n",msg);
-        return  0;
+    if (strlen(msg) == 0)
+    {
+        fprintf(stderr, "Msg is empty!: %s\n", msg);
+        return 0;
     }
+
     int cmd = 0;
     char *key;
-    char *value;
+    int *expectedMsgSize;
     char *delim = ":";
     cmd = atoi(strtok(msg, delim));
+    expectedMsgSize = atoi(strtok(NULL, delim));
     key = strtok(NULL, delim);
-    value = strtok(NULL, delim);
-
-
 
     if (cmd == SET_CMD)
     {
-        addElement(key, value, kv_handle);
+        processClientPrepWriteCmd(kv_handle, key, expectedMsgSize);
 
     } else if (cmd == GET_CMD)
     {
-        char **retValue = malloc(sizeof(char*));
+        char **retValue = malloc(sizeof(char *));
 
-        int ret =  getFromStore(kv_handle, key, retValue);
-        if(ret){
+        int ret = getFromStore(kv_handle, key, retValue);
+        if (ret)
+        {
             fprintf(stderr, "Error in fetching value! no\n");
             return 1;
         }
@@ -831,6 +959,44 @@ int processClientCmd(handle *kv_handle, char *msg)
     return 0;
 }
 
+int processClientPrepWriteCmd(handle *kv_handle, char *key , int
+expectedMsgSize)
+{
+
+    char *allocatedValue = allocateNewElement(key, expectedMsgSize, kv_handle);
+
+    kv_handle->ctx->rdma_local_mr =
+            ibv_reg_mr(kv_handle->ctx->pd, allocatedValue, expectedMsgSize,
+                       IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_LOCAL_WRITE);
+    if (!kv_handle->ctx->rdma_local_mr)
+    {
+        perror("Couldn't register MR for remote set op");
+        return 1;
+    }
+
+    struct message
+            *mr_msg = (struct message *) calloc(1, sizeof(struct message));
+
+    mr_msg->addr = (uintptr_t) kv_handle->ctx->rdma_local_mr->addr;
+    mr_msg->mr_rkey = kv_handle->ctx->rdma_local_mr->rkey;
+
+    size_t mr_msg_size =
+            roundup(sizeof(mr_msg->addr) + sizeof(mr_msg->mr_rkey) + 2,
+                    page_size);
+    char *mr_msg_char = (char *) malloc(mr_msg_size);
+    sprintf(mr_msg_char, "%d:%d", mr_msg->addr, mr_msg->mr_rkey);
+    printf("Sending mr msg: %s with size %d\n", mr_msg_char, strlen
+                                                                    (mr_msg_char) + 1);
+
+    if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, mr_msg_char,
+                       strlen(mr_msg_char) + 1))
+    {
+        perror("Couldn't post send: ");
+        return 1;
+    }
+
+    return 0;
+}
 
 int main(int argc, char *argv[])
 {
@@ -941,7 +1107,6 @@ int main(int argc, char *argv[])
     kv_open(servername, (void **) p_kvHandle);
 
 
-
     if (pp_get_port_info(kvHandle->ctx->context, ib_port,
                          &kvHandle->ctx->portinfo))
     {
@@ -1011,8 +1176,6 @@ int main(int argc, char *argv[])
     }
 
 
-
-
     if (servername)
     {
         //first Test
@@ -1066,13 +1229,10 @@ int main(int argc, char *argv[])
             perror("gettimeofday");
             return 1;
         }
-        recvMsg = malloc(roundup(kvHandle->defMsgSize,
-                                 page_size));
+        recvMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
 
-        if ((cstm_post_recv(kvHandle->ctx->pd,
-                            kvHandle->ctx->qp, recvMsg,
-                            roundup(kvHandle->defMsgSize,
-                                    page_size))) < 0)
+        if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, recvMsg,
+                            roundup(kvHandle->defMsgSize, page_size))) < 0)
         {
             perror("Couldn't post receive:");
             return 1;
@@ -1086,12 +1246,12 @@ int main(int argc, char *argv[])
         while (rcnt < iters || scnt < iters)
         {
 
-            struct ibv_wc wc[5];
+            struct ibv_wc wc[2];
             int ne, i;
 
             do
             {
-                ne = ibv_poll_cq(kvHandle->ctx->cq, 5, wc);
+                ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
                 if (ne < 0)
                 {
                     fprintf(stderr, "poll CQ failed %d\n", ne);
