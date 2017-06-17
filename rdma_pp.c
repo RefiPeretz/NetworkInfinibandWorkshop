@@ -719,9 +719,7 @@ int kv_get(void *kv_handle, const char *key, char **value)
 
 void kv_release(char *value)
 {
-    if(value != NULL){
-        free(value);
-    }
+
 };
 
 int kv_close(void *kv_handle)
@@ -961,14 +959,12 @@ int main(int argc, char *argv[])
     }
 
 
-
+    //first Test
+    char key[4] = "red";
+    char value[10] = "wedding";
 
     if (servername)
     {
-        //first Test
-        char key[4] = "red";
-        char value[10] = "wedding";
-
         if (kv_set(kvHandle, key, value))
         {
             fprintf(stderr, "Couldn't post send\n");
@@ -976,17 +972,14 @@ int main(int argc, char *argv[])
         }
 
 
-        char *returnedVal = malloc(roundup(kvHandle->defMsgSize, page_size));
-        if (kv_get(kvHandle, key, &returnedVal))
+        char *recvMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
+        if (kv_get(kvHandle, key, &recvMsg))
         {
             fprintf(stderr, "Couldn't kv get the requested key\n");
             return 1;
         }
 
-        kv_release(returnedVal);
-
-
-        //second Test
+        //first Test
         char key2[5] = "blue";
         char value2[10] = "wedding2";
 
@@ -1003,9 +996,6 @@ int main(int argc, char *argv[])
             fprintf(stderr, "Couldn't kv get the requested key\n");
             return 1;
         }
-
-        kv_release(recvMsg1);
-
     }
 
     if (!servername)
