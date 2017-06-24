@@ -502,16 +502,15 @@ int getFromStore(handle *store, const char *key, char *value) {
     int listSize = store->kvListSize;
     for (int i = 0; i < listSize; i++) {
         if (strcmp(store->kvMsgDict[i]->key, key) == 0) {
-            store->kvMsgDict[i]->curValue->curMr->rkey;
-            (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr;
 
-            *value = malloc(strlen(store->kvMsgDict[i]->value) + 1);
-            memcpy(*value, store->kvMsgDict[i]->value, strlen(store->kvMsgDict[i]->value) + 1);
+            size_t mr_msg_size = roundup(sizeof((uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr) + sizeof(store->kvMsgDict[i]->curValue->curMr->rkey) + 2, page_size);
+            value = (char *) malloc(mr_msg_size);
+            sprintf(value, "%lu:%d", (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr, store->kvMsgDict[i]->curValue->curMr->rkey);
             return 0;
         }
     }
 
-    return 1; // Didn't find any suitable key
+    return 1;
 }
 
 void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct handle *curHandle) {
@@ -558,48 +557,6 @@ void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct 
         curHandle->kvMsgDict = newList;
     }
 }
-
-
-void addElement(const char *key, char *value, struct handle *curHandle) {
-
-    if (!curHandle->kvListSize) {
-        struct kvMsg *curMsg = calloc(1, sizeof(keyMrEntry));
-        curMsg->key = malloc(strlen(key) + 1);
-        curMsg->value = malloc(strlen(value) + 1);
-
-        strcpy(curMsg->key, key);
-        strcpy(curMsg->value, value);
-        curHandle->kvMsgDict = malloc(sizeof(keyMrEntry) * 1);
-        curHandle->kvMsgDict[0] = curMsg;
-        curHandle->kvListSize++;
-    } else {
-        for (int i = 0; i < curHandle->kvListSize; i++) {
-            if (strcmp(curHandle->kvMsgDict[i]->key, key) == 0) {
-                free(curHandle->kvMsgDict[i]->value);
-                curHandle->kvMsgDict[i]->value = malloc(strlen(value) + 1);
-                strcpy(curHandle->kvMsgDict[i]->value, value);
-                return;
-            }
-        }
-
-        struct kvMsg *curMsg = calloc(1, sizeof(keyMrEntry));
-        curMsg->key = malloc(strlen(key) + 1);
-        curMsg->value = malloc(strlen(value) + 1);
-        strcpy(curMsg->key, key);
-        strcpy(curMsg->value, value);
-        curHandle->kvListSize++;
-
-
-        struct kvMsg **newList = malloc(sizeof(keyMrEntry) * curHandle->kvListSize);
-        for (int i = 0; i < curHandle->kvListSize - 1; i++) {
-            newList[i] = curHandle->kvMsgDict[i];
-        }
-        newList[curHandle->kvListSize - 1] = curMsg;
-        free(curHandle->kvMsgDict);
-        curHandle->kvMsgDict = newList;
-    }
-}
-
 
 struct message *allocateNewElement(const char *key, size_t valueSize, struct handle *curHandle) {
     char *value = calloc(1, valueSize * sizeof(char));
@@ -790,7 +747,7 @@ int kv_get(void *kv_handle, const char *key, char **value) {
             }
         }
         //        memcpy(value, recv2Msg1, strlen(recv2Msg1) + 1);
-        free(recv2Msg1);
+//        free(recv2Msg1);
     }
 
     //Now use the rdma key and mr to reach the secrad value!
@@ -888,7 +845,7 @@ int processClientCmd(handle *kv_handle, char *msg) {
         processClientPrepWriteCmd(kv_handle, key, expectedMsgSize);
 
     } else if (cmd == GET_CMD) {
-        char *retValue = malloc(sizeof(char) * 4096);
+        char *retValue;
 
         int ret = getFromStore(kv_handle, key, retValue);
         if (ret) {
@@ -896,8 +853,8 @@ int processClientCmd(handle *kv_handle, char *msg) {
             return 1;
         }
 
-        printf("Sending value after 'get' msg: %s\n", *retValue);
-        if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, *retValue, strlen(*retValue) + 1)) {
+        printf("Sending value after 'get' msg: %s\n", retValue);
+        if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, retValue, strlen(retValue) + 1)) {
             perror("Couldn't post send: ");
             return 1;
         }
