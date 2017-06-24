@@ -1031,19 +1031,6 @@ int processClientPrepWriteCmd(handle *kv_handle, char *key, int expectedMsgSize)
 
     struct message* mr_msg = allocateNewElement(key, expectedMsgSize, kv_handle);
 
-//    kv_handle->ctx->rdma_local_mr = ibv_reg_mr(kv_handle->ctx->pd, allocatedValue, expectedMsgSize,
-//                                               IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_LOCAL_WRITE);
-//    if (!kv_handle->ctx->rdma_local_mr)
-//    {
-//        perror("Couldn't register MR for remote set op");
-//        return 1;
-//    }
-//
-//    struct message *mr_msg = (struct message *) calloc(1, sizeof(struct message));
-//
-//    mr_msg->addr = (uintptr_t) kv_handle->ctx->rdma_local_mr->addr;
-//    mr_msg->mr_rkey = kv_handle->ctx->rdma_local_mr->rkey;
-
     size_t mr_msg_size = roundup(sizeof(mr_msg->addr) + sizeof(mr_msg->mr_rkey) + 2, page_size);
     char *mr_msg_char = (char *) malloc(mr_msg_size);
     sprintf(mr_msg_char, "%d:%d", mr_msg->addr, mr_msg->mr_rkey);
