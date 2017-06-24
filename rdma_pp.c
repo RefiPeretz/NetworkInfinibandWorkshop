@@ -657,14 +657,14 @@ struct message* allocateNewElement(const char *key, size_t valueSize, struct han
 
     struct ibv_mr* curMr = ibv_reg_mr(curHandle->ctx->pd, value, valueSize,
                                       IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_LOCAL_WRITE);
-    if (!curHandle->ctx->rdma_local_mr)
+    if (!curMr)
     {
         perror("Couldn't register MR for remote set op");
         return NULL;
     }
 
     struct message *mr_msg = (struct message *) calloc(1, sizeof(struct message));
-    mr_msg->addr = curMr->addr;
+    mr_msg->addr = (uintptr_t) curMr->addr;
     mr_msg->mr_rkey = curMr->rkey;
     mr_msg->valueSize = valueSize;
 
