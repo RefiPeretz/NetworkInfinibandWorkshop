@@ -28,6 +28,7 @@ struct message
 {
     uint32_t mr_rkey;
     uintptr_t addr;
+    int valueSize;
 };
 
 static int page_size;
@@ -522,8 +523,8 @@ typedef enum kv_cmd
 
 typedef struct kvMsg
 {
-     char *key;
-     char *value;
+    char *key;
+    char *value;
 } kvMsg;
 
 typedef struct handle
@@ -613,7 +614,7 @@ allocateNewElement(const char *key, size_t valueSize, struct handle *curHandle)
     {
         struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
         curMsg->key = malloc(strlen(key) + 1);
-        curMsg->value = calloc(1,valueSize * sizeof(char));
+        curMsg->value = calloc(1, valueSize * sizeof(char));
 
         strcpy(curMsg->key, key);
         curHandle->kvMsgDict = malloc(sizeof(kvMsg) * 1);
@@ -740,8 +741,7 @@ int kv_set(void *kv_handle, const char *key, const char *value)
             if (wc[i].wr_id == PINGPONG_SEND_WRID)
             {
                 scnt--;
-            }
-            else if (wc[i].wr_id == PINGPONG_RECV_WRID)
+            } else if (wc[i].wr_id == PINGPONG_RECV_WRID)
             {
                 //now we should have gotten his the server MR and we should 
                 // write our actual message
@@ -749,9 +749,9 @@ int kv_set(void *kv_handle, const char *key, const char *value)
                 processServerRdmaWriteResponseCmd(kv_handle, remoteMrMsg,
                                                   value);
                 rcvd--;
-            } else{
-                fprintf(stderr, "Wrong wr_id %d\n",
-                        (int) wc[i].wr_id);
+            } else
+            {
+                fprintf(stderr, "Wrong wr_id %d\n", (int) wc[i].wr_id);
                 return 1;
             }
         }
@@ -765,77 +765,99 @@ int kv_set(void *kv_handle, const char *key, const char *value)
 int kv_get(void *kv_handle, const char *key, char **value)
 {
     handle *kvHandle = kv_handle;
-    kv_cmd cmd = GET_CMD;
-    char *vmsg = malloc(roundup(kvHandle->defMsgSize, page_size));
-    sprintf(vmsg, "%d:%s:%s", cmd, key, "");
-    printf("Sending get msg: %s\n", vmsg);
-    if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, vmsg,
-                       strlen(vmsg) + 1))
+    unsigned int isKeyInDict = 0;
+    if (!isKeyInDict)
     {
-        perror("Couldn't post send: ");
-        return 1;
-    }
-    char *recv2Msg1;
-    recv2Msg1 = malloc(roundup(kvHandle->defMsgSize, page_size));
-    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, recv2Msg1,
-                        roundup(kvHandle->defMsgSize, page_size))) < 0)
-    {
-        perror("Couldn't post receive:");
-        return 1;
-    }
-    printf("Pooling for result value \n");
-    int scnt = 1, recved = 1;
-    while (scnt || recved)
-    {
-        struct ibv_wc wc[2];
-        int ne;
-        do
+        kv_cmd cmd = GET_CMD;
+        char *vmsg = malloc(roundup(kvHandle->defMsgSize, page_size));
+        sprintf(vmsg, "%d:%s:%s", cmd, key, "");
+        printf("Sending get msg: %s\n", vmsg);
+        if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, vmsg,
+                           strlen(vmsg) + 1))
         {
-            ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
-            if (ne < 0)
-            {
-                fprintf(stderr, "poll CQ failed %d\n", ne);
-                return 1;
-            }
-
-        } while (ne < 1);
-
-        for (int i = 0; i < ne; ++i)
+            perror("Couldn't post send: ");
+            return 1;
+        }
+        char *recv2Msg1;
+        recv2Msg1 = malloc(roundup(kvHandle->defMsgSize, page_size));
+        if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, recv2Msg1,
+                            roundup(kvHandle->defMsgSize, page_size))) < 0)
         {
-            if (wc[i].status != IBV_WC_SUCCESS)
-            {
-                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
-                        ibv_wc_status_str(wc[i].status), wc[i].status,
-                        (int) wc[i].wr_id);
-                return 1;
-            }
-
-            switch ((int) wc[i].wr_id)
-            {
-                case PINGPONG_SEND_WRID:
-                    scnt--;
-                    break;
-
-                case PINGPONG_RECV_WRID:
-                    //here we get the server MR address and rkey to read from.
-                    printf("Got msg: %s\n", recv2Msg1);
-                    //parse recv2Msg1 to size, MR addresses
-                    processServerGetReqResponseCmd()
-                    recved--;
-                    break;
-
-                default:
-                    fprintf(stderr, "Completion for unknown wr_id %d\n",
-                            (int) wc[i].wr_id);
-                    return 1;
-            }
-
+            perror("Couldn't post receive:");
+            return 1;
         }
 
+
+        printf("Pooling for result value \n");
+        int scnt = 1, recved = 1;
+        while (scnt || recved)
+        {
+            struct ibv_wc wc[2];
+            int ne;
+            do
+            {
+                ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
+                if (ne < 0)
+                {
+                    fprintf(stderr, "poll CQ failed %d\n", ne);
+                    return 1;
+                }
+
+            } while (ne < 1);
+
+            for (int i = 0; i < ne; ++i)
+            {
+                if (wc[i].status != IBV_WC_SUCCESS)
+                {
+                    fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
+                            ibv_wc_status_str(wc[i].status), wc[i].status,
+                            (int) wc[i].wr_id);
+                    return 1;
+                }
+
+                switch ((int) wc[i].wr_id)
+                {
+                    case PINGPONG_SEND_WRID:
+                        scnt--;
+                        break;
+
+                    case PINGPONG_RECV_WRID:
+                        //here we get the server MR address and rkey to read from.
+                        printf("Got msg: %s\n", recv2Msg1);
+                        //parse recv2Msg1 to size, MR addresses
+                        printf("Processing server message: %s\n", recv2Msg1);
+                        if (strlen(recv2Msg1) == 0)
+                        {
+                            fprintf(stderr, "Msg is empty!\n");
+                            return 0;
+                        }
+                        struct message
+                                *mr_msg = (struct message *) calloc(1, sizeof(struct message));
+                        char *delim = ":";
+                        mr_msg->addr = atoi(strtok(recv2Msg1, delim));
+                        mr_msg->mr_rkey = atoi(strtok(NULL, delim));
+                        mr_msg->valueSize = atoi(strtok(NULL, delim));
+
+                        recved--;
+                        break;
+
+                    default:
+                        fprintf(stderr, "Completion for unknown wr_id %d\n",
+                                (int) wc[i].wr_id);
+                        return 1;
+                }
+
+            }
+        }
+        memcpy(value, recv2Msg1, strlen(recv2Msg1) + 1);
+        free(recv2Msg1);
+
     }
 
-    memcpy(value, recv2Msg1, strlen(recv2Msg1) + 1);
-    free(recv2Msg1);
+    //Now use the rdma key and mr to reach the secrad value!
+    processServerGetReqResponseCmd(kv_handle, recv2Msg1,)
+
+
     return 0;
 };
 
@@ -886,22 +908,11 @@ int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg,
 
     return 0;
 }
-int processServerGetReqResponseCmd(handle *kv_handle, char *msg,
-                                      char *actualMessage)
+
+
+int processServerGetReqResponseCmd(handle *kv_handle, struct message msg,
+                                   int size)
 {
-    printf("Processing server message: %s\n", msg);
-    if (strlen(msg) == 0)
-    {
-        fprintf(stderr, "Msg is empty!\n");
-        return 0;
-    }
-
-    struct message
-            *mr_msg = (struct message *) calloc(1, sizeof(struct message));
-    char *delim = ":";
-    mr_msg->addr = atoi(strtok(msg, delim));
-    mr_msg->mr_rkey = atoi(strtok(NULL, delim));
-
     struct ibv_sge list = {.addr    = (uintptr_t) actualMessage, .length =
     strlen(actualMessage) + 1};
     struct ibv_send_wr wr =
@@ -911,8 +922,10 @@ int processServerGetReqResponseCmd(handle *kv_handle, char *msg,
 
     TEST_NZ(ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr));
 
+
     return 0;
 }
+
 int processClientCmd(handle *kv_handle, char *msg)
 {
     printf("Processing message %s\n", msg);
@@ -959,8 +972,7 @@ int processClientCmd(handle *kv_handle, char *msg)
     return 0;
 }
 
-int processClientPrepWriteCmd(handle *kv_handle, char *key , int
-expectedMsgSize)
+int processClientPrepWriteCmd(handle *kv_handle, char *key, int expectedMsgSize)
 {
 
     char *allocatedValue = allocateNewElement(key, expectedMsgSize, kv_handle);
@@ -985,8 +997,8 @@ expectedMsgSize)
                     page_size);
     char *mr_msg_char = (char *) malloc(mr_msg_size);
     sprintf(mr_msg_char, "%d:%d", mr_msg->addr, mr_msg->mr_rkey);
-    printf("Sending mr msg: %s with size %d\n", mr_msg_char, strlen
-                                                                    (mr_msg_char) + 1);
+    printf("Sending mr msg: %s with size %d\n", mr_msg_char,
+           strlen(mr_msg_char) + 1);
 
     if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, mr_msg_char,
                        strlen(mr_msg_char) + 1))
