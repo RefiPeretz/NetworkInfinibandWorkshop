@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c" line="180" mnemonic="0" />
+  </component>
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" assignedExecutableTargets="true" buildAllGenerated="true">
     <generated>
       <config projectName="ex1v2" targetName="SimpleIBServer" />
@@ -29,7 +32,7 @@
     </ADDITIONAL_GENERATION_ENVIRONMENT>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="Strated RDMA">
+    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rdma_pp.c" afterPath="$PROJECT_DIR$/rdma_pp.c" />
     </list>
@@ -51,17 +54,29 @@
     <favorites_list name="H_CCW17" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.7431866">
+    <splitter split-orientation="horizontal" split-proportion="0.80233175">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file leaf-file-name="rdma_pp.c" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/rdma_pp.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-5129">
-                  <caret line="895" column="4" selection-start-line="895" selection-start-column="4" selection-end-line="895" selection-end-column="4" />
+                <state relative-caret-position="237">
+                  <caret line="802" column="27" selection-start-line="802" selection-start-column="27" selection-end-line="802" selection-end-column="27" />
                   <folding>
-                    <element signature="e#14220#15960#0" expanded="false" />
-                    <element signature="e#15963#17412#0" expanded="false" />
+                    <element signature="e#18#39#0" expanded="true" />
+                    <marker date="1498315016398" expanded="false" signature="77:358" ph="..." />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="verbs.h" pinned="false" current-in-tab="false">
+            <entry file="file:///usr/include/infiniband/verbs.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="220">
+                  <caret line="1316" column="0" selection-start-line="1316" selection-start-column="0" selection-end-line="1316" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#16231#16796#1" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -70,9 +85,22 @@
           <file leaf-file-name="rdma_pp.c" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="178">
-                  <caret line="1123" column="16" selection-start-line="1123" selection-start-column="16" selection-end-line="1123" selection-end-column="16" />
-                  <folding />
+                <state relative-caret-position="227">
+                  <caret line="1135" column="0" selection-start-line="1135" selection-start-column="0" selection-end-line="1135" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#18#39#0" expanded="true" />
+                    <marker date="1498315016398" expanded="false" signature="77:358" ph="..." />
+                    <marker date="1498315016398" expanded="false" signature="365:420" ph="{...}" />
+                    <marker date="1498315016398" expanded="false" signature="438:502" ph="{...}" />
+                    <marker date="1498315016398" expanded="false" signature="521:569" ph="{...}" />
+                    <marker date="1498315016398" expanded="false" signature="618:673" ph="{...}" />
+                    <marker date="1498315016398" expanded="false" signature="711:752" ph="{...}" />
+                    <marker date="1498315016398" expanded="false" signature="790:1363" ph="{...}" />
+                    <marker date="1498315016398" expanded="false" signature="1387:1452" ph="{...}" />
+                    <marker date="1498315016398" expanded="false" signature="1617:2949" ph="{...}" />
+                    <marker date="1498315016398" expanded="false" signature="3072:4869" ph="{...}" />
+                    <marker date="1498315016398" expanded="false" signature="5071:7441" ph="{...}" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -80,14 +108,26 @@
         </leaf>
       </split-first>
       <split-second>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+        <leaf>
           <file leaf-file-name="rdma_pp.c" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/rdma_pp.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="406">
-                  <caret line="901" column="63" selection-start-line="901" selection-start-column="56" selection-end-line="901" selection-end-column="63" />
+                <state relative-caret-position="242">
+                  <caret line="760" column="87" selection-start-line="760" selection-start-column="74" selection-end-line="760" selection-end-column="87" />
                   <folding>
-                    <element signature="e#28176#36797#0" expanded="false" />
+                    <element signature="e#360#420#1" expanded="false" />
+                    <element signature="e#423#502#1" expanded="false" />
+                    <element signature="e#505#569#1" expanded="false" />
+                    <element signature="e#602#673#0" expanded="false" />
+                    <element signature="e#695#752#0" expanded="false" />
+                    <element signature="e#766#1363#1" expanded="false" />
+                    <element signature="e#1366#1452#1" expanded="false" />
+                    <element signature="e#1456#2949#0" expanded="false" />
+                    <element signature="e#2951#4869#0" expanded="false" />
+                    <element signature="e#4871#7441#0" expanded="false" />
+                    <element signature="e#25534#26620#0" expanded="false" />
+                    <element signature="e#26622#27278#0" expanded="false" />
+                    <element signature="e#27280#35760#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -200,8 +240,8 @@
         <option value="$PROJECT_DIR$/pingpong.c" />
         <option value="$PROJECT_DIR$/pingpong.h" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
-        <option value="$PROJECT_DIR$/rdma_pp.c" />
         <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c" />
+        <option value="$PROJECT_DIR$/rdma_pp.c" />
       </list>
     </option>
   </component>
@@ -338,7 +378,6 @@
           <option name="mySupportsDeletion" value="false" />
           <option name="myCanBeAbsent" value="false" />
           <option name="myId" value="CREATED" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/rdmaPP.c</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
           <option name="myUpdateName" value="Deleted" />
@@ -439,7 +478,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="GDB Remote Debug.mlx-stud-02:8080">
+  <component name="RunManager" selected="GDB Remote Debug.mlx-stud-01:8081">
     <configuration default="true" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="" symbolFile="" sysroot="">
       <method />
     </configuration>
@@ -681,49 +720,7 @@
       <workItem from="1495529232017" duration="2400000" />
       <workItem from="1495867749085" duration="36136000" />
       <workItem from="1497673125935" duration="26963000" />
-      <workItem from="1498287344743" duration="15956000" />
-    </task>
-    <task id="LOCAL-00012" summary="Fix data in thread handler">
-      <created>1491744104439</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1491744104439</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Adjust SingleStream to right structure. Small modifications in Metrics.&#10;MutliThreadClient  small modifications">
-      <created>1491904886843</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1491904886843</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Add a save results function.&#10;Adjust singlestream client to the new save result function.">
-      <created>1491997419873</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1491997419873</updated>
-    </task>
-    <task id="LOCAL-00015" summary="MultiThread and SingleStream are ready">
-      <created>1492011508200</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1492011508200</updated>
-    </task>
-    <task id="LOCAL-00016" summary="Fix SingleStreamClientLogic">
-      <created>1492111459610</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1492111459610</updated>
-    </task>
-    <task id="LOCAL-00017" summary="Add mirroring to SingStreamServer and Client SingleStream Server is done">
-      <created>1492160735392</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1492160735392</updated>
+      <workItem from="1498287344743" duration="26375000" />
     </task>
     <task id="LOCAL-00018" summary="Add mirroring to SingStreamServer and Client SingleStream Server is done">
       <created>1493110288357</created>
@@ -1026,11 +1023,53 @@
       <option name="project" value="LOCAL" />
       <updated>1498302484109</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="Strated RDMA">
+      <created>1498304834090</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1498304834090</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Strated RDMA">
+      <created>1498307125731</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1498307125731</updated>
+    </task>
+    <task id="LOCAL-00063" summary="Strated RDMA">
+      <created>1498307313930</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1498307313930</updated>
+    </task>
+    <task id="LOCAL-00064" summary="Strated RDMA">
+      <created>1498307328082</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1498307328082</updated>
+    </task>
+    <task id="LOCAL-00065" summary="Strated RDMA">
+      <created>1498308195315</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1498308195315</updated>
+    </task>
+    <task id="LOCAL-00066" summary="Strated RDMA">
+      <created>1498309947169</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1498309947169</updated>
+    </task>
+    <option name="localTasksCounter" value="67" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="347974000" />
+    <option name="totallyTimeSpent" value="358393000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1043,21 +1082,21 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="24" width="1920" height="1032" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.00625" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.0063191154" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32969433" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20742358" sideWeight="0.46761453" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3242358" sideWeight="0.48553056" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18849841" sideWeight="0.16458334" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12779553" sideWeight="0.6016771" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32481363" sideWeight="0.4875" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32092005" sideWeight="0.17470525" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17467248" sideWeight="0.5992628" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.062227074" sideWeight="0.4875" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23908296" sideWeight="0.4782123" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.088427946" sideWeight="0.49040306" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3258786" sideWeight="0.8354167" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3209607" sideWeight="0.82529473" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20742358" sideWeight="0.46761453" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -1145,9 +1184,9 @@
     <MESSAGE value="Remove extern C from metrics" />
     <MESSAGE value="added KV_release" />
     <MESSAGE value="Fix for if allocateNewElem" />
-    <MESSAGE value="Strated RDMA" />
     <MESSAGE value="fixed rdma set operation on client with set lkey&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed rdma set operation on client with set lkey&#10;" />
+    <MESSAGE value="Strated RDMA" />
+    <option name="LAST_COMMIT_MESSAGE" value="Strated RDMA" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1184,138 +1223,113 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>696</line>
-          <option name="timeStamp" value="347" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>1067</line>
+          <line>1029</line>
           <option name="timeStamp" value="348" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c</url>
-          <line>658</line>
+          <line>729</line>
           <option name="timeStamp" value="351" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>1085</line>
+          <line>1047</line>
           <option name="timeStamp" value="356" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>410</line>
-          <option name="timeStamp" value="359" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>909</line>
+          <line>871</line>
           <option name="timeStamp" value="360" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>733</line>
-          <option name="timeStamp" value="361" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>1074</line>
+          <line>1036</line>
           <option name="timeStamp" value="366" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>1119</line>
+          <line>1077</line>
           <option name="timeStamp" value="369" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>903</line>
+          <line>865</line>
           <option name="timeStamp" value="371" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>676</line>
-          <option name="timeStamp" value="372" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>680</line>
-          <option name="timeStamp" value="373" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>743</line>
-          <option name="timeStamp" value="374" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>746</line>
-          <option name="timeStamp" value="377" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c</url>
-          <line>717</line>
+          <line>703</line>
           <option name="timeStamp" value="378" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>1113</line>
+          <line>1071</line>
           <option name="timeStamp" value="380" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>722</line>
-          <option name="timeStamp" value="381" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>589</line>
-          <option name="timeStamp" value="383" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>602</line>
-          <option name="timeStamp" value="384" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>869</line>
+          <line>833</line>
           <option name="timeStamp" value="386" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>895</line>
+          <line>857</line>
           <option name="timeStamp" value="387" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>591</line>
-          <option name="timeStamp" value="388" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>828</line>
+          <line>820</line>
           <option name="timeStamp" value="389" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>687</line>
-          <option name="timeStamp" value="390" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>872</line>
+          <line>863</line>
           <option name="timeStamp" value="391" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c</url>
-          <line>1120</line>
+          <line>1108</line>
           <option name="timeStamp" value="392" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/rdma_pp.c</url>
-          <line>1133</line>
+          <line>1119</line>
           <option name="timeStamp" value="393" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
+          <line>846</line>
+          <option name="timeStamp" value="398" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
+          <line>839</line>
+          <option name="timeStamp" value="414" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c</url>
+          <line>495</line>
+          <option name="timeStamp" value="415" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c</url>
+          <line>724</line>
+          <option name="timeStamp" value="418" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c</url>
+          <line>799</line>
+          <option name="timeStamp" value="419" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
+          <line>720</line>
+          <option name="timeStamp" value="420" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/rdma_pp.c</url>
+          <line>799</line>
+          <option name="timeStamp" value="421" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -1328,12 +1342,9 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="394" />
+      <option name="time" value="422" />
     </breakpoint-manager>
     <watches-manager>
-      <configuration name="CLion_Remote">
-        <watch expression="wc[0].status" />
-      </configuration>
       <configuration name="CMakeRunConfiguration">
         <watch expression="streams[0]" />
         <watch expression="socketNumTrue" />
@@ -1538,32 +1549,45 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/rdma_pp.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="802" column="27" selection-start-line="802" selection-start-column="27" selection-end-line="802" selection-end-column="27" />
+          <folding>
+            <element signature="e#18#39#0" expanded="true" />
+            <marker date="1498315016398" expanded="false" signature="77:358" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file:///usr/include/infiniband/verbs.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="1524" column="0" selection-start-line="1524" selection-start-column="0" selection-end-line="1524" selection-end-column="0" />
+        <state relative-caret-position="220">
+          <caret line="1316" column="0" selection-start-line="1316" selection-start-column="0" selection-end-line="1316" selection-end-column="0" />
           <folding>
             <element signature="e#16231#16796#1" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rdma_pp.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5129">
-          <caret line="895" column="4" selection-start-line="895" selection-start-column="4" selection-end-line="895" selection-end-column="4" />
-          <folding>
-            <element signature="e#14220#15960#0" expanded="false" />
-            <element signature="e#15963#17412#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="1123" column="16" selection-start-line="1123" selection-start-column="16" selection-end-line="1123" selection-end-column="16" />
-          <folding />
+        <state relative-caret-position="227">
+          <caret line="1135" column="0" selection-start-line="1135" selection-start-column="0" selection-end-line="1135" selection-end-column="0" />
+          <folding>
+            <element signature="e#18#39#0" expanded="true" />
+            <marker date="1498315016398" expanded="false" signature="77:358" ph="..." />
+            <marker date="1498315016398" expanded="false" signature="365:420" ph="{...}" />
+            <marker date="1498315016398" expanded="false" signature="438:502" ph="{...}" />
+            <marker date="1498315016398" expanded="false" signature="521:569" ph="{...}" />
+            <marker date="1498315016398" expanded="false" signature="618:673" ph="{...}" />
+            <marker date="1498315016398" expanded="false" signature="711:752" ph="{...}" />
+            <marker date="1498315016398" expanded="false" signature="790:1363" ph="{...}" />
+            <marker date="1498315016398" expanded="false" signature="1387:1452" ph="{...}" />
+            <marker date="1498315016398" expanded="false" signature="1617:2949" ph="{...}" />
+            <marker date="1498315016398" expanded="false" signature="3072:4869" ph="{...}" />
+            <marker date="1498315016398" expanded="false" signature="5071:7441" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
