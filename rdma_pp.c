@@ -1081,9 +1081,10 @@ int main(int argc, char *argv[]) {
             perror("Couldn't post receive:");
             return 1;
         }
-        printf("Got msg: %s\n", recvMsg);
-        processClientCmd(kvHandle, recvMsg);
-        free(recvMsg);
+//        printf("Got msg: %s\n", recvMsg);
+//        processClientCmd(kvHandle, recvMsg);
+//        free(recvMsg);
+//        recvMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
 
 
         rcnt = scnt = 0;
@@ -1107,13 +1108,17 @@ int main(int argc, char *argv[]) {
                             wc[i].status, (int) wc[i].wr_id);
                     return 1;
                 }
-                char *recvMsg = NULL;
                 switch ((int) wc[i].wr_id) {
                     case PINGPONG_SEND_WRID:
                         ++scnt;
                         break;
 
                     case PINGPONG_RECV_WRID:
+
+                        printf("Got msg: %s\n", recvMsg);
+                        processClientCmd(kvHandle, recvMsg);
+                        free(recvMsg);
+//                        recvMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
                         recvMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
 
                         if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, recvMsg,
@@ -1121,8 +1126,6 @@ int main(int argc, char *argv[]) {
                             perror("Couldn't post receive:");
                             return 1;
                         }
-                        printf("Got msg: %s\n", recvMsg);
-                        processClientCmd(kvHandle, recvMsg);
                         ++rcnt;
                         break;
 
@@ -1130,7 +1133,8 @@ int main(int argc, char *argv[]) {
                         fprintf(stderr, "Completion for unknown wr_id %d\n", (int) wc[i].wr_id);
                         return 1;
                 }
-                free(recvMsg);
+                //TODO free
+                //free(recvMsg);
             }
         }
 
