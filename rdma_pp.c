@@ -1118,11 +1118,11 @@ int main(int argc, char *argv[]) {
         rcnt = scnt = 0;
         while (rcnt < iters || scnt < iters) {
 
-            struct ibv_wc wc[2];
+            struct ibv_wc wc[4];
             int ne, i;
 
             do {
-                ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
+                ne = ibv_poll_cq(kvHandle->ctx->cq, 4, wc);
                 if (ne < 0) {
                     fprintf(stderr, "poll CQ failed %d\n", ne);
                     return 1;
