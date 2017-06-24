@@ -34,6 +34,21 @@ struct msgKeyMr {
     int valueSize;
 };
 
+typedef enum kv_cmd {
+    SET_CMD = 3, GET_CMD = 4,
+} kv_cmd;
+
+typedef struct keyMrEntry {
+    char *key;
+    struct msgKeyMr *curValue;
+} keyMrEntry;
+
+typedef struct clientMrEntry {
+    char *key;
+    struct message *mrDetails;
+} clientMrEntry;
+
+
 static int page_size;
 typedef enum send_state {
     SS_INIT, SS_MR_SENT, SS_RDMA_SENT, SS_DONE_SENT
@@ -369,21 +384,6 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use
     ctx->ctx_send_state = SS_INIT;
     ctx->ctx_recv_state = RS_INIT;
 
-    ctx->send_msg = malloc(sizeof(struct message));
-    ctx->recv_msg = malloc(sizeof(struct message));
-
-    //    TEST_Z(ctx->send_mr = ibv_reg_mr(
-    //            ctx->pd,
-    //            ctx->send_msg,
-    //            sizeof(struct message),
-    //            IBV_ACCESS_LOCAL_WRITE));
-    //
-    //    TEST_Z(ctx->recv_mr = ibv_reg_mr(
-    //            ctx->pd,
-    //            ctx->recv_msg,
-    //            sizeof(struct message),
-    //            IBV_ACCESS_LOCAL_WRITE | ((s_mode == M_WRITE) ? IBV_ACCESS_REMOTE_WRITE : IBV_ACCESS_REMOTE_READ)));
-
     return ctx;
 }
 
@@ -465,14 +465,6 @@ static void usage(const char *argv0) {
     printf("  -g, --gid-idx=<gid index> local port gid index\n");
 }
 
-typedef enum kv_cmd {
-    SET_CMD = 3, GET_CMD = 4,
-} kv_cmd;
-
-typedef struct keyMrEntry {
-    char *key;
-    struct msgKeyMr *curValue;
-} keyMrEntry;
 
 typedef struct handle {
     struct ibv_device **dev_list;
@@ -486,6 +478,8 @@ typedef struct handle {
     struct pingpong_dest *rem_dest;
     char gid[33];
     keyMrEntry **kvMsgDict;
+    clientMrEntry **clientMrDict;
+
 } handle;
 
 int getFromStore(handle *store, const char *key, char **value) {
@@ -522,7 +516,6 @@ int getFromStoreClient(handle *store, const char *key, struct msgKeyMr **mr) {
 }
 
 void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct handle *curHandle) {
-
     if (curHandle->kvListSize == 0) {
         struct keyMrEntry *curMsg = calloc(1, sizeof(keyMrEntry));
         curMsg->key = malloc(strlen(key) + 1);
@@ -530,14 +523,12 @@ void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct 
         curMsg->curValue = malloc(sizeof(struct msgKeyMr *));
         curMsg->curValue->curMr = curMr;
         curMsg->curValue->valueSize = msgSize;
-        //TODO should be in a handle?
         curHandle->kvMsgDict = malloc(sizeof(keyMrEntry) * 1);
         curHandle->kvMsgDict[0] = curMsg;
         curHandle->kvListSize++;
     } else {
         for (int i = 0; i < curHandle->kvListSize; i++) {
             if (strcmp(curHandle->kvMsgDict[i]->key, key) == 0) {
-                //TODO free MR inside curValue?
                 free(curHandle->kvMsgDict[i]->curValue);
                 curHandle->kvMsgDict[i]->curValue = malloc(sizeof(struct msgKeyMr *));
                 curHandle->kvMsgDict[i]->curValue->curMr = curMr;
@@ -550,7 +541,6 @@ void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct 
         curMsg->key = malloc(strlen(key) + 1);
         strcpy(curMsg->key, key);
         curMsg->curValue = malloc(sizeof(struct msgKeyMr *));
-        curMsg->curValue->valueSize = msgSize;
         curMsg->curValue->curMr = curMr;
         curMsg->curValue->valueSize = msgSize;
         curHandle->kvListSize++;
@@ -564,6 +554,49 @@ void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct 
         curHandle->kvMsgDict = newList;
     }
 }
+
+//void addClientMrElement(const char *key, uintptr_t addr, uintptr_t rkey, int msgSize, struct handle *curHandle) {
+//    if (curHandle->kvListSize == 0) {
+//        struct clientMrEntry *curMsg = calloc(1, sizeof(clientMrEntry));
+//        curMsg->key = malloc(strlen(key) + 1);
+//        strcpy(curMsg->key, key);
+//        curMsg->mrDetails = malloc(sizeof(struct message *));
+//        curMsg->mrDetails->addr = addr;
+//        curMsg->mrDetails->mr_rkey = rkey;
+//        curMsg->mrDetails->valueSize = msgSize;
+//        curHandle->clientMrDict = malloc(sizeof(clientMrEntry) * 1);
+//        curHandle->clientMrDict[0] = curMsg;
+//        curHandle->kvListSize++;
+//    } else {
+//        for (int i = 0; i < curHandle->kvListSize; i++) {
+//            if (strcmp(curHandle->clientMrDict[i]->key, key) == 0) {
+//                free(curHandle->clientMrDict[i]->curValue);
+//                curHandle->clientMrDict[i]->curValue = malloc(sizeof(struct msgKeyMr *));
+//                curMsg->mrDetails->addr = addr;
+//                curMsg->mrDetails->mr_rkey = rkey;
+//                curMsg->mrDetails->valueSize = msgSize;
+//                return;
+//            }
+//        }
+//
+//        struct keyMrEntry *curMsg = calloc(1, sizeof(keyMrEntry));
+//        curMsg->key = malloc(strlen(key) + 1);
+//        strcpy(curMsg->key, key);
+//        curMsg->curValue = malloc(sizeof(struct msgKeyMr *));
+//        curMsg->curValue->valueSize = msgSize;
+//        curMsg->curValue->curMr = curMr;
+//        curMsg->curValue->valueSize = msgSize;
+//        curHandle->kvListSize++;
+//
+//        struct keyMrEntry **newList = malloc(sizeof(keyMrEntry) * curHandle->kvListSize);
+//        for (int i = 0; i < curHandle->kvListSize - 1; i++) {
+//            newList[i] = curHandle->kvMsgDict[i];
+//        }
+//        newList[curHandle->kvListSize - 1] = curMsg;
+//        free(curHandle->kvMsgDict);
+//        curHandle->kvMsgDict = newList;
+//    }
+//}
 
 struct message *allocateNewElement(const char *key, size_t valueSize, struct handle *curHandle) {
     char *value = calloc(1, valueSize * sizeof(char));
@@ -743,6 +776,10 @@ int kv_get(void *kv_handle, const char *key, char **value) {
                         mr_msg->addr = atoi(strtok(recv2Msg1, delim));
                         mr_msg->mr_rkey = atoi(strtok(NULL, delim));
                         mr_msg->valueSize = atoi(strtok(NULL, delim));
+                        struct ibv_mr *curMr = calloc(1, sizeof(struct ibv_mr));
+                        curMr->addr = mr_msg->addr;
+                        curMr->rkey = mr_msg->mr_rkey;
+                        addKeyMrElement(key, curMr, mr_msg->valueSize, kvHandle);
                         recved--;
                         break;
 
@@ -758,6 +795,38 @@ int kv_get(void *kv_handle, const char *key, char **value) {
 
     *value = calloc(1, mr_msg->valueSize * sizeof(char));
     processServerGetReqResponseCmd(kv_handle, mr_msg, value);
+    int scnt = 1;
+    while (scnt) {
+        struct ibv_wc wc[2];
+        int ne;
+        do {
+            ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
+            if (ne < 0) {
+                fprintf(stderr, "poll CQ failed %d\n", ne);
+                return 1;
+            }
+
+        } while (ne < 1);
+
+        for (int i = 0; i < ne; ++i) {
+            if (wc[i].status != IBV_WC_SUCCESS) {
+                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status),
+                        wc[i].status, (int) wc[i].wr_id);
+                return 1;
+            }
+
+            switch ((int) wc[i].wr_id) {
+                case PINGPONG_SEND_WRID:
+                    scnt--;
+                    break;
+
+                default:
+                    fprintf(stderr, "Completion for unknown wr_id %d\n", (int) wc[i].wr_id);
+                    return 1;
+            }
+
+        }
+    }
     free(mr_msg);
     return 0;
 };
@@ -1077,6 +1146,16 @@ int main(int argc, char *argv[]) {
         }
 
         kv_release(recvMsg1);
+
+
+        //third Test
+        char *recvMsg2;
+        if (kv_get(kvHandle, key2, &recvMsg2)) {
+            fprintf(stderr, "Couldn't kv get the requested key\n");
+            return 1;
+        }
+        kv_release(recvMsg2);
+
 
     }
 
