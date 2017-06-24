@@ -735,10 +735,8 @@ int kv_get(void *kv_handle, const char *key, char **value) {
 
             }
         }
+        free(recv2Msg1);
     }
-
-
-
     return 0;
 };
 
@@ -803,8 +801,9 @@ int processServerGetReqResponseCmd(handle *kv_handle, struct message *msg, char 
             msg->valueSize,
             IBV_ACCESS_LOCAL_WRITE);
 
-    struct ibv_sge list = {.addr    = (uintptr_t) (*value),
-            .length =msg->valueSize,
+    struct ibv_sge list = {
+            .addr    = (uintptr_t) (*value),
+            .length = msg->valueSize,
             .lkey = sendMr->lkey
     };
     struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_RDMA_READ, .send_flags = IBV_SEND_SIGNALED, .wr.rdma.remote_addr = (uintptr_t) msg
