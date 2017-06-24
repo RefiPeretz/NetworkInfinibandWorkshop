@@ -742,8 +742,8 @@ int kv_get(void *kv_handle, const char *key, char **value)
     {
         kv_cmd cmd = GET_CMD;
         char *get_msg = (char *) malloc(roundup(kvHandle->defMsgSize, page_size));
-        sprintf(get_msg, "%d:%s:%s", cmd, key, "");
-        printf("Sending get msg: %s with size %d\n", get_msg, (int)(strlen(get_msg) + 1));
+        sprintf(get_msg, "%d:%s", cmd, key);
+        printf("Sending get msg: %s with size %d\n", get_msg, strlen(get_msg) + 1);
 
         if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, get_msg, strlen(get_msg) + 1))
         {
@@ -753,12 +753,12 @@ int kv_get(void *kv_handle, const char *key, char **value)
 
         char *recv2Msg1;
         recv2Msg1 = malloc(roundup(kvHandle->defMsgSize, page_size));
-//        if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, recv2Msg1,
-//                            roundup(kvHandle->defMsgSize, page_size))) < 0)
-//        {
-//            perror("Couldn't post receive:");
-//            return 1;
-//        }
+        if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, recv2Msg1,
+                            roundup(kvHandle->defMsgSize, page_size))) < 0)
+        {
+            perror("Couldn't post receive:");
+            return 1;
+        }
 
 
         printf("Pooling for result value \n");
