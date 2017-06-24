@@ -504,6 +504,23 @@ int getFromStore(handle *store, const char *key, char **value) {
     return 1;
 }
 
+int getFromStoreClient(handle *store, const char *key, struct msgKeyMr **mr) {
+    int listSize = store->kvListSize;
+    for (int i = 0; i < listSize; i++) {
+        if (strcmp(store->kvMsgDict[i]->key, key) == 0) {
+
+            *mr = store->kvMsgDict[i]->curValue;
+            size_t mr_msg_size = roundup(sizeof((uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr) + sizeof(store->kvMsgDict[i]->curValue->curMr->rkey) + sizeof(store->kvMsgDict[i]->curValue->valueSize)+ 3, page_size);
+            char * value = (char *) malloc(mr_msg_size);
+            sprintf(value, "%d:%d:%d", (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr, store->kvMsgDict[i]->curValue->curMr->rkey, store->kvMsgDict[i]->curValue->valueSize);
+            printf("Prepared the MR info from store - %s\n", value);
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct handle *curHandle) {
 
     if (curHandle->kvListSize == 0) {
@@ -569,6 +586,7 @@ struct message *allocateNewElement(const char *key, size_t valueSize, struct han
 
 }
 
+int processServerGetReqResponseCmd(handle *kv_handle, struct message *msg, char **value) ;
 
 int kv_open(char *servername, void **kv_handle) {
     handle *kvHandle = *kv_handle;
@@ -592,7 +610,6 @@ int kv_open(char *servername, void **kv_handle) {
     }
     return 0;
 };
-
 
 int kv_set(void *kv_handle, const char *key, const char *value) {
     handle *kvHandle = kv_handle;
@@ -659,13 +676,18 @@ int kv_set(void *kv_handle, const char *key, const char *value) {
     return 0;
 };
 
-
 int kv_get(void *kv_handle, const char *key, char **value) {
     handle *kvHandle = kv_handle;
-    unsigned int isKeyInDict = 0;
+    int isKeyInDict = 0;
     struct message *mr_msg;
-
-    if (!isKeyInDict) {
+    mr_msg = (struct message *) calloc(1, sizeof(struct message));
+    struct msgKeyMr* mr;
+    isKeyInDict = getFromStoreClient(kv_handle, key, &mr);
+    if(!isKeyInDict){
+        mr_msg->addr = (uintptr_t) mr->curMr->addr;
+        mr_msg->mr_rkey = mr->curMr->rkey;
+        mr_msg->valueSize = mr->valueSize;
+    } else {
         kv_cmd cmd = GET_CMD;
         char *get_msg = (char *) malloc(roundup(kvHandle->defMsgSize, page_size));
         sprintf(get_msg, "%d:%s", cmd, key);
@@ -685,7 +707,7 @@ int kv_get(void *kv_handle, const char *key, char **value) {
         }
 
         printf("Pooling for result value \n");
-        int scnt = 2, recved = 1;
+        int scnt = 1, recved = 1;
         while (scnt || recved) {
             struct ibv_wc wc[2];
             int ne;
@@ -717,14 +739,10 @@ int kv_get(void *kv_handle, const char *key, char **value) {
                             fprintf(stderr, "Msg is empty!\n");
                             return 0;
                         };
-                        mr_msg = (struct message *) calloc(1, sizeof(struct message));
                         char *delim = ":";
                         mr_msg->addr = atoi(strtok(recv2Msg1, delim));
                         mr_msg->mr_rkey = atoi(strtok(NULL, delim));
                         mr_msg->valueSize = atoi(strtok(NULL, delim));
-                        *value = calloc(1, mr_msg->valueSize * sizeof(char));
-                        processServerGetReqResponseCmd(kv_handle, mr_msg, value);
-
                         recved--;
                         break;
 
@@ -737,6 +755,10 @@ int kv_get(void *kv_handle, const char *key, char **value) {
         }
         free(recv2Msg1);
     }
+
+    *value = calloc(1, mr_msg->valueSize * sizeof(char));
+    processServerGetReqResponseCmd(kv_handle, mr_msg, value);
+    free(mr_msg);
     return 0;
 };
 
