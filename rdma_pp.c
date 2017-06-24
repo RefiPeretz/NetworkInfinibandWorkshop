@@ -582,7 +582,7 @@ void addElement(const char *key, char *value, struct handle *curHandle) {
             }
         }
 
-        struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
+        struct kvMsg *curMsg = calloc(1, sizeof(keyMrEntry));
         curMsg->key = malloc(strlen(key) + 1);
         curMsg->value = malloc(strlen(value) + 1);
         strcpy(curMsg->key, key);
@@ -590,7 +590,7 @@ void addElement(const char *key, char *value, struct handle *curHandle) {
         curHandle->kvListSize++;
 
 
-        struct kvMsg **newList = malloc(sizeof(kvMsg) * curHandle->kvListSize);
+        struct kvMsg **newList = malloc(sizeof(keyMrEntry) * curHandle->kvListSize);
         for (int i = 0; i < curHandle->kvListSize - 1; i++) {
             newList[i] = curHandle->kvMsgDict[i];
         }
