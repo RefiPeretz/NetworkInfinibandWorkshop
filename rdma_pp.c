@@ -429,6 +429,7 @@ static int cstm_post_send(struct ibv_pd *pd, struct ibv_qp *qp, char *buf, int l
         fprintf(stderr, "Couldn't register MR\n");
         return 1;
     }
+
     struct ibv_sge list = {.addr    = (uintptr_t) buf, .length = length, .lkey = mr->lkey};
     struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,};
     struct ibv_send_wr *bad_wr;
@@ -630,7 +631,7 @@ int kv_set(void *kv_handle, const char *key, const char *value) {
         return 1;
     }
 
-    int scnt = 1, rcvd = 1;
+    int scnt = 2, rcvd = 1;
     while (scnt || rcvd) {
         struct ibv_wc wc[2];
         int ne;
@@ -655,7 +656,7 @@ int kv_set(void *kv_handle, const char *key, const char *value) {
             } else if (wc[i].wr_id == PINGPONG_RECV_WRID) {
                 //now we should have gotten his the server MR and we should 
                 // write our actual message
-                printf("Got msg: %s\n", remoteMrMsg);
+                printf("Got server set result msg: %s\n", remoteMrMsg);
                 processServerRdmaWriteResponseCmd(kv_handle, remoteMrMsg, value);
                 rcvd--;
             } else {
@@ -696,7 +697,7 @@ int kv_get(void *kv_handle, const char *key, char **value) {
 
 
         printf("Pooling for result value \n");
-        int scnt = 1, recved = 1;
+        int scnt = 2, recved = 1;
         while (scnt || recved) {
             struct ibv_wc wc[2];
             int ne;
@@ -722,9 +723,7 @@ int kv_get(void *kv_handle, const char *key, char **value) {
                         break;
 
                     case PINGPONG_RECV_WRID:
-                        //here we get the server MR address and rkey to read from.
-                        printf("Got msg: %s\n", recv2Msg1);
-                        //parse recv2Msg1 to size, MR addresses
+                        printf("Got server get prep msg: %s\n", recv2Msg1);
                         printf("Processing server message: %s\n", recv2Msg1);
                         if (strlen(recv2Msg1) == 0) {
                             fprintf(stderr, "Msg is empty!\n");
