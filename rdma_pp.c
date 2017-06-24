@@ -498,11 +498,13 @@ typedef struct handle {
 //    keyMrEntry **keyMrDict;
 } handle;
 
-int getFromStore(handle *store, const char *key, char **value) {
+int getFromStore(handle *store, const char *key, char *value) {
     int listSize = store->kvListSize;
     for (int i = 0; i < listSize; i++) {
         if (strcmp(store->kvMsgDict[i]->key, key) == 0) {
-            store->kvMsgDict[i]->curValue->curMr
+            store->kvMsgDict[i]->curValue->curMr->rkey;
+            (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr;
+
             *value = malloc(strlen(store->kvMsgDict[i]->value) + 1);
             memcpy(*value, store->kvMsgDict[i]->value, strlen(store->kvMsgDict[i]->value) + 1);
             return 0;
@@ -523,17 +525,17 @@ void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct 
         curMsg->curValue->curMr = curMr;
         curMsg->curValue->valueSize = msgSize;
         //TODO should be in a handle?
-        curHandle->keyMrDict = malloc(sizeof(keyMrEntry) * 1);
-        curHandle->keyMrDict[0] = curMsg;
+        curHandle->kvMsgDict = malloc(sizeof(keyMrEntry) * 1);
+        curHandle->kvMsgDict[0] = curMsg;
         curHandle->kvListSize++;
     } else {
         for (int i = 0; i < curHandle->kvListSize; i++) {
-            if (strcmp(curHandle->keyMrDict[i]->key, key) == 0) {
+            if (strcmp(curHandle->kvMsgDict[i]->key, key) == 0) {
                 //TODO free MR inside curValue?
-                free(curHandle->keyMrDict[i]->curValue);
-                curHandle->keyMrDict[i]->curValue = malloc(sizeof(struct msgKeyMr *));
-                curHandle->keyMrDict[i]->curValue->curMr = curMr;
-                curHandle->keyMrDict[i]->curValue->valueSize = msgSize;
+                free(curHandle->kvMsgDict[i]->curValue);
+                curHandle->kvMsgDict[i]->curValue = malloc(sizeof(struct msgKeyMr *));
+                curHandle->kvMsgDict[i]->curValue->curMr = curMr;
+                curHandle->kvMsgDict[i]->curValue->valueSize = msgSize;
                 return;
             }
         }
@@ -549,11 +551,11 @@ void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct 
 
         struct keyMrEntry **newList = malloc(sizeof(keyMrEntry) * curHandle->kvListSize);
         for (int i = 0; i < curHandle->kvListSize - 1; i++) {
-            newList[i] = curHandle->keyMrDict[i];
+            newList[i] = curHandle->kvMsgDict[i];
         }
         newList[curHandle->kvListSize - 1] = curMsg;
-        free(curHandle->keyMrDict);
-        curHandle->keyMrDict = newList;
+        free(curHandle->kvMsgDict);
+        curHandle->kvMsgDict = newList;
     }
 }
 
@@ -561,13 +563,13 @@ void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct 
 void addElement(const char *key, char *value, struct handle *curHandle) {
 
     if (!curHandle->kvListSize) {
-        struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
+        struct kvMsg *curMsg = calloc(1, sizeof(keyMrEntry));
         curMsg->key = malloc(strlen(key) + 1);
         curMsg->value = malloc(strlen(value) + 1);
 
         strcpy(curMsg->key, key);
         strcpy(curMsg->value, value);
-        curHandle->kvMsgDict = malloc(sizeof(kvMsg) * 1);
+        curHandle->kvMsgDict = malloc(sizeof(keyMrEntry) * 1);
         curHandle->kvMsgDict[0] = curMsg;
         curHandle->kvListSize++;
     } else {
@@ -886,9 +888,9 @@ int processClientCmd(handle *kv_handle, char *msg) {
         processClientPrepWriteCmd(kv_handle, key, expectedMsgSize);
 
     } else if (cmd == GET_CMD) {
-        char *retValue;
+        char *retValue = malloc(sizeof(char) * 4096);
 
-        int ret = getFromStore(kv_handle, key, &retValue);
+        int ret = getFromStore(kv_handle, key, retValue);
         if (ret) {
             fprintf(stderr, "Error in fetching value! no\n");
             return 1;
