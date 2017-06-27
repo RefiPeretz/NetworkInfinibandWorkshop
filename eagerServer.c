@@ -493,7 +493,7 @@ typedef struct handle
     struct ibv_device **dev_list;
     struct ibv_device *ib_dev;
     struct pingpong_context *ctx;
-    int defMsgSize;
+    long defMsgSize;
     int kvListSize;
     int ib_port;
     int rx_depth;

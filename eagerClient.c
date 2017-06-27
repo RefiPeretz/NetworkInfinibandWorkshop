@@ -56,16 +56,12 @@ struct pingpong_dest
     int psn;
     union ibv_gid gid;
 };
-struct mkv_ctx {
-    unsigned num_servers;
-    struct pingpong_context *kv_ctxs[0];
-};
 
 #define EAGER_PROTOCOL_LIMIT (1 << 22) /* 4KB limit */
 
 size_t EAGER_BUFFER_LIMIT = 10;
 struct kv_client_eager_buffer {
-    struct pingpong_context *ctx;
+    struct handle *ctx;
     char data[EAGER_PROTOCOL_LIMIT]; /* give only this to ibv_post_recv() or the user */
 };
 
@@ -505,7 +501,7 @@ typedef struct handle
     struct ibv_device **dev_list;
     struct ibv_device *ib_dev;
     struct pingpong_context *ctx;
-    int defMsgSize;
+    long defMsgSize;
     int kvListSize;
     int ib_port;
     int rx_depth;
@@ -627,7 +623,7 @@ int kv_set(void *kv_handle, const char *key, const char *value)
 {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = SET_CMD;
-    char *msg = malloc(roundup(kvHandle->defMsgSize, page_size));
+    char *msg = malloc(strlen(cmd) + strlen(key) + strlen(value) + 2 +1);
     sprintf(msg, "%d:%s:%s", cmd, key, value);
     printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
 
@@ -827,7 +823,7 @@ int processClientCmd(handle *kv_handle, char *msg) {
 
 
 int mkv_open(struct kv_server_address *servers, void **mkv_h) {
-    struct mkv_ctx *ctx;
+    struct mkv_handle *ctx;
     unsigned total_buffers_per_kv = sizeof(struct kv_client_eager_buffer) * EAGER_BUFFER_LIMIT;
 
     unsigned count = 0;
@@ -840,7 +836,7 @@ int mkv_open(struct kv_server_address *servers, void **mkv_h) {
 
     ctx->num_servers = count;
     for (count = 0; count < ctx->num_servers; count++) {
-        if (kvHandleFactory(&servers[count], total_buffers_per_kv, g_argc, g_argv, &ctx->kv_ctxs[count])) {
+        if (kvHandleFactory(&servers[count], total_buffers_per_kv, g_argc, g_argv, &ctx->kv_handle[count])) {
             return 1;
         }
     }
@@ -929,7 +925,8 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
-    if (mkv_get(kv_ctx,0, key, value)) {
+    char* retVal;
+    if (mkv_get(kv_ctx,0, key, &retVal)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
@@ -986,7 +983,7 @@ int main(int argc, char *argv[]) {
 }
 
 int
-kvHandleFactory(struct kv_server_address *server, unsigned size, int argc, char *argv[], struct handle **p_kvHandle) {
+kvHandleFactory(struct kv_server_address *server, long size, int argc, char *argv[], struct handle **p_kvHandle) {
     struct timeval start, end;
     char *servername = server->servername;
     int port = server->port;
