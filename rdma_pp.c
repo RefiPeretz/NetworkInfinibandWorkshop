@@ -562,48 +562,6 @@ void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct 
     }
 }
 
-//void addClientMrElement(const char *key, uintptr_t addr, uintptr_t rkey, int msgSize, struct handle *curHandle) {
-//    if (curHandle->kvListSize == 0) {
-//        struct clientMrEntry *curMsg = calloc(1, sizeof(clientMrEntry));
-//        curMsg->key = malloc(strlen(key) + 1);
-//        strcpy(curMsg->key, key);
-//        curMsg->mrDetails = malloc(sizeof(struct message *));
-//        curMsg->mrDetails->addr = addr;
-//        curMsg->mrDetails->mr_rkey = rkey;
-//        curMsg->mrDetails->valueSize = msgSize;
-//        curHandle->clientMrDict = malloc(sizeof(clientMrEntry) * 1);
-//        curHandle->clientMrDict[0] = curMsg;
-//        curHandle->kvListSize++;
-//    } else {
-//        for (int i = 0; i < curHandle->kvListSize; i++) {
-//            if (strcmp(curHandle->clientMrDict[i]->key, key) == 0) {
-//                free(curHandle->clientMrDict[i]->curValue);
-//                curHandle->clientMrDict[i]->curValue = malloc(sizeof(struct msgKeyMr *));
-//                curMsg->mrDetails->addr = addr;
-//                curMsg->mrDetails->mr_rkey = rkey;
-//                curMsg->mrDetails->valueSize = msgSize;
-//                return;
-//            }
-//        }
-//
-//        struct keyMrEntry *curMsg = calloc(1, sizeof(keyMrEntry));
-//        curMsg->key = malloc(strlen(key) + 1);
-//        strcpy(curMsg->key, key);
-//        curMsg->curValue = malloc(sizeof(struct msgKeyMr *));
-//        curMsg->curValue->valueSize = msgSize;
-//        curMsg->curValue->curMr = curMr;
-//        curMsg->curValue->valueSize = msgSize;
-//        curHandle->kvListSize++;
-//
-//        struct keyMrEntry **newList = malloc(sizeof(keyMrEntry) * curHandle->kvListSize);
-//        for (int i = 0; i < curHandle->kvListSize - 1; i++) {
-//            newList[i] = curHandle->kvMsgDict[i];
-//        }
-//        newList[curHandle->kvListSize - 1] = curMsg;
-//        free(curHandle->kvMsgDict);
-//        curHandle->kvMsgDict = newList;
-//    }
-//}
 
 struct message *allocateNewElement(const char *key, size_t valueSize, struct handle *curHandle) {
     char *value = calloc(1, valueSize * sizeof(char));

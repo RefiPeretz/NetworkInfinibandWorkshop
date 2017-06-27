@@ -21,6 +21,8 @@
 #include "stack.h"
 
 #define MAX_KEY 10
+#define MAX_MSG_TEST 4000
+#define LOOP_ITER 50
 
 enum
 {
@@ -964,31 +966,53 @@ int main(int argc, char *argv[])
 
     if (servername)
     {
+        char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
+        memset(msg,'w', MAX_MSG_TEST);
+        msg[MAX_MSG_TEST] = '\0';
+        if (gettimeofday(&start, NULL)) {
+            perror("gettimeofday");
+            return 1;
+        }
         printf("Start test\n");
         char key[MAX_KEY];
-        for(int i = 0; i < 2;i++){
-            //first Test
-            char* msg = malloc((1024 * sizeof(char)) + 1);
-            memset(msg,'w', 1023);
-            msg[1023] = '\0';
+        for(int i = 0; i < LOOP_ITER;i++){
             sprintf(key, "test%d", i);
             if (kv_set(kvHandle, key, msg))
             {
                 fprintf(stderr, "Couldn't post send\n");
                 return 1;
             }
-            free(msg);
         }
-        for(int i = 0; i < 2;i++){
-            char *returnedVal = malloc(kvHandle->defMsgSize);
+        for(int i = 0; i < LOOP_ITER;i++){
+            char *returnedVal = malloc(MAX_MSG_TEST + 1);
             sprintf(key, "test%d", i);
             if (kv_get(kvHandle, key, &returnedVal))
             {
                 fprintf(stderr, "Couldn't kv get the requested key\n");
                 return 1;
             }
+            //printf("Got value: %s", returnedVal);
             kv_release(returnedVal);
         }
+        for(int i = 0; i < LOOP_ITER;i++){
+            char *returnedVal = malloc(MAX_MSG_TEST + 1);
+            sprintf(key, "test%d", i);
+            if (kv_get(kvHandle, key, &returnedVal))
+            {
+                fprintf(stderr, "Couldn't kv get the requested key\n");
+                return 1;
+            }
+            //printf("Got value: %s", returnedVal);
+            kv_release(returnedVal);
+        }
+        if (gettimeofday(&end, NULL)) {
+            perror("gettimeofday");
+            return 1;
+        }
+        printf("Stop test\n");
+        double testTime = timeDifference(start,end);
+        double rdmaThroughput = calcAverageThroughput(LOOP_ITER*3,MAX_MSG_TEST,testTime);
+        printf("Rdma overall throughput:%f\n",rdmaThroughput);
 
 
 //        char *returnedVal = malloc(roundup(kvHandle->defMsgSize, page_size));
