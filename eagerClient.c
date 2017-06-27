@@ -830,7 +830,7 @@ int mkv_open(struct kv_server_address *servers, void **mkv_h) {
 
     unsigned count = 0;
     while (servers[count++].servername); /* count servers */
-
+    count--;
     ctx = malloc(sizeof(*ctx) + count * sizeof(void *));
     if (!ctx) {
         return 1;
@@ -911,12 +911,14 @@ int main(int argc, char *argv[]) {
 
     g_argc = argc;
     g_argv = argv;
+
     struct kv_server_address servers[2] = {
             {
                     .servername = "mlx-stud-01",
                     .port = 65433
-            },{0}
+            },{.servername = NULL, .port = 0}
     };
+
     assert(0 == mkv_open(servers, &kv_ctx));
     char key[4] = "red";
     char value[10] = "wedding";
