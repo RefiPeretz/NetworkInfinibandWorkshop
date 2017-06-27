@@ -30,19 +30,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="RandEager works">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MetricsIBV.c" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MetricsIBV.h" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/RDMA/Makefile" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/RDMA/rdma.c" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/README.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/rdmaPP.c" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/rdma_pp.c" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/stack.c" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/stack.h" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/eagerServer.c" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/eager.c" afterPath="$PROJECT_DIR$/eagerClient.c" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pingpong.c" afterPath="$PROJECT_DIR$/pingpong.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pingpong.h" afterPath="$PROJECT_DIR$/pingpong.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rc_pingpong.c" afterPath="$PROJECT_DIR$/rc_pingpong.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CMakeLists.txt" afterPath="$PROJECT_DIR$/CMakeLists.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/alex-skalaton.c" afterPath="$PROJECT_DIR$/alex-skalaton.c" />
     </list>
     <list id="ed5b0da3-4860-4bf5-a85a-dd6805f11d6b" name="11" comment="" />
     <list id="786bcf74-7ba9-41dc-ad33-e0d7ede81f2a" name="New changelist" comment="" />
@@ -62,85 +54,106 @@
     <favorites_list name="H_CCW17" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="CMakeLists.txt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="368">
-              <caret line="16" column="56" selection-start-line="16" selection-start-column="56" selection-end-line="16" selection-end-column="56" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pingpong.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pingpong.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pingpong.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Original/pingpong.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="rc_pingpong.c" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/rc_pingpong.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="81">
-              <caret line="901" column="10" selection-start-line="901" selection-start-column="7" selection-end-line="901" selection-end-column="10" />
-              <folding>
-                <element signature="e#0#1434#0" expanded="false" />
-                <element signature="e#1504#1523#0" expanded="true" />
-                <element signature="e#1961#2216#1" expanded="false" />
-                <element signature="e#2442#2622#1" expanded="false" />
-                <element signature="e#2651#2731#1" expanded="false" />
-                <element signature="e#2761#2802#1" expanded="false" />
-                <element signature="e#2831#2872#1" expanded="false" />
-                <element signature="e#2944#2985#1" expanded="false" />
-                <element signature="e#3013#3054#1" expanded="false" />
-                <element signature="e#3083#3124#1" expanded="false" />
-                <element signature="e#3152#3193#1" expanded="false" />
-                <element signature="e#3436#3602#1" expanded="false" />
-                <element signature="e#3605#3663#1" expanded="false" />
-                <element signature="e#3689#3988#1" expanded="false" />
-                <element signature="e#3991#4065#1" expanded="false" />
-                <element signature="e#4068#5519#0" expanded="false" />
-                <element signature="e#5521#7194#0" expanded="false" />
-                <element signature="e#7196#9434#0" expanded="false" />
-                <element signature="e#9460#11615#0" expanded="false" />
-                <element signature="e#14392#15104#0" expanded="false" />
-                <element signature="e#15106#19942#0" expanded="false" />
-                <element signature="e#19944#21755#0" expanded="false" />
-                <element signature="e#23780#23930#1" expanded="false" />
-                <element signature="e#23933#24012#1" expanded="false" />
-                <element signature="e#25953#27512#0" expanded="false" />
-                <marker date="1498540620400" expanded="false" signature="11664:12335" ph="{...}" />
-                <marker date="1498540620400" expanded="false" signature="12398:12746" ph="{...}" />
-                <marker date="1498540620400" expanded="false" signature="12906:13388" ph="{...}" />
-                <marker date="1498540620400" expanded="false" signature="13427:14390" ph="{...}" />
-                <marker date="1498540620400" expanded="false" signature="24196:24250" ph="{...}" />
-                <marker date="1498540620400" expanded="false" signature="24314:24823" ph="{...}" />
-                <marker date="1498540620400" expanded="false" signature="24902:24984" ph="{...}" />
-                <marker date="1498540620400" expanded="false" signature="25058:25140" ph="{...}" />
-                <marker date="1498540620400" expanded="false" signature="25172:25305" ph="{...}" />
-                <marker date="1498540620400" expanded="false" signature="25335:25517" ph="{...}" />
-                <marker date="1498540620400" expanded="false" signature="25721:25951" ph="{...}" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.5">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="CMakeLists.txt" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="13" column="0" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="pingpong.c" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/pingpong.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="pingpong.c" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Original/pingpong.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="skeleton.patch" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/skeleton.patch">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="rdma_rand.c" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/rdma_rand.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="pingpong.h" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/pingpong.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="594">
+                  <caret line="33" column="22" selection-start-line="33" selection-start-column="22" selection-end-line="33" selection-end-column="22" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="eagerServer.c" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/eagerServer.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="745">
+                  <caret line="591" column="0" selection-start-line="591" selection-start-column="0" selection-end-line="591" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="eagerClient.c" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/eagerClient.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="alex-skalaton.c" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/alex-skalaton.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="266">
+                  <caret line="962" column="16" selection-start-line="962" selection-start-column="16" selection-end-line="962" selection-end-column="16" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -196,8 +209,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/stream.cpp" />
-        <option value="$PROJECT_DIR$/stream.hpp" />
         <option value="$PROJECT_DIR$/connector.hpp" />
         <option value="$PROJECT_DIR$/connector.cpp" />
         <option value="$PROJECT_DIR$/Accept.hpp" />
@@ -247,6 +258,8 @@
         <option value="$PROJECT_DIR$/rdma_pp.c" />
         <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c" />
         <option value="$PROJECT_DIR$/rc_pingpong.c" />
+        <option value="$PROJECT_DIR$/alex-skalaton.c" />
+        <option value="$PROJECT_DIR$/eager.c" />
       </list>
     </option>
   </component>
@@ -258,9 +271,10 @@
   </component>
   <component name="OCFindUsagesOptions" text="false" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds">
+    <option name="x" value="-4" />
     <option name="y" value="24" />
-    <option name="width" value="1920" />
-    <option name="height" value="1032" />
+    <option name="width" value="1928" />
+    <option name="height" value="1035" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -342,20 +356,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="H_CCW17" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="H_CCW17" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Original" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
     </panes>
@@ -378,6 +378,120 @@
       <recent name="$PROJECT_DIR$/Original" />
       <recent name="$PROJECT_DIR$" />
     </key>
+  </component>
+  <component name="RestoreUpdateTree" date="Moments ago" ActionInfo="_Update">
+    <UpdatedFiles>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Updated from server" />
+        <option name="myStatusName" value="Changed on server" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="CHANGED_ON_SERVER" />
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Updated" />
+          <option name="myStatusName" value="Changed" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="UPDATED" />
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/CMakeLists.txt</PATH>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Created" />
+          <option name="myStatusName" value="Created" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="CREATED" />
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/alex-skalaton.c</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/eager.c</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/rdma_rand.c</PATH>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Deleted" />
+          <option name="myStatusName" value="Deleted" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="true" />
+          <option name="myId" value="REMOVED_FROM_REPOSITORY" />
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/rc_pingpong.c</PATH>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Restored" />
+          <option name="myStatusName" value="Will be restored" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="RESTORED" />
+        </FILE-GROUP>
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Modified" />
+        <option name="myStatusName" value="Modified" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MODIFIED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Skipped" />
+        <option name="myStatusName" value="Skipped" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="SKIPPED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with conflicts" />
+        <option name="myStatusName" value="Will be merged with conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_CONFLICTS" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with tree conflicts" />
+        <option name="myStatusName" value="Merged with tree conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with property conflicts" />
+        <option name="myStatusName" value="Will be merged with property conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged" />
+        <option name="myStatusName" value="Will be merged" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Not in repository" />
+        <option name="myStatusName" value="Not in repository" />
+        <option name="mySupportsDeletion" value="true" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="UNKNOWN" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Locally added" />
+        <option name="myStatusName" value="Locally added" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="LOCALLY_ADDED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Locally removed" />
+        <option name="myStatusName" value="Locally removed" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="LOCALLY_REMOVED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Switched" />
+        <option name="myStatusName" value="Switched" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="SWITCHED" />
+      </FILE-GROUP>
+    </UpdatedFiles>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -635,6 +749,7 @@
       <workItem from="1497673125935" duration="26963000" />
       <workItem from="1498287344743" duration="33767000" />
       <workItem from="1498539279110" duration="1344000" />
+      <workItem from="1498561092271" duration="1124000" />
     </task>
     <task id="LOCAL-00023" summary="Ready for client">
       <created>1493138850017</created>
@@ -983,7 +1098,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="367129000" />
+    <option name="totallyTimeSpent" value="368253000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -995,14 +1110,14 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="24" width="1920" height="1032" extended-state="6" />
-    <editor active="true" />
+    <frame x="-4" y="24" width="1928" height="1035" extended-state="6" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12848867" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17008953" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32969433" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3242358" sideWeight="0.48553056" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.062227074" sideWeight="0.5165877" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.062227074" sideWeight="0.48341233" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3238512" sideWeight="0.48341233" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.061269145" sideWeight="0.5208004" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.061269145" sideWeight="0.4791996" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.088427946" sideWeight="0.49040306" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
@@ -1156,11 +1271,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///+/usr/refi950/H_CCW17/MetricsIBV.c" />
-    <entry file="file://$PROJECT_DIR$/MetricsIBV.h" />
-    <entry file="file://$PROJECT_DIR$/Connector.cpp" />
-    <entry file="file://$PROJECT_DIR$/Connector.hpp" />
-    <entry file="file://$PROJECT_DIR$/MultiThreadTcpServer.cpp" />
     <entry file="file:///usr/include/netinet/in.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="828">
@@ -1242,27 +1352,9 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/logOrigMetNBOrig" />
-    <entry file="file://$PROJECT_DIR$/tmp/Acceptor.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="92">
-          <caret line="4" column="9" selection-start-line="4" selection-start-column="9" selection-end-line="4" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="14" column="25" selection-start-line="14" selection-start-column="25" selection-end-line="14" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/stack.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/tmp/Acceptor.cpp" />
+    <entry file="file://$PROJECT_DIR$/README.md" />
+    <entry file="file://$PROJECT_DIR$/stack.c" />
     <entry file="file:///usr/include/stdlib.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="346">
@@ -1270,25 +1362,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rc_pingpong.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="1087" column="0" selection-start-line="1087" selection-start-column="0" selection-end-line="1087" selection-end-column="0" />
-          <folding>
-            <element signature="e#18#39#0" expanded="false" />
-            <element signature="e#68#86#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pingpong.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="759">
-          <caret line="33" column="22" selection-start-line="33" selection-start-column="22" selection-end-line="33" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rc_pingpong.c" />
     <entry file="file://$PROJECT_DIR$/pingpong.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="828">
@@ -1311,13 +1385,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/RDMA/rdma.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="303">
-          <caret line="320" column="21" selection-start-line="320" selection-start-column="21" selection-end-line="320" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/RDMA/rdma.c" />
     <entry file="file://$PROJECT_DIR$/rc_pingpong.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
@@ -1335,34 +1403,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="369">
-          <caret line="1227" column="9" selection-start-line="1227" selection-start-column="9" selection-end-line="1227" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rdma_pp.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="506" column="17" selection-start-line="506" selection-start-column="17" selection-end-line="506" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/stack.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="6" column="0" selection-start-line="6" selection-start-column="2" selection-end-line="52" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c" />
+    <entry file="file://$PROJECT_DIR$/rdma_pp.c" />
+    <entry file="file://$PROJECT_DIR$/stack.h" />
     <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
-          <caret line="16" column="56" selection-start-line="16" selection-start-column="56" selection-end-line="16" selection-end-column="56" />
+        <state relative-caret-position="0">
+          <caret line="13" column="0" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1375,6 +1422,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/rc_pingpong.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="922" column="46" selection-start-line="922" selection-start-column="46" selection-end-line="922" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Original/pingpong.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1383,48 +1438,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rc_pingpong.c">
+    <entry file="file://$PROJECT_DIR$/skeleton.patch">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="81">
-          <caret line="901" column="10" selection-start-line="901" selection-start-column="7" selection-end-line="901" selection-end-column="10" />
-          <folding>
-            <element signature="e#0#1434#0" expanded="false" />
-            <element signature="e#1504#1523#0" expanded="true" />
-            <element signature="e#1961#2216#1" expanded="false" />
-            <element signature="e#2442#2622#1" expanded="false" />
-            <element signature="e#2651#2731#1" expanded="false" />
-            <element signature="e#2761#2802#1" expanded="false" />
-            <element signature="e#2831#2872#1" expanded="false" />
-            <element signature="e#2944#2985#1" expanded="false" />
-            <element signature="e#3013#3054#1" expanded="false" />
-            <element signature="e#3083#3124#1" expanded="false" />
-            <element signature="e#3152#3193#1" expanded="false" />
-            <element signature="e#3436#3602#1" expanded="false" />
-            <element signature="e#3605#3663#1" expanded="false" />
-            <element signature="e#3689#3988#1" expanded="false" />
-            <element signature="e#3991#4065#1" expanded="false" />
-            <element signature="e#4068#5519#0" expanded="false" />
-            <element signature="e#5521#7194#0" expanded="false" />
-            <element signature="e#7196#9434#0" expanded="false" />
-            <element signature="e#9460#11615#0" expanded="false" />
-            <element signature="e#14392#15104#0" expanded="false" />
-            <element signature="e#15106#19942#0" expanded="false" />
-            <element signature="e#19944#21755#0" expanded="false" />
-            <element signature="e#23780#23930#1" expanded="false" />
-            <element signature="e#23933#24012#1" expanded="false" />
-            <element signature="e#25953#27512#0" expanded="false" />
-            <marker date="1498540620400" expanded="false" signature="11664:12335" ph="{...}" />
-            <marker date="1498540620400" expanded="false" signature="12398:12746" ph="{...}" />
-            <marker date="1498540620400" expanded="false" signature="12906:13388" ph="{...}" />
-            <marker date="1498540620400" expanded="false" signature="13427:14390" ph="{...}" />
-            <marker date="1498540620400" expanded="false" signature="24196:24250" ph="{...}" />
-            <marker date="1498540620400" expanded="false" signature="24314:24823" ph="{...}" />
-            <marker date="1498540620400" expanded="false" signature="24902:24984" ph="{...}" />
-            <marker date="1498540620400" expanded="false" signature="25058:25140" ph="{...}" />
-            <marker date="1498540620400" expanded="false" signature="25172:25305" ph="{...}" />
-            <marker date="1498540620400" expanded="false" signature="25335:25517" ph="{...}" />
-            <marker date="1498540620400" expanded="false" signature="25721:25951" ph="{...}" />
-          </folding>
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rdma_rand.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pingpong.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="594">
+          <caret line="33" column="22" selection-start-line="33" selection-start-column="22" selection-end-line="33" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alex-skalaton.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="962" column="16" selection-start-line="962" selection-start-column="16" selection-end-line="962" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/eagerServer.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="745">
+          <caret line="591" column="0" selection-start-line="591" selection-start-column="0" selection-end-line="591" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/eagerClient.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
