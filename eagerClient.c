@@ -59,8 +59,13 @@ struct mkv_ctx {
     struct pingpong_context *kv_ctxs[0];
 };
 
+#define EAGER_PROTOCOL_LIMIT (1 << 22) /* 4KB limit */
 
 size_t EAGER_BUFFER_LIMIT = 10;
+struct kv_client_eager_buffer {
+    struct pingpong_context *ctx;
+    char data[EAGER_PROTOCOL_LIMIT]; /* give only this to ibv_post_recv() or the user */
+};
 
 static int pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn,
                           enum ibv_mtu mtu, int sl, struct pingpong_dest *dest,
@@ -805,12 +810,12 @@ int mkv_open(struct kv_server_address *servers, void **mkv_h)
     }
 
     ctx->num_servers = count;
-    for (count = 0; count < ctx->num_servers; count++) {
-        if (orig_main(&servers[count], total_buffers_per_kv, g_argc, g_argv,
-                      &ctx->kv_ctxs[count])) {
-            return 1;
-        }
-    }
+//    for (count = 0; count < ctx->num_servers; count++) {
+//        if (orig_main(&servers[count], total_buffers_per_kv, g_argc, g_argv,
+//                      &ctx->kv_ctxs[count])) {
+//            return 1;
+//        }
+//    }
 
     *mkv_h = ctx;
     return 0;
