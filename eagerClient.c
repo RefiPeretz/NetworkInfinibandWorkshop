@@ -23,7 +23,7 @@
 
 struct kv_server_address {
     char *servername; /* In the last item of an array this is NULL */
-    short port; /* This is useful for multiple servers on a host */
+    unsigned int port; /* This is useful for multiple servers on a host */
 };
 
 enum {
