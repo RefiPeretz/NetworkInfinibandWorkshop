@@ -998,36 +998,6 @@ int main(int argc, char *argv[])
         }
 
 
-        //        char *returnedVal = malloc(roundup(kvHandle->defMsgSize, page_size));
-        //        if (kv_get(kvHandle, key, &returnedVal))
-        //        {
-        //            fprintf(stderr, "Couldn't kv get the requested key\n");
-        //            return 1;
-        //        }
-        //        free(returnedVal);
-        //        kv_release(returnedVal);
-
-
-        //        //second Test
-        //        char key2[5] = "blue";
-        //        char value2[10] = "wedding2";
-        //
-        //        if (kv_set(kvHandle, key2, value2))
-        //        {
-        //            fprintf(stderr, "Couldn't post send\n");
-        //            return 1;
-        //        }
-        //
-        //
-        //        char *recvMsg1 = malloc(roundup(kvHandle->defMsgSize, page_size));
-        //        if (kv_get(kvHandle, key2, &recvMsg1))
-        //        {
-        //            fprintf(stderr, "Couldn't kv get the requested key\n");
-        //            return 1;
-        //        }
-
-        //        kv_release(recvMsg1);
-
     }
 
     if (!servername)
