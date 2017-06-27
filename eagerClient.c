@@ -760,7 +760,7 @@ void mkv_close(void *mkv_h)
     unsigned count;
     struct mkv_handle *m_handle = mkv_h;
     for (count = 0; count < m_handle->num_servers; count++) {
-//        pp_close_ctx();
+        pp_close_ctx(m_handle->kv_handle[count]->ctx);
     }
     free(m_handle);
 }
