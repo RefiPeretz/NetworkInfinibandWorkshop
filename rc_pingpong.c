@@ -899,7 +899,6 @@ int pp_wait_completions(struct pingpong_context *ctx, int iters)
 	return 0;
 }
 
-#ifdef EX2
 int kv_open(struct kv_server_address *server, void **kv_handle)
 {
     return orig_main(server, EAGER_PROTOCOL_LIMIT, g_argc, g_argv, (struct pingpong_context **)kv_handle);
@@ -953,7 +952,6 @@ int kv_close(void *kv_handle)
 #define get      kv_get
 #define release  kv_release
 #define my_close kv_close
-#endif /* EX2 */
 
 #define EAGER_BUFFER_LIMIT (10)
 
@@ -1008,6 +1006,7 @@ int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value)
 	struct mkv_ctx *ctx = mkv_h;
 	return kv_get(ctx->kv_ctxs[kv_id], key, value);
 }
+
 
 void mkv_release(char *value)
 {
