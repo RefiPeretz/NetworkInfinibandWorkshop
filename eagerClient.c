@@ -674,6 +674,13 @@ int kv_set(void *kv_handle, const char *key, const char *value)
     return 0;
 };
 
+int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value)
+{
+    struct mkv_handle *m_handle = mkv_h;
+    return kv_get(m_handle->kv_handle[kv_id], key, value);
+}
+
+
 
 int kv_get(void *kv_handle, const char *key, char **value)
 {
@@ -912,6 +919,18 @@ int main(int argc, char *argv[]) {
             {0}
     };
     assert(0 == mkv_open(servers, &kv_ctx));
+    char key[4] = "red";
+    char value[10] = "wedding";
+
+    if (mkv_set(kv_ctx,0, key, value)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    if (mkv_get(kv_ctx,0, key, value)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+
 
 
 
