@@ -512,6 +512,22 @@ typedef struct handle
     kvMsg **kvMsgDict;
 } handle;
 
+typedef struct mkv_handle
+{
+    struct ibv_device **dev_list;
+    struct ibv_device *ib_dev;
+    unsigned num_servers;
+    struct handle *kv_handle[0];
+    int defMsgSize;
+    int kvListSize;
+    int ib_port;
+    int rx_depth;
+    struct pingpong_dest my_dest;
+    struct pingpong_dest *rem_dest;
+    char gid[33];
+    kvMsg **kvMsgDict;
+} mkv_handle;
+
 int getFromStore(handle *store, const char *key, char **value)
 {
     int listSize = store->kvListSize;
