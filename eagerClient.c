@@ -54,9 +54,13 @@ struct pingpong_dest
     int psn;
     union ibv_gid gid;
 };
+struct mkv_ctx {
+    unsigned num_servers;
+    struct pingpong_context *kv_ctxs[0];
+};
 
 
-
+size_t EAGER_BUFFER_LIMIT = 10;
 
 static int pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn,
                           enum ibv_mtu mtu, int sl, struct pingpong_dest *dest,
@@ -787,7 +791,30 @@ int processClientCmd(handle *kv_handle, char *msg)
 }
 
 
+int mkv_open(struct kv_server_address *servers, void **mkv_h)
+{
+    struct mkv_ctx *ctx;
+    unsigned total_buffers_per_kv = sizeof(struct kv_client_eager_buffer) * EAGER_BUFFER_LIMIT;
 
+    unsigned count = 0;
+    while (servers[count++].servername); /* count servers */
+
+    ctx = malloc(sizeof(*ctx) + count * sizeof(void*));
+    if (!ctx) {
+        return 1;
+    }
+
+    ctx->num_servers = count;
+    for (count = 0; count < ctx->num_servers; count++) {
+        if (orig_main(&servers[count], total_buffers_per_kv, g_argc, g_argv,
+                      &ctx->kv_ctxs[count])) {
+            return 1;
+        }
+    }
+
+    *mkv_h = ctx;
+    return 0;
+}
 
 int main(int argc, char *argv[])
 {

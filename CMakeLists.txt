@@ -8,6 +8,10 @@ SET(GCC_COVERAGE_LINK_FLAGS "-lm -g -libverbs")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -g -lm -Wall -Wextra -o")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LDFLAGS} -g -lm -Wall -Wextra -o")
 
-set(ex3_1 eagerServer.c pingpong.c pingpong.h)
-add_executable(eager ${ex3_1})
-target_link_libraries(eager "${GCC_COVERAGE_LINK_FLAGS}")
+set(ex3_1_server eagerServer.c pingpong.c pingpong.h)
+add_executable(ex3_1_server ${ex3_1_server})
+target_link_libraries(ex3_1_server "${GCC_COVERAGE_LINK_FLAGS}")
+
+set(ex3_1_client eagerClient.c pingpong.c pingpong.h)
+add_executable(ex3_1_client ${ex3_1_client})
+target_link_libraries(ex3_1_client "${GCC_COVERAGE_LINK_FLAGS}")
