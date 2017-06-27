@@ -391,11 +391,11 @@ int pp_close_ctx(struct pingpong_context *ctx)
         return 1;
     }
 
-    if (ibv_dealloc_pd(ctx->pd))
-    {
-        fprintf(stderr, "Couldn't deallocate PD\n");
-        return 1;
-    }
+//    if (ibv_dealloc_pd(ctx->pd))
+//    {
+//        fprintf(stderr, "Couldn't deallocate PD\n");
+//        return 1;
+//    }
 
     if (ctx->channel)
     {
@@ -479,8 +479,8 @@ typedef enum kv_cmd
 
 typedef struct kvMsg
 {
-    const char *key;
-    const char *value;
+     char *key;
+     char *value;
 } kvMsg;
 
 typedef struct handle
@@ -746,7 +746,7 @@ int processClientCmd(handle *kv_handle, char *msg)
     int cmd = 0;
     char *key;
     char *value;
-    char *delim = ":";
+    const char *delim = ":";
     cmd = atoi(strtok(msg, delim));
     key = strtok(NULL, delim);
     value = strtok(NULL, delim);
@@ -763,7 +763,7 @@ int processClientCmd(handle *kv_handle, char *msg)
 
         int ret =  getFromStore(kv_handle, key, retValue);
         if(ret){
-            fprintf(stderr, "Error in fetching value! no\n");
+            fprintf(stderr, "Error in fetching value!\n");
             return 1;
         }
         printf("Sending value after 'get' msg: %s\n", *retValue);
@@ -959,10 +959,6 @@ int main(int argc, char *argv[])
             return 1;
         }
     }
-    //first Test
-    char* msg = malloc((1024 * sizeof(char)) + 1);
-    memset(msg,'w', 1024);
-    msg[1024] = '\0';
 
 
 
@@ -971,12 +967,17 @@ int main(int argc, char *argv[])
         printf("Start test\n");
         char key[MAX_KEY];
         for(int i = 0; i < 2;i++){
+            //first Test
+            char* msg = malloc((1024 * sizeof(char)) + 1);
+            memset(msg,'w', 1023);
+            msg[1023] = '\0';
             sprintf(key, "test%d", i);
             if (kv_set(kvHandle, key, msg))
             {
                 fprintf(stderr, "Couldn't post send\n");
                 return 1;
             }
+            free(msg);
         }
         for(int i = 0; i < 2;i++){
             char *returnedVal = malloc(kvHandle->defMsgSize);
@@ -1038,9 +1039,6 @@ int main(int argc, char *argv[])
             perror("Couldn't post receive:");
             return 1;
         }
-        printf("Got msg: %s\n", recvMsg);
-        processClientCmd(kvHandle, recvMsg);
-        free(recvMsg);
 
 
         rcnt = scnt = 0;
@@ -1070,7 +1068,6 @@ int main(int argc, char *argv[])
                                 (int) wc[i].wr_id);
                         return 1;
                     }
-                    char *recvMsg = NULL;
                     switch ((int) wc[i].wr_id)
                     {
                         case PINGPONG_SEND_WRID:
@@ -1078,6 +1075,9 @@ int main(int argc, char *argv[])
                             break;
 
                         case PINGPONG_RECV_WRID:
+                            printf("Got msg: %s\n", recvMsg);
+                            processClientCmd(kvHandle, recvMsg);
+                            free(recvMsg);
                             recvMsg = malloc(roundup(kvHandle->defMsgSize,
                                                      page_size));
 
@@ -1089,8 +1089,6 @@ int main(int argc, char *argv[])
                                 perror("Couldn't post receive:");
                                 return 1;
                             }
-                            printf("Got msg: %s\n", recvMsg);
-                            processClientCmd(kvHandle, recvMsg);
                             ++rcnt;
                             break;
 
@@ -1099,7 +1097,6 @@ int main(int argc, char *argv[])
                                     (int) wc[i].wr_id);
                             return 1;
                     }
-                    free(recvMsg);
                 }
         }
 
