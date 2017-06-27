@@ -668,6 +668,11 @@ int kv_set(void *kv_handle, const char *key, const char *value)
     return 0;
 };
 
+int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value){
+    struct mkv_handle *m_handle = mkv_h;
+    return kv_get(m_handle->kv_handle[kv_id], key, value);
+}
+
 
 int kv_get(void *kv_handle, const char *key, char **value)
 {
