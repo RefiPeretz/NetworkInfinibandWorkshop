@@ -767,7 +767,7 @@ void mkv_close(void *mkv_h)
     unsigned count;
     struct mkv_handle *m_handle = mkv_h;
     for (count = 0; count < m_handle->num_servers; count++) {
-        pp_close_ctx(m_handle->kv_handle[count]->ctx);
+//        pp_close_ctx();
     }
     free(m_handle);
 }
@@ -911,12 +911,11 @@ int main(int argc, char *argv[]) {
 
     g_argc = argc;
     g_argv = argv;
-    struct kv_server_address servers[1] = {
+    struct kv_server_address servers[2] = {
             {
-                    .servername = "mlx-stud-02",
+                    .servername = "mlx-stud-01",
                     .port = 65433
-            },
-            {0}
+            },{0}
     };
     assert(0 == mkv_open(servers, &kv_ctx));
     char key[4] = "red";
@@ -941,7 +940,7 @@ int main(int argc, char *argv[]) {
 int
 kvHandleFactory(struct kv_server_address *server, unsigned size, int argc, char *argv[], struct handle **p_kvHandle) {
     struct timeval start, end;
-    char *servername = NULL;
+    char *servername = server->servername;
     int port = server->port;
     int ib_port = 1;
     enum ibv_mtu mtu = IBV_MTU_1024;
