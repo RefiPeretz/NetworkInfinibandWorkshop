@@ -32,7 +32,7 @@ enum {
 
 struct message {
     uint32_t mr_rkey;
-    uintptr_t addr;
+    long unsigned addr;
     int valueSize;
 };
 
@@ -496,7 +496,7 @@ int getFromStore(handle *store, const char *key, char **value) {
 
             size_t mr_msg_size = roundup(sizeof((uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr) + sizeof(store->kvMsgDict[i]->curValue->curMr->rkey) + sizeof(store->kvMsgDict[i]->curValue->valueSize)+ 3, page_size);
             *value = (char *) malloc(mr_msg_size);
-            sprintf(*value, "%d:%d:%d", (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr, store->kvMsgDict[i]->curValue->curMr->rkey, store->kvMsgDict[i]->curValue->valueSize);
+            sprintf(*value, "%lu:%d:%d", (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr, store->kvMsgDict[i]->curValue->curMr->rkey, store->kvMsgDict[i]->curValue->valueSize);
             printf("Prepared the MR info from store - %s\n", *value);
             return 0;
         }
@@ -513,7 +513,7 @@ int getFromStoreClient(handle *store, const char *key, struct msgKeyMr **mr) {
             *mr = store->kvMsgDict[i]->curValue;
             size_t mr_msg_size = roundup(sizeof((uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr) + sizeof(store->kvMsgDict[i]->curValue->curMr->rkey) + sizeof(store->kvMsgDict[i]->curValue->valueSize)+ 3, page_size);
             char * value = (char *) malloc(mr_msg_size);
-            sprintf(value, "%d:%d:%d", (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr, store->kvMsgDict[i]->curValue->curMr->rkey, store->kvMsgDict[i]->curValue->valueSize);
+            sprintf(value, "%lu:%d:%d", (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr, store->kvMsgDict[i]->curValue->curMr->rkey, store->kvMsgDict[i]->curValue->valueSize);
             printf("Prepared the MR info from store - %s\n", value);
             return 0;
         }
@@ -724,7 +724,7 @@ int kv_get(void *kv_handle, const char *key, char **value) {
     struct msgKeyMr* mr;
     isKeyInDict = getFromStoreClient(kv_handle, key, &mr);
     if(!isKeyInDict){
-        mr_msg->addr = (uintptr_t) mr->curMr->addr;
+        mr_msg->addr = (unsigned long) mr->curMr->addr;
         mr_msg->mr_rkey = mr->curMr->rkey;
         mr_msg->valueSize = mr->valueSize;
     } else {
@@ -780,7 +780,7 @@ int kv_get(void *kv_handle, const char *key, char **value) {
                             return 0;
                         };
                         char *delim = ":";
-                        mr_msg->addr = atoi(strtok(recv2Msg1, delim));
+                        mr_msg->addr = strtoul(strtok(recv2Msg1, delim),NULL,10);
                         mr_msg->mr_rkey = atoi(strtok(NULL, delim));
                         mr_msg->valueSize = atoi(strtok(NULL, delim));
                         struct ibv_mr *curMr = calloc(1, sizeof(struct ibv_mr));
@@ -869,8 +869,9 @@ int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, char *actual
 
     struct message *mr_msg = (struct message *) calloc(1, sizeof(struct message));
     char *delim = ":";
-    mr_msg->addr = (uintptr_t) atoi(strtok(msg, delim));
+    mr_msg->addr = strtoul(strtok(msg, delim),NULL,10);
     mr_msg->mr_rkey = (uint32_t) atoi(strtok(NULL, delim));
+    printf("Parsed server message - addr: %lu, rkey: %d\n", mr_msg->addr, mr_msg->mr_rkey);
 
     struct ibv_sge list = {
             .addr    = (uintptr_t) actualMessage,
@@ -958,7 +959,7 @@ int processClientPrepWriteCmd(handle *kv_handle, char *key, int expectedMsgSize)
 
     size_t mr_msg_size = roundup(sizeof(mr_msg->addr) + sizeof(mr_msg->mr_rkey) + 2, page_size);
     char *mr_msg_char = (char *) malloc(mr_msg_size);
-    sprintf(mr_msg_char, "%d:%d", mr_msg->addr, mr_msg->mr_rkey);
+    sprintf(mr_msg_char, "%lu:%d", mr_msg->addr, mr_msg->mr_rkey);
     printf("Sending mr msg: %s with size %d\n", mr_msg_char, strlen(mr_msg_char) + 1);
 
     if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, mr_msg_char, strlen(mr_msg_char) + 1)) {
