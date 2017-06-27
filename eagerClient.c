@@ -307,6 +307,7 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
 }
 
 #include <sys/param.h>
+#include <assert.h>
 
 static struct pingpong_context *
 pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
@@ -754,15 +755,15 @@ void kv_release(char *value) {
 };
 
 
-//void mkv_close(void *mkv_h)
-//{
-//    unsigned count;
-//    struct mkv_handle *m_handle = mkv_h;
-//    for (count = 0; count < m_handle->num_servers; count++) {
-//        pp_close_ctx();
-//    }
-//    free(m_handle);
-//}
+void mkv_close(void *mkv_h)
+{
+    unsigned count;
+    struct mkv_handle *m_handle = mkv_h;
+    for (count = 0; count < m_handle->num_servers; count++) {
+        pp_close_ctx();
+    }
+    free(m_handle);
+}
 
 
 int kv_close(void *kv_handle)
