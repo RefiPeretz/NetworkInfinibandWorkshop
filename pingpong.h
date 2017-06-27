@@ -37,9 +37,6 @@
 
 #include <infiniband/verbs.h>
 
-#define TEST_NZ(x) do { if ( (x)) exceptioExit("error: " #x " failed (returned non-zero)." ); } while (0)
-#define TEST_Z(x)  do { if (!(x)) exceptioExit("error: " #x " failed (returned zero/null)."); } while (0)
-void exceptioExit(const char *reason);
 enum ibv_mtu pp_mtu_to_enum(int mtu);
 uint16_t pp_get_local_lid(struct ibv_context *context, int port);
 int pp_get_port_info(struct ibv_context *context, int port,

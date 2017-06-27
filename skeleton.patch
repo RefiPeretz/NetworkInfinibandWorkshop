@@ -1,0 +1,646 @@
+diff --git b/rc_pingpong.c a/rc_pingpong.c
+index ced7192..bc70b56 100644
+--- b/rc_pingpong.c	
++++ a/rc_pingpong.c
+@@ -34,6 +34,7 @@
+ #  include <config.h>
+ #endif /* HAVE_CONFIG_H */
+ 
++#include <assert.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+@@ -47,8 +48,115 @@
+ #include <arpa/inet.h>
+ #include <time.h>
+ 
++#ifdef EX4
++#include <stdio.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <string.h>
++#include <stdlib.h>
++#include <sys/types.h>
++#include <dirent.h>
++#include <sys/types.h>
++#include <unistd.h>
++#include <sys/mman.h>
++#endif
++
+ #include "pingpong.h"
+ 
++int g_argc;
++char **g_argv;
++
++#define EAGER_PROTOCOL_LIMIT (1 << 22) /* 4KB limit */
++#define MAX_TEST_SIZE (10 * EAGER_PROTOCOL_LIMIT)
++#define TEST_LOCATION "~/www/"
++
++enum packet_type {
++    EAGER_GET_REQUEST,
++    EAGER_GET_RESPONSE,
++    EAGER_SET_REQUEST,
++    // EAGER_SET_RESPONSE - not needed!
++
++    RENDEZVOUS_GET_REQUEST,
++    RENDEZVOUS_GET_RESPONSE,
++    RENDEZVOUS_SET_REQUEST,
++    RENDEZVOUS_SET_RESPONSE,
++
++#ifdef EX3
++	CREDIT,
++#endif
++
++#ifdef EX4
++    FIND,
++    LOCATION,
++#endif
++};
++
++struct packet {
++    enum packet_type type; /* What kind of packet/protocol is this */
++    union {
++        /* The actual packet type will determine which struct will be used: */
++
++        /* EAGER PROTOCOL PACKETS */
++        struct {
++            unsigned value_length; /* value is binary, so needs to have length! */
++            char key_and_value[0]; /* null terminator between key and value */
++        } eager_get_request;
++
++        struct {
++            unsigned value_length;
++            char value[0];
++        } eager_get_response;
++
++        struct {
++            /* TODO */
++        } eager_set_request;
++
++        struct {
++            /* TODO */
++        } eager_set_response;
++
++        /* RENDEZVOUS PROTOCOL PACKETS */
++        struct {
++            /* TODO */
++        } rndv_get_request;
++
++        struct {
++            /* TODO */
++        } rndv_get_response;
++
++        struct {
++            /* TODO */
++        } rndv_set_request;
++
++        struct {
++            /* TODO */
++        } rndv_set_response;
++		
++#ifdef EX3
++		struct {
++			/* TODO */
++		} credit;
++#endif
++
++#ifdef EX4
++        struct {
++            unsigned num_of_servers;
++            char key[0];
++        } find;
++
++        struct {
++            unsigned selected_server;
++        } location;
++#endif
++    };
++};
++
++struct kv_server_address {
++    char *servername; /* In the last item of an array this is NULL */
++    short port; /* This is useful for multiple servers on a host */
++};
++
+ enum {
+ 	PINGPONG_RECV_WRID = 1,
+ 	PINGPONG_SEND_WRID = 2,
+@@ -66,6 +174,7 @@ struct pingpong_context {
+ 	void			*buf;
+ 	int			 size;
+ 	int			 rx_depth;
++    int          routs;
+ 	int			 pending;
+ 	struct ibv_port_attr     portinfo;
+ };
+@@ -318,6 +427,7 @@ static struct pingpong_context *pp_init_ctx(struct ibv_device *ib_dev, int size,
+ 
+ 	ctx->size     = size;
+ 	ctx->rx_depth = rx_depth;
++	ctx->routs    = rx_depth;
+ 
+ 	ctx->buf = malloc(roundup(size, page_size));
+ 	if (!ctx->buf) {
+@@ -387,7 +497,8 @@ static struct pingpong_context *pp_init_ctx(struct ibv_device *ib_dev, int size,
+ 			.qp_state        = IBV_QPS_INIT,
+ 			.pkey_index      = 0,
+ 			.port_num        = port,
+-			.qp_access_flags = 0
++			.qp_access_flags = IBV_ACCESS_REMOTE_READ |
++			                   IBV_ACCESS_REMOTE_WRITE
+ 		};
+ 
+ 		if (ibv_modify_qp(ctx->qp, &attr,
+@@ -465,21 +576,26 @@ static int pp_post_recv(struct pingpong_context *ctx, int n)
+ 	return i;
+ }
+ 
+-static int pp_post_send(struct pingpong_context *ctx)
++static int pp_post_send(struct pingpong_context *ctx, enum ibv_wr_opcode opcode, unsigned size, const char *local_ptr, void *remote_ptr, uint32_t remote_key)
+ {
+ 	struct ibv_sge list = {
+-		.addr	= (uintptr_t) ctx->buf,
+-		.length = ctx->size,
++		.addr	= (uintptr_t) (local_ptr ? local_ptr : ctx->buf),
++		.length = size,
+ 		.lkey	= ctx->mr->lkey
+ 	};
+ 	struct ibv_send_wr wr = {
+ 		.wr_id	    = PINGPONG_SEND_WRID,
+ 		.sg_list    = &list,
+ 		.num_sge    = 1,
+-		.opcode     = IBV_WR_SEND,
++		.opcode     = opcode,
+ 		.send_flags = IBV_SEND_SIGNALED,
+ 	};
+ 	struct ibv_send_wr *bad_wr;
++	
++	if (remote_ptr) {
++		wr.wr.rdma.remote_addr = (uintptr_t) remote_ptr;
++		wr.wr.rdma.rkey = remote_key;
++	}
+ 
+ 	return ibv_post_send(ctx->qp, &wr, &bad_wr);
+ }
+@@ -503,7 +619,30 @@ static void usage(const char *argv0)
+ 	printf("  -g, --gid-idx=<gid index> local port gid index\n");
+ }
+ 
+-int main(int argc, char *argv[])
++void handle_server_packets_only(struct pingpong_context *ctx, struct packet *packet)
++{
++	unsigned response_size = 0;
++	
++    switch (packet->type) {
++	/* Only handle packets relevant to the server here - client will handle inside get/set() calls */
++    case EAGER_GET_REQUEST: /* TODO (10LOC): handle a short GET() on the server */
++    case EAGER_SET_REQUEST: /* TODO (10LOC): handle a short SET() on the server */
++    case RENDEZVOUS_GET_REQUEST: /* TODO (10LOC): handle a long GET() on the server */
++    case RENDEZVOUS_SET_REQUEST: /* TODO (20LOC): handle a long SET() on the server */
++
++#ifdef EX4
++    case FIND: /* TODO (2LOC): use some hash function */
++#endif
++    default:
++        break;
++    }
++	
++	if (response_size) {
++		pp_post_send(ctx, IBV_WR_SEND, response_size, NULL, NULL, 0);
++	}
++}
++
++int orig_main(struct kv_server_address *server, unsigned size, int argc, char *argv[], struct pingpong_context **result_ctx)
+ {
+ 	struct ibv_device      **dev_list;
+ 	struct ibv_device	*ib_dev;
+@@ -512,10 +651,9 @@ int main(int argc, char *argv[])
+ 	struct pingpong_dest    *rem_dest;
+ 	struct timeval           start, end;
+ 	char                    *ib_devname = NULL;
+-	char                    *servername = NULL;
+-	int                      port = 18515;
++	char                    *servername = server->servername;
++	int                      port = server->port;
+ 	int                      ib_port = 1;
+-	int                      size = 4096;
+ 	enum ibv_mtu		 mtu = IBV_MTU_1024;
+ 	int                      rx_depth = 500;
+ 	int                      iters = 1000;
+@@ -701,23 +839,17 @@ int main(int argc, char *argv[])
+ 		if (pp_connect_ctx(ctx, ib_port, my_dest.psn, mtu, sl, rem_dest, gidx))
+ 			return 1;
+ 
+-	ctx->pending = PINGPONG_RECV_WRID;
+-
+-	if (servername) {
+-		if (pp_post_send(ctx)) {
+-			fprintf(stderr, "Couldn't post send\n");
+-			return 1;
+-		}
+-		ctx->pending |= PINGPONG_SEND_WRID;
+-	}
+-
+-	if (gettimeofday(&start, NULL)) {
+-		perror("gettimeofday");
+-		return 1;
+-	}
++    ibv_free_device_list(dev_list);
++    free(rem_dest);
++    *result_ctx = ctx;
++    return 0;
++}
+ 
++int pp_wait_completions(struct pingpong_context *ctx, int iters)
++{
++    int rcnt, scnt, num_cq_events, use_event = 0;
+ 	rcnt = scnt = 0;
+-	while (rcnt < iters || scnt < iters) {
++	while (rcnt + scnt < iters) {
+ 		if (use_event) {
+ 			struct ibv_cq *ev_cq;
+ 			void          *ev_ctx;
+@@ -764,19 +896,23 @@ int main(int argc, char *argv[])
+ 				switch ((int) wc[i].wr_id) {
+ 				case PINGPONG_SEND_WRID:
+ 					++scnt;
++#ifdef EX3
++					/* TODO (5LOC): If credit level reaches 0 - only wait for CREDIT messages before handling anything else... s*/
++#endif
+ 					break;
+ 
+ 				case PINGPONG_RECV_WRID:
+-					if (--routs <= 1) {
+-						routs += pp_post_recv(ctx, ctx->rx_depth - routs);
+-						if (routs < ctx->rx_depth) {
++					if (--ctx->routs <= 1) {
++						ctx->routs += pp_post_recv(ctx, ctx->rx_depth - ctx->routs);
++						if (ctx->routs < ctx->rx_depth) {
+ 							fprintf(stderr,
+ 								"Couldn't post receive (%d)\n",
+-								routs);
++								ctx->routs);
+ 							return 1;
+ 						}
+ 					}
+ 
++					handle_server_packets_only(ctx, ctx->buf);
+ 					++rcnt;
+ 					break;
+ 
+@@ -785,43 +921,329 @@ int main(int argc, char *argv[])
+ 						(int) wc[i].wr_id);
+ 					return 1;
+ 				}
+-
+-				ctx->pending &= ~(int) wc[i].wr_id;
+-				if (scnt < iters && !ctx->pending) {
+-					if (pp_post_send(ctx)) {
+-						fprintf(stderr, "Couldn't post send\n");
+-						return 1;
+-					}
+-					ctx->pending = PINGPONG_RECV_WRID |
+-						       PINGPONG_SEND_WRID;
+-				}
+ 			}
+ 		}
+ 	}
+ 
+-	if (gettimeofday(&end, NULL)) {
+-		perror("gettimeofday");
++	ibv_ack_cq_events(ctx->cq, num_cq_events);
++	return 0;
++}
++
++#ifdef EX2
++int kv_open(struct kv_server_address *server, void **kv_handle)
++{
++    return orig_main(server, EAGER_PROTOCOL_LIMIT, g_argc, g_argv, (struct pingpong_context **)kv_handle);
++}
++
++int kv_set(void *kv_handle, const char *key, const char *value)
++{
++    struct pingpong_context *ctx = kv_handle;
++    struct packet *set_packet = (struct packet*)&ctx->buf;
++
++    unsigned packet_size = strlen(key) + strlen(value) + sizeof(struct packet);
++    if (packet_size < (EAGER_PROTOCOL_LIMIT)) {
++        /* Eager protocol - EX1 part 1 */
++        set_packet->type = EAGER_SET_REQUEST;
++        /* TODO (4LOC): fill in the rest of the set_packet */
++
++        pp_post_send(ctx, IBV_WR_SEND, packet_size, NULL, NULL, 0); /* Sends the packet to the server */
++        return pp_wait_completions(ctx, 1); /* await EAGER_SET_REQUEST completion */
++    }
++
++    /* Otherwise, use RENDEZVOUS - EX1 part 2 */
++    set_packet->type = RENDEZVOUS_SET_REQUEST;
++    /* TODO (4LOC): fill in the rest of the set_packet - request peer address & remote key */
++
++    pp_post_recv(ctx, 1); /* Posts a receive-buffer for RENDEZVOUS_SET_RESPONSE */
++    pp_post_send(ctx, IBV_WR_SEND, packet_size, NULL, NULL, 0); /* Sends the packet to the server */
++    assert(pp_wait_completions(ctx, 2)); /* wait for both to complete */
++
++    assert(set_packet->type == RENDEZVOUS_SET_RESPONSE);
++    pp_post_send(ctx, IBV_WR_RDMA_WRITE, packet_size, value, NULL, 0/* TODO (1LOC): replace with remote info for RDMA_WRITE from packet */);
++    return pp_wait_completions(ctx, 1); /* wait for both to complete */
++}
++
++int kv_get(void *kv_handle, const char *key, char **value)
++{
++    return 0; /* TODO (25LOC): similar to SET, only no n*/
++}
++
++void kv_release(char *value)
++{
++    /* TODO (2LOC): free value */
++}
++
++int kv_close(void *kv_handle)
++{
++    return pp_close_ctx((struct pingpong_context*)kv_handle);
++}
++
++#define my_open  kv_open
++#define set      kv_set
++#define get      kv_get
++#define release  kv_release
++#define my_close kv_close
++#endif /* EX2 */
++
++#ifdef EX3
++#define EAGER_BUFFER_LIMIT (10)
++
++struct kv_client_eager_buffer {
++	struct pingpong_context *ctx;
++	char data[EAGER_PROTOCOL_LIMIT]; /* give only this to ibv_post_recv() or the user */
++};
++
++struct mkv_ctx {
++	unsigned num_servers;
++	struct pingpong_context *kv_ctxs[0];
++};
++
++/* TODO (2LOC): call this function after creating each pingpong context, to set the initial credits */
++void mkv_send_credit(struct pingpong_context *ctx, unsigned how_many_credits)
++{
++	/* TODO (2LOC): implement using pp_post_send() */
++}
++
++int mkv_open(struct kv_server_address *servers, void **mkv_h)
++{
++	struct mkv_ctx *ctx;
++	unsigned total_buffers_per_kv = sizeof(struct kv_client_eager_buffer) * EAGER_BUFFER_LIMIT;
++	
++	unsigned count = 0;
++	while (servers[count++].servername); /* count servers */
++	
++	ctx = malloc(sizeof(*ctx) + count * sizeof(void*));
++	if (!ctx) {
+ 		return 1;
+ 	}
++	
++	ctx->num_servers = count;
++	for (count = 0; count < ctx->num_servers; count++) {
++		if (orig_main(&servers[count], total_buffers_per_kv, g_argc, g_argv, &ctx->kv_ctxs[count])) {
++			return 1;
++		}
++	}
++	
++	*mkv_h = ctx;
++	return 0;
++}
+ 
+-	{
+-		float usec = (end.tv_sec - start.tv_sec) * 1000000 +
+-			(end.tv_usec - start.tv_usec);
+-		long long bytes = (long long) size * iters * 2;
++int mkv_set(void *mkv_h, unsigned kv_id, const char *key, const char *value)
++{
++	struct mkv_ctx *ctx = mkv_h;
++	return kv_set(ctx->kv_ctxs[kv_id], key, value);
++}
+ 
+-		printf("%lld bytes in %.2f seconds = %.2f Mbit/sec\n",
+-		       bytes, usec / 1000000., bytes * 8. / usec);
+-		printf("%d iters in %.2f seconds = %.2f usec/iter\n",
+-		       iters, usec / 1000000., usec / iters);
++int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value)
++{
++	struct mkv_ctx *ctx = mkv_h;
++	return kv_get(ctx->kv_ctxs[kv_id], key, value);
++}
++
++void mkv_release(char *value)
++{
++	struct kv_client_eager_buffer *buffer = value - offsetof(struct kv_client_eager_buffer, data);
++	mkv_send_credit(buffer->ctx, 1);
++}
++
++void mkv_close(void *mkv_h)
++{
++	unsigned count;
++	struct mkv_ctx *ctx = mkv_h;
++	for (count = 0; count < ctx->num_servers; count++) {
++		pp_close_ctx((struct pingpong_context*)ctx->kv_ctxs[count]);
+ 	}
++	free(ctx);
++}
+ 
+-	ibv_ack_cq_events(ctx->cq, num_cq_events);
++#define my_open    mkv_open
++#define set(a,b,c) mkv_set(a, strlen(b), b, c)
++#define get(a,b,c) mkv_get(a, strlen(b), b, c)
++#define release    mkv_release
++#define my_close   mkv_close
++#endif /* EX3 */
++
++#ifdef EX4
++struct dkv_ctx {
++	struct mkv_ctx *mkv;
++	struct pingpong_context *indexer;
++};
+ 
+-	if (pp_close_ctx(ctx))
++int dkv_open(struct kv_server_address *servers, /* array of servers */
++             struct kv_server_address *indexer, /* single indexer */
++             void **dkv_h)
++{
++	struct dkv_ctx *ctx = malloc(sizeof(*ctx));
++	if (orig_main(indexer, EAGER_PROTOCOL_LIMIT, g_argc, g_argv, &ctx->indexer)) {
+ 		return 1;
++	}
++	if (mkv_open(servers, (void**)&ctx->mkv)) {
++		return 1;
++	}
++	*dkv_h = ctx;
++}
++
++int dkv_set(void *dkv_h, const char *key, const char *value, unsigned length)
++{
++	struct dkv_ctx *ctx = dkv_h;
++    struct packet *set_packet = (struct packet*)&ctx->indexer->buf;
++    unsigned packet_size = strlen(key) + sizeof(struct packet);
+ 
+-	ibv_free_device_list(dev_list);
+-	free(rem_dest);
++    /* Step #1: The client sends the Index server FIND(key, #kv-servers) */
++    set_packet->type = FIND;
++	set_packet->find.num_of_servers = ctx->mkv->num_servers;
++	strcpy(set_packet->find.key, key);
+ 
+-	return 0;
++    pp_post_recv(ctx->indexer, 1); /* Posts a receive-buffer for LOCATION */
++    pp_post_send(ctx->indexer, IBV_WR_SEND, packet_size, NULL, NULL, 0); /* Sends the packet to the server */
++    assert(pp_wait_completions(ctx->indexer, 2)); /* wait for both to complete */
++
++    /* Step #2: The Index server responds with LOCATION(#kv-server-id) */
++    assert(set_packet->type == LOCATION);
++
++    /* Step #3: The client contacts KV-server with the ID returned in LOCATION, using SET/GET messages. */
++	return mkv_set(ctx->mkv, set_packet->location.selected_server, key, value);
++		//length); /* TODO (10LOC): Add this value length parameter to all the relevant functions... including kv_set()/kv_get() */
++}
++
++int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length)
++{
++	/* TODO (20LOC): implement similarly to dkv_get() */
++}
++
++void dkv_release(char *value)
++{
++	mkv_release(value);
++}
++
++int dkv_close(void *dkv_h)
++{
++	struct dkv_ctx *ctx = dkv_h;
++	pp_close_ctx(ctx->indexer);
++	mkv_close(ctx->mkv);
++	free(ctx);
++}
++
++void recursive_fill_kv(char const* dirname, void *dkv_h) {
++	struct dirent *curr_ent;
++	DIR* dirp = opendir(dirname);
++	if (dirp == NULL) {
++		return;
++	}
++
++	while ((curr_ent = readdir(dirp)) != NULL) {
++		if (!((strcmp(curr_ent->d_name, ".") == 0) ||
++		(strcmp(curr_ent->d_name, "..") == 0))) {
++			char* path = malloc(strlen(dirname) + strlen(curr_ent->d_name) + 2);
++			strcpy(path, dirname);
++			strcat(path, "/");
++			strcat(path, curr_ent->d_name);
++			if (curr_ent->d_type == DT_DIR) {
++				recursive_fill_kv(path, dkv_h);
++			} else if (curr_ent->d_type == DT_REG) {
++				int fd = open(path, O_RDONLY);
++				size_t fsize = lseek(fd, (size_t)0, SEEK_END);
++				void *p = mmap(0, fsize, PROT_READ, MAP_PRIVATE, fd, 0);
++				/* TODO (1LOC): Add a print here to see you found the full paths... */
++				dkv_set(dkv_h, path, p, fsize);
++				munmap(p, fsize);
++				close(fd);
++			}
++			free(path);
++		}
++	}
++	closedir(dirp);
++}
++
++#define my_open    dkv_open
++#define set(a,b,c) dkv_set(a,b,c,strlen(c))
++#define get(a,b,c) dkv_get(a,b,c,&g_argc)
++#define release    dkv_release
++#define my_close   dkv_close
++#endif /* EX4 */
++
++void run_server()
++{
++    struct pingpong_context *ctx;
++    struct kv_server_address server = {0};
++    assert(0 == orig_main(&server, EAGER_PROTOCOL_LIMIT, g_argc, g_argv, &ctx));
++    while (0 <= pp_wait_completions(ctx, 1));
++    pp_close_ctx(ctx);
++}
++
++int main(int argc, char **argv)
++{
++    void *kv_ctx; /* handle to internal KV-client context */
++
++    char send_buffer[MAX_TEST_SIZE] = {0};
++    char *recv_buffer;
++
++    struct kv_server_address servers[2] = {
++            {
++                    .servername = "localhost",
++                    .port = 12345
++            },
++            {0}
++    };
++
++#ifdef EX4
++    struct kv_server_address indexer[2] = {
++            {
++                    .servername = "localhost",
++                    .port = 12346
++            },
++            {0}
++    };
++#endif
++
++    g_argc = argc;
++    g_argv = argv;
++    if (argc > 1) {
++        run_server();
++    }
++
++#ifdef EX4
++    assert(0 == my_open(servers, indexer, &kv_ctx));
++#elif EX3
++    assert(0 == my_open(servers, &kv_ctx));
++#else
++    assert(0 == my_open(&servers[0], &kv_ctx));
++#endif
++
++    /* Test small size */
++    assert(100 < MAX_TEST_SIZE);
++    memset(send_buffer, 'a', 100);
++    assert(0 == set(kv_ctx, "1", send_buffer));
++    assert(0 == get(kv_ctx, "1", &recv_buffer));
++    assert(0 == strcpy(send_buffer, recv_buffer));
++    release(recv_buffer);
++
++    /* Test logic */
++    assert(0 == get(kv_ctx, "test1", &recv_buffer));
++    assert(0 == strcpy(send_buffer, recv_buffer));
++    release(recv_buffer);
++    memset(send_buffer, 'b', 100);
++    assert(0 == set(kv_ctx, "1", send_buffer));
++    memset(send_buffer, 'c', 100);
++    assert(0 == set(kv_ctx, "22", send_buffer));
++    memset(send_buffer, 'b', 100);
++    assert(0 == get(kv_ctx, "1", &recv_buffer));
++    assert(0 == strcpy(send_buffer, recv_buffer));
++    release(recv_buffer);
++
++    /* Test large size */
++    memset(send_buffer, 'a', MAX_TEST_SIZE - 1);
++    assert(0 == set(kv_ctx, "1", send_buffer));
++    assert(0 == set(kv_ctx, "333", send_buffer));
++    assert(0 == get(kv_ctx, "1", &recv_buffer));
++    assert(0 == strcpy(send_buffer, recv_buffer));
++    release(recv_buffer);
++	
++	
++#ifdef EX4
++	recursive_fill_kv(TEST_LOCATION, kv_ctx);
++#endif
++
++    my_close(kv_ctx);
++    return 0;
+ }
