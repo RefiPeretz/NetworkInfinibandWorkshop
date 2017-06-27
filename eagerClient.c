@@ -614,6 +614,11 @@ int kv_open(char *servername, void **kv_handle)
     return 0;
 };
 
+int mkv_set(void *mkv_h, unsigned kv_id, const char *key, const char *value){
+    struct mkv_handle *m_handle = mkv_h;
+    return kv_set(m_handle->kv_handle[kv_id], key, value);
+}
+
 
 int kv_set(void *kv_handle, const char *key, const char *value)
 {
