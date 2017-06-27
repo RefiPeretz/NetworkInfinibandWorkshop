@@ -19,6 +19,8 @@
 #include "pingpong.h"
 
 #define MAX_KEY 10
+#define MAX_MSG_TEST 4000
+#define LOOP_ITER 50
 
 
 struct kv_server_address {
@@ -767,7 +769,7 @@ void mkv_close(void *mkv_h)
     unsigned count;
     struct mkv_handle *m_handle = mkv_h;
     for (count = 0; count < m_handle->num_servers; count++) {
-//        pp_close_ctx();
+        pp_close_ctx(m_handle->kv_handle[count]->ctx);
     }
     free(m_handle);
 }
@@ -931,6 +933,50 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
+
+
+
+//    //Complicated Test:
+//    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
+//    memset(msg,'w', MAX_MSG_TEST);
+//    msg[MAX_MSG_TEST] = '\0';
+//    printf("Start test\n");
+//
+//    char key[MAX_KEY];
+//    for(int i = 0; i < LOOP_ITER;i++){
+//        sprintf(key, "test%d", i);
+//        if (kv_set(kvHandle, key, msg))
+//        {
+//            fprintf(stderr, "Couldn't post send\n");
+//            return 1;
+//        }
+//    }
+//    for(int i = 0; i < LOOP_ITER;i++){
+//        char *returnedVal = malloc(MAX_MSG_TEST + 1);
+//        sprintf(key, "test%d", i);
+//        if (kv_get(kvHandle, key, &returnedVal))
+//        {
+//            fprintf(stderr, "Couldn't kv get the requested key\n");
+//            return 1;
+//        }
+//        //printf("Got value: %s", returnedVal);
+//        kv_release(returnedVal);
+//    }
+//    for(int i = 0; i < LOOP_ITER;i++){
+//        char *returnedVal = malloc(MAX_MSG_TEST + 1);
+//        sprintf(key, "test%d", i);
+//        if (kv_get(kvHandle, key, &returnedVal))
+//        {
+//            fprintf(stderr, "Couldn't kv get the requested key\n");
+//            return 1;
+//        }
+//        //printf("Got value: %s", returnedVal);
+//        kv_release(returnedVal);
+//    }
+//
+//    printf("Stop test\n");
+
+
 
 
 
