@@ -22,7 +22,7 @@
 
 
 #define MAX_KEY 10
-#define MAX_MSG_TEST 1000000
+#define MAX_MSG_TEST 1000000000
 #define LOOP_ITER 50
 
 
@@ -405,10 +405,10 @@ int pp_close_ctx(struct pingpong_context *ctx) {
         return 1;
     }
 
-    if (ibv_dealloc_pd(ctx->pd)) {
+/*    if (ibv_dealloc_pd(ctx->pd)) {
         fprintf(stderr, "Couldn't deallocate PD\n");
         return 1;
-    }
+    }*/
 
     if (ctx->channel) {
         if (ibv_destroy_comp_channel(ctx->channel)) {
