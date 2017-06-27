@@ -813,7 +813,7 @@ int orig_main(struct kv_server_address *server, unsigned size, int argc, char *a
 
     ibv_free_device_list(dev_list);
     free(rem_dest);
-    *result_ctx = ctx;
+		*result_ctx = ctx;
     return 0;
 }
 
