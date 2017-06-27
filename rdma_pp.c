@@ -6,32 +6,36 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <netdb.h>
-#include <stdlib.h>
 #include <getopt.h>
 #include <arpa/inet.h>
 #include <time.h>
+#include "MetricsIBV.h"
 
 
 #include "pingpong.h"
-#include "stack.h"
+
+
+#define MAX_KEY 10
+#define MAX_MSG_TEST 100000
+#define LOOP_ITER 20
+
 
 enum {
     PINGPONG_RECV_WRID = 1, PINGPONG_SEND_WRID = 2,
 };
 
 struct message {
-    uint32_t mr_rkey;
-    uintptr_t addr;
-    int valueSize;
+    uintptr_t mr_rkey;
+    void* addr;
+    long long valueSize;
 };
 
 struct msgKeyMr {
     struct ibv_mr *curMr;
-    int valueSize;
+    long long valueSize;
 };
 
 typedef enum kv_cmd {
@@ -81,10 +85,6 @@ struct pingpong_context {
     struct message *send_msg;
 
     char *rdma_local_region;
-    char *rdma_remote_region;
-
-    recv_state ctx_recv_state;
-    send_state ctx_send_state;
 
 };
 
@@ -381,8 +381,6 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use
         }
     }
 
-    ctx->ctx_send_state = SS_INIT;
-    ctx->ctx_recv_state = RS_INIT;
 
     return ctx;
 }
@@ -489,7 +487,7 @@ int getFromStore(handle *store, const char *key, char **value) {
 
             size_t mr_msg_size = roundup(sizeof((uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr) + sizeof(store->kvMsgDict[i]->curValue->curMr->rkey) + sizeof(store->kvMsgDict[i]->curValue->valueSize)+ 3, page_size);
             *value = (char *) malloc(mr_msg_size);
-            sprintf(*value, "%d:%d:%d", (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr, store->kvMsgDict[i]->curValue->curMr->rkey, store->kvMsgDict[i]->curValue->valueSize);
+            sprintf(*value, "%lu:%d:%lli", (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr, store->kvMsgDict[i]->curValue->curMr->rkey, store->kvMsgDict[i]->curValue->valueSize);
             printf("Prepared the MR info from store - %s\n", *value);
             return 0;
         }
@@ -506,7 +504,7 @@ int getFromStoreClient(handle *store, const char *key, struct msgKeyMr **mr) {
             *mr = store->kvMsgDict[i]->curValue;
             size_t mr_msg_size = roundup(sizeof((uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr) + sizeof(store->kvMsgDict[i]->curValue->curMr->rkey) + sizeof(store->kvMsgDict[i]->curValue->valueSize)+ 3, page_size);
             char * value = (char *) malloc(mr_msg_size);
-            sprintf(value, "%d:%d:%d", (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr, store->kvMsgDict[i]->curValue->curMr->rkey, store->kvMsgDict[i]->curValue->valueSize);
+            sprintf(value, "%lu:%d:%lli", (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr, store->kvMsgDict[i]->curValue->curMr->rkey, store->kvMsgDict[i]->curValue->valueSize);
             printf("Prepared the MR info from store - %s\n", value);
             return 0;
         }
@@ -515,7 +513,7 @@ int getFromStoreClient(handle *store, const char *key, struct msgKeyMr **mr) {
     return 1;
 }
 
-void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct handle *curHandle) {
+void addKeyMrElement(const char *key, struct ibv_mr *curMr, long long int msgSize, struct handle *curHandle) {
     if (curHandle->kvListSize == 0) {
         struct keyMrEntry *curMsg = calloc(1, sizeof(keyMrEntry));
         curMsg->key = malloc(strlen(key) + 1);
@@ -598,7 +596,7 @@ void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct 
 //    }
 //}
 
-struct message *allocateNewElement(const char *key, size_t valueSize, struct handle *curHandle) {
+struct message *allocateNewElement(const char *key, long long int valueSize, struct handle *curHandle) {
     char *value = calloc(1, valueSize * sizeof(char));
 
     struct ibv_mr *curMr = ibv_reg_mr(curHandle->ctx->pd, value, valueSize,
@@ -609,7 +607,7 @@ struct message *allocateNewElement(const char *key, size_t valueSize, struct han
     }
 
     struct message *mr_msg = (struct message *) calloc(1, sizeof(struct message));
-    mr_msg->addr = (uintptr_t) curMr->addr;
+    mr_msg->addr = curMr->addr;
     mr_msg->mr_rkey = curMr->rkey;
     mr_msg->valueSize = valueSize;
 
@@ -655,8 +653,8 @@ int kv_set(void *kv_handle, const char *key, const char *value) {
 
     //first send msg to server with size and MR to read from.
     char *msg = (char *) malloc(roundup(kvHandle->defMsgSize, page_size));
-    sprintf(msg, "%d:%s:%d", cmd, key, strlen(value) + 1);
-    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
+    sprintf(msg, "%d:%s:%zu", cmd, key, strlen(value) + 1);
+    printf("Sending set msg: %s with size %zu and value size of %zu\n", msg, strlen(msg) + 1, strlen(value) + 1);
 
     if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg, strlen(msg) + 1)) {
         perror("Couldn't post send: ");
@@ -724,9 +722,9 @@ int kv_get(void *kv_handle, const char *key, char **value) {
         kv_cmd cmd = GET_CMD;
         char *get_msg = (char *) malloc(roundup(kvHandle->defMsgSize, page_size));
         sprintf(get_msg, "%d:%s", cmd, key);
-        printf("Sending get msg: %s with size %d\n", get_msg, strlen(get_msg) + 1);
+        printf("Sending get msg: %s with size %d\n", get_msg, (int) (strlen(get_msg) + 1));
 
-        if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, get_msg, strlen(get_msg) + 1)) {
+        if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, get_msg, (int) (strlen(get_msg) + 1))) {
             perror("Couldn't post send: ");
             return 1;
         }
@@ -773,12 +771,12 @@ int kv_get(void *kv_handle, const char *key, char **value) {
                             return 0;
                         };
                         char *delim = ":";
-                        mr_msg->addr = atoi(strtok(recv2Msg1, delim));
-                        mr_msg->mr_rkey = atoi(strtok(NULL, delim));
-                        mr_msg->valueSize = atoi(strtok(NULL, delim));
+                        mr_msg->addr = strtok(recv2Msg1, delim);
+                        mr_msg->mr_rkey = (uintptr_t) atoi(strtok(NULL, delim));
+                        mr_msg->valueSize = atoll(strtok(NULL, delim));
                         struct ibv_mr *curMr = calloc(1, sizeof(struct ibv_mr));
                         curMr->addr = mr_msg->addr;
-                        curMr->rkey = mr_msg->mr_rkey;
+                        curMr->rkey = (uint32_t) mr_msg->mr_rkey;
                         addKeyMrElement(key, curMr, mr_msg->valueSize, kvHandle);
                         recved--;
                         break;
@@ -862,8 +860,8 @@ int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, char *actual
 
     struct message *mr_msg = (struct message *) calloc(1, sizeof(struct message));
     char *delim = ":";
-    mr_msg->addr = (uintptr_t) atoi(strtok(msg, delim));
-    mr_msg->mr_rkey = (uint32_t) atoi(strtok(NULL, delim));
+    mr_msg->addr = (void*)strtok(msg, delim);
+    mr_msg->mr_rkey = (uintptr_t) atol(strtok(NULL, delim));
 
     struct ibv_sge list = {
             .addr    = (uintptr_t) actualMessage,
@@ -877,7 +875,7 @@ int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, char *actual
             .opcode = IBV_WR_RDMA_WRITE,
             .send_flags = IBV_SEND_SIGNALED,
             .wr.rdma.remote_addr = (uintptr_t) mr_msg->addr,
-            .wr.rdma.rkey = mr_msg->mr_rkey};
+            .wr.rdma.rkey = (uint32_t) mr_msg->mr_rkey};
     struct ibv_send_wr *bad_wr;
 
     TEST_NZ(ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr));
@@ -889,20 +887,37 @@ int processServerGetReqResponseCmd(handle *kv_handle, struct message *msg, char 
     struct ibv_mr* sendMr = ibv_reg_mr(
             kv_handle->ctx->pd,
             *value,
-            msg->valueSize,
+            (size_t) msg->valueSize,
             IBV_ACCESS_LOCAL_WRITE);
 
     struct ibv_sge list = {
             .addr    = (uintptr_t) (*value),
-            .length = msg->valueSize,
+            .length = (uint32_t) msg->valueSize,
             .lkey = sendMr->lkey
     };
     struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_RDMA_READ, .send_flags = IBV_SEND_SIGNALED, .wr.rdma.remote_addr = (uintptr_t) msg
-            ->addr, .wr.rdma.rkey = msg->mr_rkey};
+            ->addr, .wr.rdma.rkey = (uint32_t) msg->mr_rkey};
     struct ibv_send_wr *bad_wr;
 
     TEST_NZ(ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr));
 
+
+    return 0;
+}
+
+int processClientPrepWriteCmd(handle *kv_handle, char *key, long long expectedMsgSize) {
+
+    struct message *mr_msg = allocateNewElement(key, expectedMsgSize, kv_handle);
+
+    size_t mr_msg_size = roundup(sizeof(mr_msg->addr) + sizeof(mr_msg->mr_rkey) + 2, page_size);
+    char *mr_msg_char = (char *) malloc(mr_msg_size);
+    sprintf(mr_msg_char, "%p:%lu", mr_msg->addr, mr_msg->mr_rkey);
+    printf("Sending mr msg: %s with size %zu\n", mr_msg_char, strlen(mr_msg_char) + 1);
+
+    if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, mr_msg_char, strlen(mr_msg_char) + 1)) {
+        perror("Couldn't post send: ");
+        return 1;
+    }
 
     return 0;
 }
@@ -934,29 +949,12 @@ int processClientCmd(handle *kv_handle, char *msg) {
         }
 
         printf("Sending value after 'get' msg: %s\n", retValue);
-        if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, retValue, strlen(retValue) + 1)) {
+        if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, retValue, (int) (strlen(retValue) + 1))) {
             perror("Couldn't post send: ");
             return 1;
         }
     } else {
         fprintf(stderr, "Coudln't decide what's the msg! MsgCmd - %d\n", cmd);
-    }
-
-    return 0;
-}
-
-int processClientPrepWriteCmd(handle *kv_handle, char *key, int expectedMsgSize) {
-
-    struct message *mr_msg = allocateNewElement(key, expectedMsgSize, kv_handle);
-
-    size_t mr_msg_size = roundup(sizeof(mr_msg->addr) + sizeof(mr_msg->mr_rkey) + 2, page_size);
-    char *mr_msg_char = (char *) malloc(mr_msg_size);
-    sprintf(mr_msg_char, "%d:%d", mr_msg->addr, mr_msg->mr_rkey);
-    printf("Sending mr msg: %s with size %d\n", mr_msg_char, strlen(mr_msg_char) + 1);
-
-    if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, mr_msg_char, strlen(mr_msg_char) + 1)) {
-        perror("Couldn't post send: ");
-        return 1;
     }
 
     return 0;
@@ -1110,51 +1108,98 @@ int main(int argc, char *argv[]) {
 
 
     if (servername) {
-        //first Test
-        char key[4] = "red";
-        char value[10] = "wedding";
-
-        if (kv_set(kvHandle, key, value)) {
-            fprintf(stderr, "Couldn't post send\n");
+        char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
+        memset(msg,'w', MAX_MSG_TEST);
+        msg[MAX_MSG_TEST] = '\0';
+        if (gettimeofday(&start, NULL)) {
+            perror("gettimeofday");
             return 1;
         }
-
-
-        char *returnedVal;
-        if (kv_get(kvHandle, key, &returnedVal)) {
-            fprintf(stderr, "Couldn't kv get the requested key\n");
+        printf("Start test\n");
+        char key[MAX_KEY];
+        for(int i = 0; i < LOOP_ITER;i++){
+            sprintf(key, "test%d", i);
+            if (kv_set(kvHandle, key, msg))
+            {
+                fprintf(stderr, "Couldn't post send\n");
+                return 1;
+            }
+        }
+        for(int i = 0; i < LOOP_ITER;i++){
+            char *returnedVal = malloc(MAX_MSG_TEST + 1);
+            sprintf(key, "test%d", i);
+            if (kv_get(kvHandle, key, &returnedVal))
+            {
+                fprintf(stderr, "Couldn't kv get the requested key\n");
+                return 1;
+            }
+            //printf("Got value: %s", returnedVal);
+            kv_release(returnedVal);
+        }
+        for(int i = 0; i < LOOP_ITER;i++){
+            char *returnedVal = malloc(MAX_MSG_TEST + 1);
+            sprintf(key, "test%d", i);
+            if (kv_get(kvHandle, key, &returnedVal))
+            {
+                fprintf(stderr, "Couldn't kv get the requested key\n");
+                return 1;
+            }
+            //printf("Got value: %s", returnedVal);
+            kv_release(returnedVal);
+        }
+        if (gettimeofday(&end, NULL)) {
+            perror("gettimeofday");
             return 1;
         }
-
-        kv_release(returnedVal);
-
-
-        //second Test
-        char key2[5] = "blue";
-        char value2[10] = "wedding2";
-
-        if (kv_set(kvHandle, key2, value2)) {
-            fprintf(stderr, "Couldn't post send\n");
-            return 1;
-        }
-
-
-        char *recvMsg1;
-        if (kv_get(kvHandle, key2, &recvMsg1)) {
-            fprintf(stderr, "Couldn't kv get the requested key\n");
-            return 1;
-        }
-
-        kv_release(recvMsg1);
-
-
-        //third Test
-        char *recvMsg2;
-        if (kv_get(kvHandle, key2, &recvMsg2)) {
-            fprintf(stderr, "Couldn't kv get the requested key\n");
-            return 1;
-        }
-        kv_release(recvMsg2);
+        printf("Stop test\n");
+        double testTime = timeDifference(start,end);
+        double rdmaThroughput = calcAverageThroughput(LOOP_ITER*3,MAX_MSG_TEST,testTime);
+        printf("Rdma overall throughput:%lf",rdmaThroughput);
+//        //first Test
+//        char key[4] = "red";
+//        char value[10] = "wedding";
+//
+//        if (kv_set(kvHandle, key, value)) {
+//            fprintf(stderr, "Couldn't post send\n");
+//            return 1;
+//        }
+//
+//
+//        char *returnedVal;
+//        if (kv_get(kvHandle, key, &returnedVal)) {
+//            fprintf(stderr, "Couldn't kv get the requested key\n");
+//            return 1;
+//        }
+//
+//        kv_release(returnedVal);
+//
+//
+//        //second Test
+//        char key2[5] = "blue";
+//        char value2[10] = "wedding2";
+//
+//        if (kv_set(kvHandle, key2, value2)) {
+//            fprintf(stderr, "Couldn't post send\n");
+//            return 1;
+//        }
+//
+//
+//        char *recvMsg1;
+//        if (kv_get(kvHandle, key2, &recvMsg1)) {
+//            fprintf(stderr, "Couldn't kv get the requested key\n");
+//            return 1;
+//        }
+//
+//        kv_release(recvMsg1);
+//
+//
+//        //third Test
+//        char *recvMsg2;
+//        if (kv_get(kvHandle, key2, &recvMsg2)) {
+//            fprintf(stderr, "Couldn't kv get the requested key\n");
+//            return 1;
+//        }
+//        kv_release(recvMsg2);
 
 
     }
