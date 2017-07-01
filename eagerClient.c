@@ -925,7 +925,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
-    char* retVal;
+    char* retVal = malloc(4096);;
     if (mkv_get(kv_ctx,0, key, &retVal)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
