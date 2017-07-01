@@ -479,7 +479,7 @@ static void usage(const char *argv0)
 
 typedef enum kv_cmd
 {
-    SET_CMD = 3, GET_CMD = 4,
+    SET_CMD = 3, GET_CMD = 4,SET_CREDIT = 5
 } kv_cmd;
 
 typedef struct kvMsg
@@ -591,137 +591,9 @@ int kv_open(char *servername, void **kv_handle)
 };
 
 
-int kv_set(void *kv_handle, const char *key, const char *value)
-{
-    handle *kvHandle = kv_handle;
-    kv_cmd cmd = SET_CMD;
-    char *msg = malloc(roundup(kvHandle->defMsgSize, page_size));
-    sprintf(msg, "%d:%s:%s", cmd, key, value);
-    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
-
-    if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg,
-                       strlen(msg) + 1))
-    {
-        perror("Couldn't post send: ");
-        return 1;
-    }
 
 
-    int scnt = 0;
-    while (scnt == 0)
-    {
-        struct ibv_wc wc[2];
-        int ne;
-        do
-        {
-            ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
-            if (ne < 0)
-            {
-                fprintf(stderr, "poll CQ failed %d\n", ne);
-                return 1;
-            }
 
-        } while (ne < 1);
-
-        for (int i = 0; i < ne; ++i)
-        {
-            if (wc[i].status != IBV_WC_SUCCESS)
-            {
-                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
-                        ibv_wc_status_str(wc[i].status), wc[i].status,
-                        (int) wc[i].wr_id);
-                return 1;
-            }
-            if (wc[i].wr_id == PINGPONG_SEND_WRID)
-            {
-                scnt++;
-                break;
-            }
-        }
-    }
-
-
-    return 0;
-};
-
-
-int kv_get(void *kv_handle, const char *key, char **value)
-{
-    handle *kvHandle = kv_handle;
-    kv_cmd cmd = GET_CMD;
-    char *vmsg = malloc(roundup(kvHandle->defMsgSize, page_size));
-    sprintf(vmsg, "%d:%s:%s", cmd, key, "");
-    printf("Sending get msg: %s\n", vmsg);
-    if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, vmsg,
-                       strlen(vmsg) + 1))
-    {
-        perror("Couldn't post send: ");
-        return 1;
-    }
-    char *recv2Msg1;
-    recv2Msg1 = malloc(roundup(kvHandle->defMsgSize,
-                               page_size));
-    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, recv2Msg1, roundup(kvHandle->defMsgSize, page_size))) <
-        0) {
-        perror("Couldn't post receive:");
-        return 1;
-    }
-    printf("Pooling for result value \n");
-    char *recv2Msg;
-    int scnt = 1, recved = 1;
-    while (scnt || recved)
-    {
-        struct ibv_wc wc[2];
-        int ne;
-        do
-        {
-            ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
-            if (ne < 0)
-            {
-                fprintf(stderr, "poll CQ failed %d\n", ne);
-                return 1;
-            }
-
-        } while (ne < 1);
-
-        for (int i = 0; i < ne; ++i)
-        {
-            if (wc[i].status != IBV_WC_SUCCESS)
-            {
-                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
-                        ibv_wc_status_str(wc[i].status), wc[i].status,
-                        (int) wc[i].wr_id);
-                return 1;
-            }
-
-            recv2Msg = malloc(roundup(kvHandle->defMsgSize, page_size));
-            switch ((int) wc[i].wr_id)
-            {
-                case PINGPONG_SEND_WRID:
-                    scnt--;
-                    break;
-
-                case PINGPONG_RECV_WRID:
-
-                    printf("Got msg: %s\n", recv2Msg1);
-
-                    recved--;
-                    break;
-
-                default:
-                    fprintf(stderr, "Completion for unknown wr_id %d\n",
-                            (int) wc[i].wr_id);
-                    return 1;
-            }
-
-        }
-
-    }
-
-    memcpy(*value, recv2Msg, strlen(recv2Msg) + 1);
-    free(recv2Msg);
-    return 0;
-};
 
 void kv_release(char *value)
 {
@@ -779,6 +651,9 @@ int processClientCmd(handle *kv_handle, char *msg)
             perror("Couldn't post send: ");
             return 1;
         }
+    }else if(cmd == SET_CREDIT){
+        kv_handle->credits+= atoi(value);
+
     } else
     {
         fprintf(stderr, "Coudln't decide what's the msg! MsgCmd - %d\n", cmd);
@@ -938,16 +813,9 @@ int main(int argc, char *argv[])
            kvHandle->gid);
 
 
-    if (servername)
-    {
-        kvHandle->rem_dest =
-                pp_client_exch_dest(servername, port, &kvHandle->my_dest);
-    } else
-    {
-        kvHandle->rem_dest =
-                pp_server_exch_dest(kvHandle->ctx, ib_port, mtu, port, sl,
-                                    &kvHandle->my_dest, gidx);
-    }
+    kvHandle->rem_dest =
+            pp_server_exch_dest(kvHandle->ctx, ib_port, mtu, port, sl,
+                                &kvHandle->my_dest, gidx);
 
     if (!kvHandle->rem_dest)
     {
@@ -960,47 +828,8 @@ int main(int argc, char *argv[])
            kvHandle->rem_dest->lid, kvHandle->rem_dest->qpn,
            kvHandle->rem_dest->psn, kvHandle->gid);
 
-    if (servername)
-    {
-        if (pp_connect_ctx(kvHandle->ctx, ib_port, kvHandle->my_dest.psn, mtu,
-                           sl, kvHandle->rem_dest, gidx))
-        {
-            return 1;
-        }
-    }
 
 
-
-    if (servername)
-    {
-        printf("Start test\n");
-        char key[MAX_KEY];
-        for(int i = 0; i < 2;i++){
-            //first Test
-            char* msg = malloc((1024 * sizeof(char)) + 1);
-            memset(msg,'w', 1023);
-            msg[1023] = '\0';
-            sprintf(key, "test%d", i);
-            if (kv_set(kvHandle, key, msg))
-            {
-                fprintf(stderr, "Couldn't post send\n");
-                return 1;
-            }
-            free(msg);
-        }
-        for(int i = 0; i < 2;i++){
-            char *returnedVal = malloc(kvHandle->defMsgSize);
-            sprintf(key, "test%d", i);
-            if (kv_get(kvHandle, key, &returnedVal))
-            {
-                fprintf(stderr, "Couldn't kv get the requested key\n");
-                return 1;
-            }
-            kv_release(returnedVal);
-        }
-
-
-    }
 
     if (!servername)
     {
