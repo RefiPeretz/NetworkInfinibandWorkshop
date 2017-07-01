@@ -497,6 +497,7 @@ typedef struct handle
     int kvListSize;
     int ib_port;
     int rx_depth;
+    int credits;
     struct pingpong_dest my_dest;
     struct pingpong_dest *rem_dest;
     char gid[33];
@@ -892,6 +893,7 @@ int main(int argc, char *argv[])
     kvHandle->defMsgSize = size;
     kvHandle->ib_port = ib_port;
     kvHandle->rx_depth = 500;
+    kvHandle->credits = 0;
     gidx = -1;
 
     page_size = sysconf(_SC_PAGESIZE);
