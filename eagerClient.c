@@ -59,7 +59,7 @@ struct pingpong_dest
 
 #define EAGER_PROTOCOL_LIMIT (1 << 22) /* 4KB limit */
 
-size_t EAGER_BUFFER_LIMIT = 10;
+#define EAGER_BUFFER_LIMIT (10)
 struct kv_client_eager_buffer {
     struct handle *ctx;
     char data[EAGER_PROTOCOL_LIMIT]; /* give only this to ibv_post_recv() or the user */
@@ -623,7 +623,7 @@ int kv_set(void *kv_handle, const char *key, const char *value)
 {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = SET_CMD;
-    char *msg = malloc(strlen(cmd) + strlen(key) + strlen(value) + 2 +1);
+    char *msg = malloc(1 + strlen(key) + strlen(value) + 2 +1);
     sprintf(msg, "%d:%s:%s", cmd, key, value);
     printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
 
@@ -836,7 +836,7 @@ int mkv_open(struct kv_server_address *servers, void **mkv_h) {
 
     ctx->num_servers = count;
     for (count = 0; count < ctx->num_servers; count++) {
-        if (kvHandleFactory(&servers[count], total_buffers_per_kv, g_argc, g_argv, &ctx->kv_handle[count])) {
+        if (kvHandleFactory(&servers[count], 4096, g_argc, g_argv, &ctx->kv_handle[count])) {
             return 1;
         }
     }
@@ -905,7 +905,7 @@ int pp_wait_completions(struct handle *pContext, int i) {
 }
 
 int main(int argc, char *argv[]) {
-    mkv_handle *kv_ctx; /* handle to internal KV-client context */
+    void *kv_ctx; /* handle to internal KV-client context */
 
     g_argc = argc;
     g_argv = argv;
@@ -983,7 +983,7 @@ int main(int argc, char *argv[]) {
 }
 
 int
-kvHandleFactory(struct kv_server_address *server, long size, int argc, char *argv[], struct handle **p_kvHandle) {
+kvHandleFactory(struct kv_server_address *server, unsigned size, int argc, char *argv[], struct handle **p_kvHandle) {
     struct timeval start, end;
     char *servername = server->servername;
     int port = server->port;
@@ -1071,7 +1071,7 @@ kvHandleFactory(struct kv_server_address *server, long size, int argc, char *arg
     }
 
     handle *kvHandle = calloc(1, sizeof *kvHandle);
-    p_kvHandle = &kvHandle;
+    *p_kvHandle = kvHandle;
     kvHandle->defMsgSize = size;
     kvHandle->ib_port = ib_port;
     kvHandle->rx_depth = 500;

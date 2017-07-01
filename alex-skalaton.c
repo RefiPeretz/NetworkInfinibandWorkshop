@@ -947,12 +947,6 @@ int kv_close(void *kv_handle)
     return pp_close_ctx((struct pingpong_context*)kv_handle);
 }
 
-#define my_open  kv_open
-#define set      kv_set
-#define get      kv_get
-#define release  kv_release
-#define my_close kv_close
-
 #define EAGER_BUFFER_LIMIT (10)
 
 struct kv_client_eager_buffer {
