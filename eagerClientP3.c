@@ -707,7 +707,7 @@ int kv_get(void *kv_handle, const char *key, char **value)
     char *recv2Msg;
     int scnt = 1, recved = 1;
     int iterations = 10000;
-    while (scnt || recved || iterations > 0)
+    while ((scnt || recved) && iterations > 0)
     {
         struct ibv_wc wc[2];
         int ne;
@@ -920,7 +920,7 @@ void mkv_send_credit(void *mkv_h, unsigned kv_id, unsigned how_many_credits)
     sprintf(msg, "%d:%d", cmd, how_many_credits);
     printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
 
-    return sendMsgLogic(m_handle->kv_handle[kv_id], msg);
+    sendMsgLogic(m_handle->kv_handle[kv_id], msg);
 }
 
 int main(int argc, char *argv[]) {
