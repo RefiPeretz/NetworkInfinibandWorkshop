@@ -560,17 +560,14 @@ typedef struct handle
     char* pop() {
         char* result = NULL;
         if(!isKvMsgQueEmpty()) {
-            result = msgQue[msgQueItemCount];
+            result = front;
             msgQueItemCount--;
-
             if(msgQueItemCount == 0){
                 char* front = NULL;
                 char* rear = NULL;
             } else {
                 front = msgQue[msgQueItemCount];
             }
-
-            return result;
         }
         return result;
     }
@@ -696,6 +693,27 @@ int kv_close(void *kv_handle)
     return 0;
 };
 
+
+int getCmdMsgLogic(handle* kv_handle, char* key){
+
+    char **retValue = malloc(sizeof(char*));
+    int ret =  getFromStore(kv_handle, key, retValue);
+    if(ret){
+        fprintf(stderr, "Error in fetching value!\n");
+        return 1;
+    }
+
+    printf("Sending value after 'get' msg: %s\n", *retValue);
+    if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, *retValue,
+                       strlen(*retValue) + 1))
+    {
+        perror("Couldn't post send: ");
+        return 1;
+    }
+
+    return 0;
+}
+
 int processClientCmd(handle *kv_handle, char *msg)
 {
     printf("Processing message %s\n", msg);
@@ -719,28 +737,20 @@ int processClientCmd(handle *kv_handle, char *msg)
 
     } else if (cmd == GET_CMD)
     {
-        char **retValue = malloc(sizeof(char*));
-
-        int ret =  getFromStore(kv_handle, key, retValue);
-        if(ret){
-            fprintf(stderr, "Error in fetching value!\n");
-            return 1;
-        }
-        //TODO does I have enough credits and credits -- after send.
-        //TODO insert to queue if there no credits
         printf("Checking client credits:  %d\n", kv_handle->credits);
-
-        printf("Sending value after 'get' msg: %s\n", *retValue);
-        if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, *retValue,
-                           strlen(*retValue) + 1))
-        {
-            perror("Couldn't post send: ");
-            return 1;
+        if(kv_handle->credits == 0){
+            kv_handle->insert(key);
+            printf("Storing msg due to insufficient funds :( \n");
+            return 0;
         }
+        return getCmdMsgLogic(kv_handle, key);
     }else if(cmd == SET_CREDIT){
         kv_handle->credits += atoi(value);
-        //TODO check queue and handle if there is something in queue.
-
+        if(!kv_handle->isKvMsgQueEmpty() && kv_handle->credits > 0){
+            char* pendingMsgKey = kv_handle->pop();
+            return getCmdMsgLogic(kv_handle, pendingMsgKey);
+        }
+        //TODO: check queue and handle if there is something in queue.
     } else
     {
         fprintf(stderr, "Coudln't decide what's the msg! MsgCmd - %d\n", cmd);
