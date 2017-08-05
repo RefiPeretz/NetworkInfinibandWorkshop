@@ -910,6 +910,14 @@ int pp_wait_completions(struct handle *pContext, int i) {
     return 0;
 }
 
+void mkv_send_credit(void *mkv_h, unsigned how_many_credits)
+{
+    struct mkv_handle *m_handle = mkv_h;
+    handle *kvHandle = kv_handle;
+    kv_cmd cmd = SET_CREDIT;
+
+}
+
 int main(int argc, char *argv[]) {
     void *kv_ctx; /* handle to internal KV-client context */
 

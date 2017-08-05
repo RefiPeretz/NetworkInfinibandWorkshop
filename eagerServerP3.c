@@ -478,10 +478,7 @@ static void usage(const char *argv0)
     printf("  -g, --gid-idx=<gid index> local port gid index\n");
 }
 
-typedef enum kv_cmd
-{
-    SET_CMD = 3, GET_CMD = 4,SET_CREDIT = 5
-} kv_cmd;
+
 
 typedef struct kvMsg
 {
@@ -750,7 +747,6 @@ int processClientCmd(handle *kv_handle, char *msg)
             char* pendingMsgKey = kv_handle->pop();
             return getCmdMsgLogic(kv_handle, pendingMsgKey);
         }
-        //TODO: check queue and handle if there is something in queue.
     } else
     {
         fprintf(stderr, "Coudln't decide what's the msg! MsgCmd - %d\n", cmd);

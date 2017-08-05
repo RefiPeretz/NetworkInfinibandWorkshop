@@ -44,4 +44,8 @@ int pp_get_port_info(struct ibv_context *context, int port,
 void wire_gid_to_gid(const char *wgid, union ibv_gid *gid);
 void gid_to_wire_gid(const union ibv_gid *gid, char wgid[]);
 
+typedef enum kv_cmd
+{
+	SET_CMD = 3, GET_CMD = 4,SET_CREDIT = 5
+} kv_cmd;
 #endif /* IBV_PINGPONG_H */
