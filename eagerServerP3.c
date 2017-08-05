@@ -548,7 +548,8 @@ bool insert(handle* kvHandle, char* data) {
             kvHandle->rear = data;
         }
         kvHandle->msgQueItemCount++;
-        kvHandle->msgQue[kvHandle->msgQueItemCount] = data;
+        kvHandle->msgQue[kvHandle->msgQueItemCount] = malloc( sizeof(char) * strlen(data) + 1 );
+        strcpy(kvHandle->msgQue[kvHandle->msgQueItemCount], data);
         if((kvHandle->msgQueItemCount - 1)  == 0){
             kvHandle->front = kvHandle->msgQue[kvHandle->msgQueItemCount];
             kvHandle->rear = kvHandle->msgQue[kvHandle->msgQueItemCount];
@@ -744,7 +745,7 @@ int processClientCmd(handle *kv_handle, char *msg)
 
     } else if(cmd == SET_CREDIT) {
 
-        kv_handle->credits += atoi(value);
+        kv_handle->credits += atoi(key);
         while(!isKvMsgQueEmpty(kv_handle) && kv_handle->credits > 0){
             char* pendingMsgKey = pop(kv_handle);
             return getCmdMsgLogic(kv_handle, pendingMsgKey);
