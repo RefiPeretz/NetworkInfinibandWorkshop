@@ -298,6 +298,7 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
 }
 
 #include <sys/param.h>
+#include <stdbool.h>
 
 static struct pingpong_context *
 pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
@@ -487,6 +488,7 @@ typedef struct kvMsg
     char *key;
     char *value;
 } kvMsg;
+#define MAX_KV_MSG_QUE 100
 
 typedef struct handle
 {
@@ -502,7 +504,87 @@ typedef struct handle
     struct pingpong_dest *rem_dest;
     char gid[33];
     kvMsg **kvMsgDict;
+
+
+    char* msgQue[MAX_KV_MSG_QUE];
+    char* front;
+    char* rear;
+    int lastItemIndex;
+    int msgQueItemCount;
+
+    char * getKvMsgQueFront(){
+        return front;
+    }
+
+    bool isKvMsgQueEmpty(){
+        if(msgQueItemCount == 0){
+            return true;
+        }
+        return false;
+    }
+
+
+    int getKvMsgQueSize(){
+        return msgQueItemCount;
+    }
+
+    //return true if msg queue isn't full
+    bool isKvMsgQueFull(){
+        if(msgQueItemCount == MAX_KV_MSG_QUE){
+            return true;
+        }
+        return false;
+    }
+
+    //return true if insert was successful
+    bool insert(char* data) {
+        if(!isKvMsgQueFull) {
+            if(msgQueItemCount == 0){
+                char* front = data;
+                char* rear = data;
+            } else {
+                char* rear = data;
+            }
+            msgQueItemCount++;
+            msgQue[msgQueItemCount] = data;
+            if((msgQueItemCount - 1)  == 0){
+                char* front = msgQue[msgQueItemCount];
+                char* rear = msgQue[msgQueItemCount];
+            } else {
+                char* rear = msgQue[msgQueItemCount];
+            }
+        }
+
+    }
+
+    char* pop() {
+        char* result = NULL;
+        if(!isKvMsgQueEmpty()) {
+            result = msgQue[msgQueItemCount];
+            msgQueItemCount--;
+
+            if(msgQueItemCount == 0){
+                char* front = NULL;
+                char* rear = NULL;
+            } else {
+                front = msgQue[msgQueItemCount];
+            }
+
+            return result;
+        }
+        return result;
+    }
+
 } handle;
+
+
+
+
+
+
+
+
+
 
 int getFromStore(handle *store, const char *key, char **value)
 {
@@ -644,9 +726,11 @@ int processClientCmd(handle *kv_handle, char *msg)
             fprintf(stderr, "Error in fetching value!\n");
             return 1;
         }
-        printf("Sending value after 'get' msg: %s\n", *retValue);
-        //TODO does I have enough credtis and credits -- after send.
+        //TODO does I have enough credits and credits -- after send.
         //TODO insert to queue if there no credits
+        printf("Checking client credits:  %d\n", kv_handle->credits);
+
+        printf("Sending value after 'get' msg: %s\n", *retValue);
         if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, *retValue,
                            strlen(*retValue) + 1))
         {
@@ -654,8 +738,8 @@ int processClientCmd(handle *kv_handle, char *msg)
             return 1;
         }
     }else if(cmd == SET_CREDIT){
-        kv_handle->credits+= atoi(value);
-        //TODO cehck queue and handle if there is something in queue.
+        kv_handle->credits += atoi(value);
+        //TODO check queue and handle if there is something in queue.
 
     } else
     {
