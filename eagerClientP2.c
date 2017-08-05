@@ -824,6 +824,7 @@ int processClientCmd(handle *kv_handle, char *msg) {
     return 0;
 }
 
+void
 
 int mkv_open(struct kv_server_address *servers, void **mkv_h) {
     struct mkv_handle *ctx;

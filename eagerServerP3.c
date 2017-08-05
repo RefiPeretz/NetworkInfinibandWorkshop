@@ -645,6 +645,8 @@ int processClientCmd(handle *kv_handle, char *msg)
             return 1;
         }
         printf("Sending value after 'get' msg: %s\n", *retValue);
+        //TODO does I have enough credtis and credits -- after send.
+        //TODO insert to queue if there no credits
         if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, *retValue,
                            strlen(*retValue) + 1))
         {
@@ -653,6 +655,7 @@ int processClientCmd(handle *kv_handle, char *msg)
         }
     }else if(cmd == SET_CREDIT){
         kv_handle->credits+= atoi(value);
+        //TODO cehck queue and handle if there is something in queue.
 
     } else
     {
