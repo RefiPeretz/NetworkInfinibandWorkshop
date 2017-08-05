@@ -725,6 +725,8 @@ int kv_get(void *kv_handle, const char *key, char **value,char* clientBuffers,in
         int freeIndex = getFreeBufferIndex(kv_handle);
         recv2Msg1 = clientBuffers + (kv_id*MAX_MSG_TEST + freeIndex*MAX_MSG_TEST);
         kvHandle->usedBuffers++;
+    } else {
+        recv2Msg1 = calloc(1, 4096);
     }
 
 
@@ -1019,21 +1021,27 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
+    retVal = malloc(4096);
     if (mkv_get(kv_ctx,0, key2, &retVal)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
+    retVal = malloc(4096);
     if (mkv_get(kv_ctx,0, key2, &retVal)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
+    retVal = malloc(4096);
     if (mkv_get(kv_ctx,0, key, &retVal)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
+    mkv_release(retVal,0,kv_ctx);
+
     //mkv_send_credit(kv_ctx, 0, 50);
     struct mkv_handle *m_handle = kv_ctx;
-    mkv_close(kv_ctx);
+    //mkv_close(kv_ctx);
+    mkv_send_credit(kv_ctx, 0, 2);
 
 //    //Complicated Test:
 //    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
