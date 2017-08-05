@@ -622,14 +622,8 @@ int mkv_set(void *mkv_h, unsigned kv_id, const char *key, const char *value){
 }
 
 
-int kv_set(void *kv_handle, const char *key, const char *value)
+int sendMsgLogic(void *kv_handle,  char *msg)
 {
-    handle *kvHandle = kv_handle;
-    kv_cmd cmd = SET_CMD;
-    char *msg = malloc(1 + strlen(key) + strlen(value) + 2 +1);
-    sprintf(msg, "%d:%s:%s", cmd, key, value);
-    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
-
     if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg,
                        strlen(msg) + 1))
     {
@@ -671,8 +665,17 @@ int kv_set(void *kv_handle, const char *key, const char *value)
         }
     }
 
+}
 
-    return 0;
+int kv_set(void *kv_handle, const char *key, const char *value)
+{
+    handle *kvHandle = kv_handle;
+    kv_cmd cmd = SET_CMD;
+    char *msg = malloc(1 + strlen(key) + strlen(value) + 2 +1);
+    sprintf(msg, "%d:%s:%s", cmd, key, value);
+    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
+
+    return sendMsgLogic(kv_handle, msg);
 };
 
 int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value)
@@ -910,12 +913,16 @@ int pp_wait_completions(struct handle *pContext, int i) {
     return 0;
 }
 
-void mkv_send_credit(void *mkv_h, unsigned how_many_credits)
+void mkv_send_credit(void *mkv_h, unsigned kv_id, unsigned how_many_credits)
 {
     struct mkv_handle *m_handle = mkv_h;
-    handle *kvHandle = kv_handle;
+    handle *kvHandle = m_handle->kv_handle[kv_id];
     kv_cmd cmd = SET_CREDIT;
+    char *msg = malloc(1 + 1  +1);
+    sprintf(msg, "%d:%d", cmd, how_many_credits);
+    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
 
+    return sendMsgLogic(kv_handle, msg);
 }
 
 int main(int argc, char *argv[]) {
