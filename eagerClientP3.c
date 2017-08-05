@@ -764,6 +764,11 @@ void kv_release(char *value) {
     }
 };
 
+void mkv_release(char *value){
+
+    //mkv_send_credit(buffer->ctx, 1);
+}
+
 
 void mkv_close(void *mkv_h)
 {
@@ -937,60 +942,59 @@ int main(int argc, char *argv[]) {
     };
 
     assert(0 == mkv_open(servers, &kv_ctx));
-    char key[4] = "red";
-    char value[10] = "wedding";
-
-    if (mkv_set(kv_ctx,0, key, value)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    char* retVal = malloc(4096);;
-    if (mkv_get(kv_ctx,0, key, &retVal)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-
+//    char key[4] = "red";
+//    char value[10] = "wedding";
+//
+//    if (mkv_set(kv_ctx,0, key, value)) {
+//        fprintf(stderr, "Couldn't post send\n");
+//        return 1;
+//    }
+//    char* retVal = malloc(4096);;
+//    if (mkv_get(kv_ctx,0, key, &retVal)) {
+//        fprintf(stderr, "Couldn't post send\n");
+//        return 1;
+//    }
 
 
 //    //Complicated Test:
-//    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
-//    memset(msg,'w', MAX_MSG_TEST);
-//    msg[MAX_MSG_TEST] = '\0';
-//    printf("Start test\n");
-//
-//    char key[MAX_KEY];
-//    for(int i = 0; i < LOOP_ITER;i++){
-//        sprintf(key, "test%d", i);
-//        if (kv_set(kvHandle, key, msg))
-//        {
-//            fprintf(stderr, "Couldn't post send\n");
-//            return 1;
-//        }
-//    }
-//    for(int i = 0; i < LOOP_ITER;i++){
-//        char *returnedVal = malloc(MAX_MSG_TEST + 1);
-//        sprintf(key, "test%d", i);
-//        if (kv_get(kvHandle, key, &returnedVal))
-//        {
-//            fprintf(stderr, "Couldn't kv get the requested key\n");
-//            return 1;
-//        }
-//        //printf("Got value: %s", returnedVal);
-//        kv_release(returnedVal);
-//    }
-//    for(int i = 0; i < LOOP_ITER;i++){
-//        char *returnedVal = malloc(MAX_MSG_TEST + 1);
-//        sprintf(key, "test%d", i);
-//        if (kv_get(kvHandle, key, &returnedVal))
-//        {
-//            fprintf(stderr, "Couldn't kv get the requested key\n");
-//            return 1;
-//        }
-//        //printf("Got value: %s", returnedVal);
-//        kv_release(returnedVal);
-//    }
-//
-//    printf("Stop test\n");
+    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
+    memset(msg,'w', MAX_MSG_TEST);
+    msg[MAX_MSG_TEST] = '\0';
+    printf("Start test\n");
+
+    char key[MAX_KEY];
+    for(int i = 0; i < LOOP_ITER;i++){
+        sprintf(key, "test%d", i);
+        if (kv_set(kv_ctx, key, msg))
+        {
+            fprintf(stderr, "Couldn't post send\n");
+            return 1;
+        }
+    }
+    for(int i = 0; i < LOOP_ITER;i++){
+        char *returnedVal = malloc(MAX_MSG_TEST + 1);
+        sprintf(key, "test%d", i);
+        if (kv_get(kv_ctx, key, &returnedVal))
+        {
+            fprintf(stderr, "Couldn't kv get the requested key\n");
+            return 1;
+        }
+        //printf("Got value: %s", returnedVal);
+        kv_release(returnedVal);
+    }
+    for(int i = 0; i < LOOP_ITER;i++){
+        char *returnedVal = malloc(MAX_MSG_TEST + 1);
+        sprintf(key, "test%d", i);
+        if (kv_get(kv_ctx, key, &returnedVal))
+        {
+            fprintf(stderr, "Couldn't kv get the requested key\n");
+            return 1;
+        }
+        //printf("Got value: %s", returnedVal);
+        kv_release(returnedVal);
+    }
+
+    printf("Stop test\n");
 
 
 
