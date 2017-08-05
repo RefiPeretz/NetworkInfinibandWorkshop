@@ -19,8 +19,14 @@
 #include "pingpong.h"
 
 #define MAX_KEY 10
-#define MAX_MSG_TEST 4000
+#define MAX_MSG_TEST 4096
 #define LOOP_ITER 50
+#define NUMBER_OF_BUFFERS 2
+#define EAGER_PROTOCOL_LIMIT (1 << 22) /* 4KB limit */
+#define USED_BUFFER 1
+#define UN_USED_BUFFER 0
+
+
 
 
 struct kv_server_address {
@@ -501,9 +507,11 @@ typedef struct handle
     int kvListSize;
     int ib_port;
     int rx_depth;
+    int usedBuffers;
     struct pingpong_dest my_dest;
     struct pingpong_dest *rem_dest;
     char gid[33];
+    int isUsed[NUMBER_OF_BUFFERS];
     kvMsg **kvMsgDict;
 } handle;
 
@@ -521,7 +529,7 @@ typedef struct mkv_handle
     struct pingpong_dest *rem_dest;
     char gid[33];
     kvMsg **kvMsgDict;
-    struct kv_client_eager_buffer *clientBuffers;
+    char* clientBuffers;
     int clientBuffersNum;
 } mkv_handle;
 
@@ -677,12 +685,27 @@ int kv_set(void *kv_handle, const char *key, const char *value)
 int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value)
 {
     struct mkv_handle *m_handle = mkv_h;
-    return kv_get(m_handle->kv_handle[kv_id], key, value);
+    return kv_get(m_handle->kv_handle[kv_id], key, value,m_handle->clientBuffers,kv_id);
 }
 
+int getFreeBufferIndex(handle *kvHandle){
+    for(int i = 0; i < NUMBER_OF_BUFFERS; i++){
+        if(kvHandle->isUsed[i] == UN_USED_BUFFER){
+            kvHandle->isUsed[i] = USED_BUFFER;
+            return i;
+        }
+    }
 
+}
 
-int kv_get(void *kv_handle, const char *key, char **value)
+/**
+ * allocate free buffer
+ * @param kv_id
+ * @param usedBuffer
+ * @return
+ */
+
+int kv_get(void *kv_handle, const char *key, char **value,char* clientBuffers,int kv_id)
 {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = GET_CMD;
@@ -696,8 +719,16 @@ int kv_get(void *kv_handle, const char *key, char **value)
         return 1;
     }
     char *recv2Msg1;
-    recv2Msg1 = malloc(roundup(kvHandle->defMsgSize,
-                               page_size));
+    if(kvHandle->usedBuffers < NUMBER_OF_BUFFERS ){
+        int freeIndex = getFreeBufferIndex(kv_handle);
+        recv2Msg1 = clientBuffers + (kv_id*MAX_MSG_TEST + freeIndex*MAX_MSG_TEST);
+        kvHandle->usedBuffers++;
+    }else{
+        fprintf(stderr, "There is no buffers left\n");
+        return -1;
+    }
+
+
     if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, recv2Msg1, roundup(kvHandle->defMsgSize, page_size))) <
         0) {
         perror("Couldn't post receive:");
@@ -764,12 +795,6 @@ void kv_release(char *value) {
     }
 };
 
-void mkv_release(char *value){
-
-    //mkv_send_credit(buffer->ctx, 1);
-}
-
-
 void mkv_close(void *mkv_h)
 {
     unsigned count;
@@ -778,6 +803,25 @@ void mkv_close(void *mkv_h)
         pp_close_ctx(m_handle->kv_handle[count]->ctx);
     }
     free(m_handle);
+}
+
+void mkv_release(char *value,int kv_id,void *mkv_h)
+{
+    struct mkv_handle *m_handle = mkv_h;
+    struct handle *cur_handle = m_handle->kv_handle[kv_id];
+    for(int i = 0 ;i < NUMBER_OF_BUFFERS;i++){
+        if(cur_handle->isUsed[i] == USED_BUFFER){
+            char* temp = m_handle->clientBuffers + (kv_id*MAX_MSG_TEST + i*MAX_MSG_TEST);
+            if(strcmp(value, temp)){
+                //clear bufffer
+                memset(temp, 0, MAX_MSG_TEST);
+                cur_handle->isUsed[i] = UN_USED_BUFFER;
+                cur_handle->usedBuffers--;
+            }
+        }
+    }
+    mkv_send_credit(mkv_h, kv_id, 1);
+
 }
 
 
@@ -834,7 +878,8 @@ int processClientCmd(handle *kv_handle, char *msg) {
 
 int mkv_open(struct kv_server_address *servers, void **mkv_h) {
     struct mkv_handle *ctx;
-    unsigned total_buffers_per_kv = sizeof(struct kv_client_eager_buffer) * EAGER_BUFFER_LIMIT;
+    //unsigned total_buffers_per_kv = sizeof(struct kv_client_eager_buffer) * EAGER_BUFFER_LIMIT;
+    //unsigned total_buffers_per_kv = EAGER_BUFFER_LIMIT;
 
     unsigned count = 0;
     while (servers[count++].servername); /* count servers */
@@ -845,11 +890,12 @@ int mkv_open(struct kv_server_address *servers, void **mkv_h) {
     }
 
     ctx->num_servers = count;
-    ctx->clientBuffersNum = 2;
-    ctx->clientBuffers = (struct kv_client_eager_buffer *) calloc(2, sizeof(struct kv_client_eager_buffer));
+    //TODO maby change to limit number of buffers
+    ctx->clientBuffersNum = NUMBER_OF_BUFFERS;
+    ctx->clientBuffers = calloc(0,MAX_MSG_TEST*ctx->num_servers*ctx->clientBuffersNum);
 
     for (count = 0; count < ctx->num_servers; count++) {
-        if (kvHandleFactory(&servers[count], 4096, g_argc, g_argv, &ctx->kv_handle[count])) {
+        if (kvHandleFactory(&servers[count], MAX_MSG_TEST, g_argc, g_argv, &ctx->kv_handle[count])) {
             return 1;
         }
     }
@@ -921,9 +967,9 @@ void mkv_send_credit(void *mkv_h, unsigned kv_id, unsigned how_many_credits)
 {
     struct mkv_handle *m_handle = mkv_h;
     kv_cmd cmd = SET_CREDIT;
-    char *msg = malloc(1 + 1  +1);
+    char *msg = malloc(sizeof(char) * 4);
     sprintf(msg, "%d:%d", cmd, how_many_credits);
-    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
+    printf("Sending set credit msg: %s with size %d\n", msg, strlen(msg) + 1);
 
     sendMsgLogic(m_handle->kv_handle[kv_id], msg);
 }
@@ -936,65 +982,94 @@ int main(int argc, char *argv[]) {
 
     struct kv_server_address servers[2] = {
             {
-                    .servername = "mlx-stud-01",
+                    .servername = "mlx-stud-04",
                     .port = 65433
             },{.servername = NULL, .port = 0}
     };
 
     assert(0 == mkv_open(servers, &kv_ctx));
-//    char key[4] = "red";
-//    char value[10] = "wedding";
-//
-//    if (mkv_set(kv_ctx,0, key, value)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    char* retVal = malloc(4096);;
-//    if (mkv_get(kv_ctx,0, key, &retVal)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
+    char key[4] = "red";
+    char value[10] = "wedding";
+    char key2[4] = "red2";
+    char value2[10] = "wedding2";
+
+    if (mkv_set(kv_ctx,0, key, value)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    char* retVal = malloc(4096);
+    if (mkv_get(kv_ctx,0, key, &retVal)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    retVal = malloc(4096);
+    if (mkv_get(kv_ctx,0, key, &retVal)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    mkv_release(retVal,0,kv_ctx);
+    mkv_send_credit(kv_ctx, 0, 1);
+
+    if (mkv_set(kv_ctx,0, key2, value2)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    if (mkv_get(kv_ctx,0, key2, &retVal)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    if (mkv_get(kv_ctx,0, key2, &retVal)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    if (mkv_get(kv_ctx,0, key, &retVal)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+
+
+
 
 
 //    //Complicated Test:
-    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
-    memset(msg,'w', MAX_MSG_TEST);
-    msg[MAX_MSG_TEST] = '\0';
-    printf("Start test\n");
-
-    char key[MAX_KEY];
-    for(int i = 0; i < LOOP_ITER;i++){
-        sprintf(key, "test%d", i);
-        if (kv_set(kv_ctx, key, msg))
-        {
-            fprintf(stderr, "Couldn't post send\n");
-            return 1;
-        }
-    }
-    for(int i = 0; i < LOOP_ITER;i++){
-        char *returnedVal = malloc(MAX_MSG_TEST + 1);
-        sprintf(key, "test%d", i);
-        if (kv_get(kv_ctx, key, &returnedVal))
-        {
-            fprintf(stderr, "Couldn't kv get the requested key\n");
-            return 1;
-        }
-        //printf("Got value: %s", returnedVal);
-        kv_release(returnedVal);
-    }
-    for(int i = 0; i < LOOP_ITER;i++){
-        char *returnedVal = malloc(MAX_MSG_TEST + 1);
-        sprintf(key, "test%d", i);
-        if (kv_get(kv_ctx, key, &returnedVal))
-        {
-            fprintf(stderr, "Couldn't kv get the requested key\n");
-            return 1;
-        }
-        //printf("Got value: %s", returnedVal);
-        kv_release(returnedVal);
-    }
-
-    printf("Stop test\n");
+//    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
+//    memset(msg,'w', MAX_MSG_TEST);
+//    msg[MAX_MSG_TEST] = '\0';
+//    printf("Start test\n");
+//
+//    char key[MAX_KEY];
+//    for(int i = 0; i < LOOP_ITER;i++){
+//        sprintf(key, "test%d", i);
+//        if (kv_set(kvHandle, key, msg))
+//        {
+//            fprintf(stderr, "Couldn't post send\n");
+//            return 1;
+//        }
+//    }
+//    for(int i = 0; i < LOOP_ITER;i++){
+//        char *returnedVal = malloc(MAX_MSG_TEST + 1);
+//        sprintf(key, "test%d", i);
+//        if (kv_get(kvHandle, key, &returnedVal))
+//        {
+//            fprintf(stderr, "Couldn't kv get the requested key\n");
+//            return 1;
+//        }
+//        //printf("Got value: %s", returnedVal);
+//        kv_release(returnedVal);
+//    }
+//    for(int i = 0; i < LOOP_ITER;i++){
+//        char *returnedVal = malloc(MAX_MSG_TEST + 1);
+//        sprintf(key, "test%d", i);
+//        if (kv_get(kvHandle, key, &returnedVal))
+//        {
+//            fprintf(stderr, "Couldn't kv get the requested key\n");
+//            return 1;
+//        }
+//        //printf("Got value: %s", returnedVal);
+//        kv_release(returnedVal);
+//    }
+//
+//    printf("Stop test\n");
 
 
 
