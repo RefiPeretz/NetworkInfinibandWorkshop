@@ -19,3 +19,7 @@ target_link_libraries(ex3_1_client "${GCC_COVERAGE_LINK_FLAGS}")
 set(ex3_1_serverP3 eagerServerP3.c pingpong.c pingpong.h)
 add_executable(ex3_1_serverP3 ${ex3_1_serverP3})
 target_link_libraries(ex3_1_serverP3 "${GCC_COVERAGE_LINK_FLAGS}")
+
+set(ex3_clientP3 eagerClientP3.c pingpong.c pingpong.h)
+add_executable(ex3_clientP3 ${ex3_clientP3})
+target_link_libraries(ex3_clientP3 "${GCC_COVERAGE_LINK_FLAGS}")

@@ -486,11 +486,6 @@ static void usage(const char *argv0)
     printf("  -g, --gid-idx=<gid index> local port gid index\n");
 }
 
-typedef enum kv_cmd
-{
-    SET_CMD = 3, GET_CMD = 4,
-} kv_cmd;
-
 typedef struct kvMsg
 {
     char *key;
@@ -622,9 +617,9 @@ int mkv_set(void *mkv_h, unsigned kv_id, const char *key, const char *value){
 }
 
 
-int sendMsgLogic(void *kv_handle,  char *msg)
+int sendMsgLogic(handle *kv_handle,  char *msg)
 {
-    if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg,
+    if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, msg,
                        strlen(msg) + 1))
     {
         perror("Couldn't post send: ");
@@ -639,7 +634,7 @@ int sendMsgLogic(void *kv_handle,  char *msg)
         int ne;
         do
         {
-            ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
+            ne = ibv_poll_cq(kv_handle->ctx->cq, 2, wc);
             if (ne < 0)
             {
                 fprintf(stderr, "poll CQ failed %d\n", ne);
@@ -664,6 +659,7 @@ int sendMsgLogic(void *kv_handle,  char *msg)
             }
         }
     }
+    return 0;
 
 }
 
@@ -710,10 +706,12 @@ int kv_get(void *kv_handle, const char *key, char **value)
     printf("Pooling for result value \n");
     char *recv2Msg;
     int scnt = 1, recved = 1;
-    while (scnt || recved)
+    int iterations = 10000;
+    while (scnt || recved || iterations > 0)
     {
         struct ibv_wc wc[2];
         int ne;
+        int pollIterations = 10000;
         do
         {
             ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
@@ -722,8 +720,8 @@ int kv_get(void *kv_handle, const char *key, char **value)
                 fprintf(stderr, "poll CQ failed %d\n", ne);
                 return 1;
             }
-
-        } while (ne < 1);
+            pollIterations--;
+        } while (ne < 1 && pollIterations > 0);
 
         for (int i = 0; i < ne; ++i) {
             if (wc[i].status != IBV_WC_SUCCESS) {
@@ -751,6 +749,7 @@ int kv_get(void *kv_handle, const char *key, char **value)
             }
 
         }
+        iterations--;
 
     }
 
@@ -916,13 +915,12 @@ int pp_wait_completions(struct handle *pContext, int i) {
 void mkv_send_credit(void *mkv_h, unsigned kv_id, unsigned how_many_credits)
 {
     struct mkv_handle *m_handle = mkv_h;
-    handle *kvHandle = m_handle->kv_handle[kv_id];
     kv_cmd cmd = SET_CREDIT;
     char *msg = malloc(1 + 1  +1);
     sprintf(msg, "%d:%d", cmd, how_many_credits);
     printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
 
-    return sendMsgLogic(kv_handle, msg);
+    return sendMsgLogic(m_handle->kv_handle[kv_id], msg);
 }
 
 int main(int argc, char *argv[]) {

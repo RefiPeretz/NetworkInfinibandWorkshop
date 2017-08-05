@@ -509,70 +509,70 @@ typedef struct handle
     int lastItemIndex;
     int msgQueItemCount;
 
-    char * getKvMsgQueFront(){
-        return front;
-    }
 
-    bool isKvMsgQueEmpty(){
-        if(msgQueItemCount == 0){
-            return true;
-        }
-        return false;
-    }
-
-
-    int getKvMsgQueSize(){
-        return msgQueItemCount;
-    }
-
-    //return true if msg queue isn't full
-    bool isKvMsgQueFull(){
-        if(msgQueItemCount == MAX_KV_MSG_QUE){
-            return true;
-        }
-        return false;
-    }
-
-    //return true if insert was successful
-    bool insert(char* data) {
-        if(!isKvMsgQueFull) {
-            if(msgQueItemCount == 0){
-                char* front = data;
-                char* rear = data;
-            } else {
-                char* rear = data;
-            }
-            msgQueItemCount++;
-            msgQue[msgQueItemCount] = data;
-            if((msgQueItemCount - 1)  == 0){
-                char* front = msgQue[msgQueItemCount];
-                char* rear = msgQue[msgQueItemCount];
-            } else {
-                char* rear = msgQue[msgQueItemCount];
-            }
-        }
-
-    }
-
-    char* pop() {
-        char* result = NULL;
-        if(!isKvMsgQueEmpty()) {
-            result = front;
-            msgQueItemCount--;
-            if(msgQueItemCount == 0){
-                char* front = NULL;
-                char* rear = NULL;
-            } else {
-                front = msgQue[msgQueItemCount];
-            }
-        }
-        return result;
-    }
 
 } handle;
 
 
+char * getKvMsgQueFront(handle* kvHandle){
+    return kvHandle->front;
+}
 
+bool isKvMsgQueEmpty(handle* kvHandle){
+    if(kvHandle->msgQueItemCount == 0){
+        return true;
+    }
+    return false;
+}
+
+
+int getKvMsgQueSize(handle* kvHandle){
+    return kvHandle->msgQueItemCount;
+}
+
+//return true if msg queue isn't full
+bool isKvMsgQueFull(handle* kvHandle){
+    if(kvHandle->msgQueItemCount == MAX_KV_MSG_QUE){
+        return true;
+    }
+    return false;
+}
+
+//return true if insert was successful
+bool insert(handle* kvHandle, char* data) {
+    if(!isKvMsgQueFull(kvHandle)) {
+        if(kvHandle->msgQueItemCount == 0){
+            kvHandle->front = data;
+            kvHandle->rear = data;
+        } else {
+            kvHandle->rear = data;
+        }
+        kvHandle->msgQueItemCount++;
+        kvHandle->msgQue[kvHandle->msgQueItemCount] = data;
+        if((kvHandle->msgQueItemCount - 1)  == 0){
+            kvHandle->front = kvHandle->msgQue[kvHandle->msgQueItemCount];
+            kvHandle->rear = kvHandle->msgQue[kvHandle->msgQueItemCount];
+        } else {
+            kvHandle->rear = kvHandle->msgQue[kvHandle->msgQueItemCount];
+        }
+    }
+
+}
+
+char* pop(handle* kvHandle) {
+    char* result = NULL;
+    if(!isKvMsgQueEmpty(kvHandle)) {
+        result = kvHandle->front;
+        kvHandle->msgQueItemCount--;
+        if(kvHandle->msgQueItemCount == 0){
+            kvHandle->front = NULL;
+            kvHandle->rear = NULL;
+        } else {
+            kvHandle->front = kvHandle->msgQue[kvHandle->msgQueItemCount];
+        }
+    }
+    return result;
+}
 
 
 
@@ -692,7 +692,7 @@ int kv_close(void *kv_handle)
 
 
 int getCmdMsgLogic(handle* kv_handle, char* key){
-
+    kv_handle->credits--;
     char **retValue = malloc(sizeof(char*));
     int ret =  getFromStore(kv_handle, key, retValue);
     if(ret){
@@ -728,28 +728,32 @@ int processClientCmd(handle *kv_handle, char *msg)
 
 
 
-    if (cmd == SET_CMD)
-    {
+    if (cmd == SET_CMD) {
+
         addElement(key, value, kv_handle);
 
-    } else if (cmd == GET_CMD)
-    {
+    } else if (cmd == GET_CMD) {
+
         printf("Checking client credits:  %d\n", kv_handle->credits);
         if(kv_handle->credits == 0){
-            kv_handle->insert(key);
+            insert(kv_handle, key);
             printf("Storing msg due to insufficient funds :( \n");
             return 0;
         }
         return getCmdMsgLogic(kv_handle, key);
-    }else if(cmd == SET_CREDIT){
+
+    } else if(cmd == SET_CREDIT) {
+
         kv_handle->credits += atoi(value);
-        if(!kv_handle->isKvMsgQueEmpty() && kv_handle->credits > 0){
-            char* pendingMsgKey = kv_handle->pop();
+        while(!isKvMsgQueEmpty(kv_handle) && kv_handle->credits > 0){
+            char* pendingMsgKey = pop(kv_handle);
             return getCmdMsgLogic(kv_handle, pendingMsgKey);
         }
-    } else
-    {
+
+    } else {
+
         fprintf(stderr, "Coudln't decide what's the msg! MsgCmd - %d\n", cmd);
+
     }
 
     return 0;
