@@ -517,8 +517,6 @@ typedef struct handle
 
 typedef struct mkv_handle
 {
-    struct ibv_device **dev_list;
-    struct ibv_device *ib_dev;
     unsigned num_servers;
     struct handle *kv_handle[0];
     int defMsgSize;
@@ -636,20 +634,22 @@ int sendMsgLogic(handle *kv_handle,  char *msg)
 
 
     int scnt = 0;
-    while (scnt == 0)
+    int iterations = 1000;
+    while (scnt == 0 || iterations > 0)
     {
-        struct ibv_wc wc[2];
+        struct ibv_wc wc[101];
         int ne;
+        int pollIterations = 100;
         do
         {
-            ne = ibv_poll_cq(kv_handle->ctx->cq, 2, wc);
+            ne = ibv_poll_cq(kv_handle->ctx->cq, 101, wc);
             if (ne < 0)
             {
                 fprintf(stderr, "poll CQ failed %d\n", ne);
                 return 1;
             }
-
-        } while (ne < 1);
+            pollIterations--;
+        } while (ne < 1 && pollIterations > 0);
 
         for (int i = 0; i < ne; ++i)
         {
@@ -666,6 +666,8 @@ int sendMsgLogic(handle *kv_handle,  char *msg)
                 break;
             }
         }
+
+        iterations--;
     }
     return 0;
 
@@ -723,9 +725,6 @@ int kv_get(void *kv_handle, const char *key, char **value,char* clientBuffers,in
         int freeIndex = getFreeBufferIndex(kv_handle);
         recv2Msg1 = clientBuffers + (kv_id*MAX_MSG_TEST + freeIndex*MAX_MSG_TEST);
         kvHandle->usedBuffers++;
-    }else{
-        fprintf(stderr, "There is no buffers left\n");
-        return -1;
     }
 
 
@@ -785,7 +784,6 @@ int kv_get(void *kv_handle, const char *key, char **value,char* clientBuffers,in
     }
 
     memcpy(*value, recv2Msg, strlen(recv2Msg) + 1);
-    free(recv2Msg);
     return 0;
 };
 
@@ -794,15 +792,30 @@ void kv_release(char *value) {
         free(value);
     }
 };
+void mkv_send_credit(void *mkv_h, unsigned kv_id, unsigned how_many_credits)
+{
+    struct mkv_handle *m_handle = mkv_h;
+    kv_cmd cmd = SET_CREDIT;
+    char *msg = malloc(sizeof(char) * 20);
+    sprintf(msg, "%d:%d", cmd, how_many_credits);
+    printf("Sending set credit msg: %s with size %d\n", msg, strlen(msg) + 1);
 
+    sendMsgLogic(m_handle->kv_handle[kv_id], msg);
+}
 void mkv_close(void *mkv_h)
 {
     unsigned count;
-    struct mkv_handle *m_handle = mkv_h;
-    for (count = 0; count < m_handle->num_servers; count++) {
-        pp_close_ctx(m_handle->kv_handle[count]->ctx);
+    struct mkv_handle *master_handle = mkv_h;
+    for (count = 0; count < master_handle->num_servers; count++) {
+        ibv_ack_cq_events(master_handle->kv_handle[count]->ctx->cq, 0);
+        pp_close_ctx(master_handle->kv_handle[count]->ctx);
+        ibv_free_device_list(master_handle->kv_handle[count]->dev_list);
+        free(master_handle->kv_handle[count]->rem_dest);
+        free(master_handle->kv_handle[count]);
     }
-    free(m_handle);
+    //ibv_free_device_list(master_handle->dev_list);
+
+    free(master_handle);
 }
 
 void mkv_release(char *value,int kv_id,void *mkv_h)
@@ -814,7 +827,7 @@ void mkv_release(char *value,int kv_id,void *mkv_h)
             char* temp = m_handle->clientBuffers + (kv_id*MAX_MSG_TEST + i*MAX_MSG_TEST);
             if(strcmp(value, temp)){
                 //clear bufffer
-                memset(temp, 0, MAX_MSG_TEST);
+                //memset(temp, 0, MAX_MSG_TEST);
                 cur_handle->isUsed[i] = UN_USED_BUFFER;
                 cur_handle->usedBuffers--;
             }
@@ -827,6 +840,7 @@ void mkv_release(char *value,int kv_id,void *mkv_h)
 
 int kv_close(void *kv_handle)
 {
+
     if (pp_close_ctx(((handle *) kv_handle)->ctx))
     {
         return 1;
@@ -963,16 +977,7 @@ int pp_wait_completions(struct handle *pContext, int i) {
     return 0;
 }
 
-void mkv_send_credit(void *mkv_h, unsigned kv_id, unsigned how_many_credits)
-{
-    struct mkv_handle *m_handle = mkv_h;
-    kv_cmd cmd = SET_CREDIT;
-    char *msg = malloc(sizeof(char) * 4);
-    sprintf(msg, "%d:%d", cmd, how_many_credits);
-    printf("Sending set credit msg: %s with size %d\n", msg, strlen(msg) + 1);
 
-    sendMsgLogic(m_handle->kv_handle[kv_id], msg);
-}
 
 int main(int argc, char *argv[]) {
     void *kv_ctx; /* handle to internal KV-client context */
@@ -990,8 +995,9 @@ int main(int argc, char *argv[]) {
     assert(0 == mkv_open(servers, &kv_ctx));
     char key[4] = "red";
     char value[10] = "wedding";
-    char key2[4] = "red2";
-    char value2[10] = "wedding2";
+    char key2[5] = "red2";
+    char value2[11] = "wedding2";
+    mkv_send_credit(kv_ctx, 0, 2);
 
     if (mkv_set(kv_ctx,0, key, value)) {
         fprintf(stderr, "Couldn't post send\n");
@@ -1008,7 +1014,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     mkv_release(retVal,0,kv_ctx);
-    mkv_send_credit(kv_ctx, 0, 1);
 
     if (mkv_set(kv_ctx,0, key2, value2)) {
         fprintf(stderr, "Couldn't post send\n");
@@ -1026,10 +1031,9 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
-
-
-
-
+    //mkv_send_credit(kv_ctx, 0, 50);
+    struct mkv_handle *m_handle = kv_ctx;
+    mkv_close(kv_ctx);
 
 //    //Complicated Test:
 //    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
