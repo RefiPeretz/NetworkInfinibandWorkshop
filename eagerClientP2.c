@@ -60,6 +60,7 @@ struct pingpong_dest
 #define EAGER_PROTOCOL_LIMIT (1 << 22) /* 4KB limit */
 
 #define EAGER_BUFFER_LIMIT (10)
+
 struct kv_client_eager_buffer {
     unsigned kv_id; /* which connection does this buffer belong to */
     char data[EAGER_PROTOCOL_LIMIT]; /* give only this to ibv_post_recv() or the user */
@@ -525,6 +526,8 @@ typedef struct mkv_handle
     struct pingpong_dest *rem_dest;
     char gid[33];
     kvMsg **kvMsgDict;
+    struct kv_client_eager_buffer *clientBuffers;
+    int clientBuffersNum;
 } mkv_handle;
 
 int getFromStore(handle *store, const char *key, char **value)
@@ -835,6 +838,9 @@ int mkv_open(struct kv_server_address *servers, void **mkv_h) {
     }
 
     ctx->num_servers = count;
+    ctx->clientBuffersNum = 2;
+    ctx->clientBuffers = (struct kv_client_eager_buffer *) calloc(2, sizeof(struct kv_client_eager_buffer));
+
     for (count = 0; count < ctx->num_servers; count++) {
         if (kvHandleFactory(&servers[count], 4096, g_argc, g_argv, &ctx->kv_handle[count])) {
             return 1;
