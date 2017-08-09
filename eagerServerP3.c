@@ -18,7 +18,145 @@
 
 #include "pingpong.h"
 
-#define MAX_KEY 10
+#define MAX_KEY
+
+#define MAX_KV_MSG_QUE 100
+
+typedef struct kvMsg
+{
+    char *key;
+    char *value;
+} kvMsg;
+
+struct pingpong_dest
+{
+    int lid;
+    int qpn;
+    int psn;
+    union ibv_gid gid;
+};
+
+
+
+typedef struct handle
+{
+    struct ibv_device **dev_list;
+    struct ibv_device *ib_dev;
+    struct pingpong_context *ctx;
+    long defMsgSize;
+    int kvListSize;
+    int ib_port;
+    int rx_depth;
+    int credits;
+    struct pingpong_dest my_dest;
+    struct pingpong_dest *rem_dest;
+    char gid[33];
+    kvMsg **kvMsgDict;
+
+    struct stack_t* creditStack;
+
+    char* msgQue[MAX_KV_MSG_QUE];
+    char* front;
+    char* rear;
+    int lastItemIndex;
+    int msgQueItemCount;
+
+
+
+} handle;
+
+/**
+ * Type for individual stack entry
+ */
+struct stack_entry {
+    char *data;
+    struct stack_entry *next;
+    struct stack_entry *prev;
+
+};
+
+/**
+ * Type for stack instance
+ */
+struct stack_t
+{
+    struct stack_entry *head;
+    size_t stackSize;  // not strictly necessary, but
+    // useful for logging
+};
+
+/**
+ * Create a new stack instance
+ */
+struct stack_t *newStack(void)
+{
+    struct stack_t *stack = malloc(sizeof *stack);
+    if (stack)
+    {
+        stack->head = NULL;
+        stack->stackSize = 0;
+    }
+    return stack;
+}
+
+/**
+ * Make a copy of the string to be stored (assumes
+ * strdup() or similar functionality is not
+ * available
+ */
+char *copyString(char *str)
+{
+    char *tmp = malloc(strlen(str) + 1);
+    if (tmp)
+        strcpy(tmp, str);
+    return tmp;
+}
+
+/**
+ * Push a value onto the stack
+ */
+void push(struct handle* kvHandle, char *value)
+{
+    struct stack_t* curStack = kvHandle->creditStack;
+
+    struct stack_entry *entry = malloc(sizeof *entry);
+    if (entry)
+    {
+        entry->data = copyString(value);
+        entry->next = curStack->head;
+        curStack->head = entry;
+        if(curStack->stackSize > 0){
+            curStack->head->next->prev = entry;
+        }
+        curStack->stackSize++;
+    }
+}
+
+
+
+/**
+ * Pop the top element from the stack; this deletes both
+ * the stack entry and the string it points to
+ */
+char* pop(handle* kvHandle)
+{
+    struct stack_t* curStack = kvHandle->creditStack;
+    if (curStack->head != NULL)
+    {
+        struct stack_entry *tmp = curStack->head;
+        while(tmp->next != NULL){
+            tmp = tmp->next;
+        }
+        if( curStack->stackSize > 1){
+            tmp->prev->next = NULL;
+        }
+        curStack->stackSize--;
+        return tmp->data;
+
+    }
+    return NULL;
+}
+
 
 
 struct kv_server_address {
@@ -46,15 +184,6 @@ struct pingpong_context
     struct ibv_port_attr portinfo;
 
 };
-
-struct pingpong_dest
-{
-    int lid;
-    int qpn;
-    int psn;
-    union ibv_gid gid;
-};
-
 
 
 
@@ -480,38 +609,8 @@ static void usage(const char *argv0)
 
 
 
-typedef struct kvMsg
-{
-    char *key;
-    char *value;
-} kvMsg;
-#define MAX_KV_MSG_QUE 100
-
-typedef struct handle
-{
-    struct ibv_device **dev_list;
-    struct ibv_device *ib_dev;
-    struct pingpong_context *ctx;
-    long defMsgSize;
-    int kvListSize;
-    int ib_port;
-    int rx_depth;
-    int credits;
-    struct pingpong_dest my_dest;
-    struct pingpong_dest *rem_dest;
-    char gid[33];
-    kvMsg **kvMsgDict;
 
 
-    char* msgQue[MAX_KV_MSG_QUE];
-    char* front;
-    char* rear;
-    int lastItemIndex;
-    int msgQueItemCount;
-
-
-
-} handle;
 
 
 char * getKvMsgQueFront(handle* kvHandle){
@@ -559,22 +658,6 @@ bool insert(handle* kvHandle, char* data) {
     }
 
 }
-
-char* pop(handle* kvHandle) {
-    char* result = NULL;
-    if(!isKvMsgQueEmpty(kvHandle)) {
-        result = kvHandle->front;
-        kvHandle->msgQueItemCount--;
-        if(kvHandle->msgQueItemCount == 0){
-            kvHandle->front = NULL;
-            kvHandle->rear = NULL;
-        } else {
-            kvHandle->front = kvHandle->msgQue[kvHandle->msgQueItemCount];
-        }
-    }
-    return result;
-}
-
 
 
 
@@ -642,6 +725,7 @@ void addElement(const char* key, char* value,struct handle* curHandle)
 int kv_open(char *servername, void **kv_handle)
 {
     handle *kvHandle = *kv_handle;
+    kvHandle->creditStack = newStack();
     kvHandle->dev_list = ibv_get_device_list(NULL);
     if (!kvHandle->dev_list)
     {
@@ -737,7 +821,7 @@ int processClientCmd(handle *kv_handle, char *msg)
 
         printf("Checking client credits:  %d\n", kv_handle->credits);
         if(kv_handle->credits == 0){
-            insert(kv_handle, key);
+            push(kv_handle, key);
             printf("Storing msg due to insufficient funds :( \n");
             return 0;
         }
@@ -746,7 +830,7 @@ int processClientCmd(handle *kv_handle, char *msg)
     } else if(cmd == SET_CREDIT) {
 
         kv_handle->credits += atoi(key);
-        while(!isKvMsgQueEmpty(kv_handle) && kv_handle->credits > 0){
+        while(kv_handle->creditStack->stackSize > 0 && kv_handle->credits > 0){
             char* pendingMsgKey = pop(kv_handle);
             return getCmdMsgLogic(kv_handle, pendingMsgKey);
         }
@@ -759,7 +843,6 @@ int processClientCmd(handle *kv_handle, char *msg)
 
     return 0;
 }
-
 
 
 
@@ -866,7 +949,7 @@ int main(int argc, char *argv[])
     kvHandle->defMsgSize = size;
     kvHandle->ib_port = ib_port;
     kvHandle->rx_depth = 500;
-    kvHandle->credits = 0;
+    kvHandle->credits = 2;
     gidx = -1;
 
     page_size = sysconf(_SC_PAGESIZE);

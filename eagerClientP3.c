@@ -989,7 +989,7 @@ int main(int argc, char *argv[]) {
 
     struct kv_server_address servers[2] = {
             {
-                    .servername = "mlx-stud-04",
+                    .servername = "mlx-stud-01",
                     .port = 65433
             },{.servername = NULL, .port = 0}
     };
@@ -999,7 +999,6 @@ int main(int argc, char *argv[]) {
     char value[10] = "wedding";
     char key2[5] = "red2";
     char value2[11] = "wedding2";
-    mkv_send_credit(kv_ctx, 0, 2);
 
     if (mkv_set(kv_ctx,0, key, value)) {
         fprintf(stderr, "Couldn't post send\n");
