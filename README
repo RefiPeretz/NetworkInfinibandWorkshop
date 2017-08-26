@@ -1,0 +1,106 @@
+===================EX3===================
+refi950
+fimak
+
+===================Description Ex2===================
+This ex desgin to simulate connections between two types of approaches:
+Eager and Rendezvous.
+
+Base on ex1 IBVSeverClient we build the following:
+
+EagerClientServer:
+This Client/Server designed for small messages communication up to 4096[Bytes] in size.
+Implementing Key-store value EagerClientServer has two options set or get.
+
+Set: setting key and value to server "database"
+Get: send request to server for certain key value the sever should response
+ with the value of the key.
+
+randClientServer:
+This Client/Server designed for large messages in size.
+The seg and the get functions works the same as in EagerClientServer however the
+implementing the communication with RDMA. When we are setting key we request
+a set through regular Eager infrastructure. We get back and address to wirte to and we
+write our value.
+
+When we produce a get request we get back from ther server the address we need to read
+from using RDMA.
+
+In order the maintain the database of the sever we implement a dictionary map in c.
+This mpa store our key and values both in EagerClientServer and RandClientServer.
+Also we add a smart cache for the RandClient to maintain a key and address for key we alreay
+read. In this way we don't have to ask for an address of certain key we can just read it
+from memory.
+
+
+===================Description Ex3===================
+*Approved by Alex to change mkv_release API.
+
+Ex3 base in the code from ex2 eager server client.
+
+The server explore the world of memory. Here we are limited with memory. Each client and server
+has a limited number of buffers.
+
+P1 - turn ex2 to a multiserver. By creating mkv we created a manager to all the client server connections.
+We also manage all the memory of the buffers.
+P2- We experiment with  limited memory with out a solution to what happen if we have no
+memory left.
+P3 - We integrate the credits system. When there is not enough memory the server will put the
+request in queue. The client will not get response and after contnat number iteration will get out
+form the receiving loop. Now if and only if the client will use mkv_release it will be able to get
+any response from the server. When server gets credit it checks the queue and if its not empty
+it send msgs from it until it empty or until it empty or the credits are done agin.
+
+When there is a scenario of insuficent credits the server and client will loop
+a contast number of iteration until they get timeout. Than the Client will have to
+call mkv_release in order the proceed the server in return will send requests from queue.
+The queue is implemented by an implementation of queue in c.
+===================Tests===================
+We tested all 3 parts.
+Fot the las part we did also testing with not enough credits on purpose and
+only than release.
+
+For the first three tests on all pars we did a session of SET and two gets
+on the same value.
+NUMBER_OF_BUFFERS = 2.
+
+Throughput results:
+P1: 71.76[Mbit/s]
+P2: 70.31[Mbit/s]
+P3: 65.57[Mbit/s] (Make seance since there is redundant checks for credits)
+
+To check part three we delibertly send more requests than the server can handle and than
+we cal mkv_release some.
+
+Scenario:
+SET
+GET
+GET
+RELEASE
+SET
+GET
+GET
+GET
+RELEASE
+
+Throughput results:
+P3: 1.8[Mbit/s] (We can make it quicker with more efficient timeout methods)
+
+
+
+===================Useage===================
+run make
+
+server: serverP3
+client client P3 servername
+
+Run the third scenario test.
+SET
+GET
+GET
+RELEASE
+SET
+GET
+GET
+GET
+RELEASE

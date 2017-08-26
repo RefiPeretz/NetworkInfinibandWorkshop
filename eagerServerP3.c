@@ -37,7 +37,6 @@ struct pingpong_dest
 };
 
 
-
 typedef struct handle
 {
     struct ibv_device **dev_list;

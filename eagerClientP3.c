@@ -14,6 +14,7 @@
 #include <getopt.h>
 #include <arpa/inet.h>
 #include <time.h>
+#include "MetricsIBV.h"
 
 
 #include "pingpong.h"
@@ -983,13 +984,23 @@ int pp_wait_completions(struct handle *pContext, int i) {
 
 int main(int argc, char *argv[]) {
     void *kv_ctx; /* handle to internal KV-client context */
-
+    struct timeval start, end;
+    char *servername = NULL;
     g_argc = argc;
     g_argv = argv;
 
+    if (argc == 2)
+    {
+        servername = strdup(argv[1]);
+    } else
+    {
+        usage(argv[0]);
+        return 1;
+    }
+
     struct kv_server_address servers[2] = {
             {
-                    .servername = "mlx-stud-01",
+                    .servername = servername,
                     .port = 65433
             },{.servername = NULL, .port = 0}
     };
@@ -999,7 +1010,10 @@ int main(int argc, char *argv[]) {
     char value[10] = "wedding";
     char key2[5] = "red2";
     char value2[11] = "wedding2";
-
+    if (gettimeofday(&start, NULL)) {
+        perror("gettimeofday");
+        return 1;
+    }
     if (mkv_set(kv_ctx,0, key, value)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
@@ -1041,6 +1055,14 @@ int main(int argc, char *argv[]) {
     struct mkv_handle *m_handle = kv_ctx;
     //mkv_close(kv_ctx);
     mkv_send_credit(kv_ctx, 0, 2);
+    if (gettimeofday(&end, NULL)) {
+        perror("gettimeofday");
+        return 1;
+    }
+    printf("Stop test\n");
+    double testTime = timeDifference(start,end);
+    double rdmaThroughput = calcAverageThroughput(11,MAX_MSG_TEST,testTime);
+    printf("ex3 overall throughput:%f\n",rdmaThroughput);
 
 //    //Complicated Test:
 //    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
