@@ -373,8 +373,8 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
     }
 
     {
-        struct ibv_qp_attr attr =
-                {.qp_state        = IBV_QPS_INIT, .pkey_index      = 0, .port_num        = port, .qp_access_flags = 0};
+        struct ibv_qp_attr attr = {.qp_state        = IBV_QPS_INIT, .pkey_index      = 0, .port_num        = port, .qp_access_flags =
+        IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_REMOTE_READ | IBV_ACCESS_REMOTE_ATOMIC};
 
         if (ibv_modify_qp(ctx->qp, &attr,
                           IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT |

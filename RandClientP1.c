@@ -26,7 +26,17 @@
 #define USED_BUFFER 1
 #define UN_USED_BUFFER 0
 
-
+/**
+ * allocate free buffer
+ * @param kv_id
+ * @param usedBuffer
+ * @return
+ */
+typedef struct Message {
+    uint32_t mr_rkey;
+    long unsigned addr;
+    int valueSize;
+} Message;
 
 
 struct kv_server_address {
@@ -397,6 +407,7 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
 }
 
 
+
 int pp_close_ctx(struct pingpong_context *ctx)
 {
     if (ibv_destroy_qp(ctx->qp))
@@ -682,7 +693,7 @@ int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, char *actual
                                        IBV_ACCESS_LOCAL_WRITE);
 
 
-    struct message *mr_msg = (struct message *) calloc(1, sizeof(struct message));
+    struct Message *mr_msg = (struct Message *) calloc(1, sizeof(struct Message));
     char *delim = ":";
     mr_msg->addr = strtoul(strtok(msg, delim), NULL, 10);
     mr_msg->mr_rkey = (uint32_t) atoi(strtok(NULL, delim));
@@ -702,24 +713,21 @@ int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, char *actual
     return 0;
 }
 
-int
+
 int kv_set(void *kv_handle, const char *key, const char *value)
 {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = SET_CMD;
-    char *msg = malloc(1 + strlen(key) + strlen(value) + 2 +1);
-    sprintf(msg, "%d:%s:%s", cmd, key, value);
-    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
-
-    //return sendMsgLogic(kv_handle, msg);
-
     //first send msg to server with size and MR to read from.
-
     size_t actualMsgSize = roundup(strlen(value) + 1, page_size);
     char *actualMsg = (char *) malloc(actualMsgSize);
     sprintf(actualMsg, "%d:%s:%s", cmd, key, value);
+
+    //first send msg to server with size and MR to read from.
+    char *msg = (char *) malloc(roundup(kvHandle->defMsgSize, page_size));
     sprintf(msg, "%d:%s:%d", cmd, key, strlen(value) + 1);
     printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
+
     if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg, strlen(msg) + 1)) {
         perror("Couldn't post send: ");
         return 1;
@@ -733,10 +741,10 @@ int kv_set(void *kv_handle, const char *key, const char *value)
     }
     int scnt = 2, rcvd = 1;
     while (scnt || rcvd) {
-        struct ibv_wc wc[2];
+        struct ibv_wc wc[5];
         int ne;
         do {
-            ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
+            ne = ibv_poll_cq(kvHandle->ctx->cq, 5, wc);
             if (ne < 0) {
                 fprintf(stderr, "poll CQ failed %d\n", ne);
                 return 1;
@@ -767,8 +775,9 @@ int kv_set(void *kv_handle, const char *key, const char *value)
     }
 
 
-
+    return 0;
 };
+
 
 int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value)
 {
@@ -787,7 +796,7 @@ int getFreeBufferIndex(handle *kvHandle){
 }
 
 
-int processServerGetReqResponseCmd(handle *kv_handle, struct message *msg, char **value) {
+int processServerGetReqResponseCmd(handle *kv_handle, struct Message *msg, char **value) {
     struct ibv_mr *sendMr = ibv_reg_mr(kv_handle->ctx->pd, *value, msg->valueSize, IBV_ACCESS_LOCAL_WRITE);
 
     struct ibv_sge list = {.addr    = (uintptr_t) (*value), .length = msg->valueSize, .lkey = sendMr->lkey};
@@ -801,17 +810,7 @@ int processServerGetReqResponseCmd(handle *kv_handle, struct message *msg, char 
     return 0;
 }
 
-/**
- * allocate free buffer
- * @param kv_id
- * @param usedBuffer
- * @return
- */
-struct Message {
-    uint32_t mr_rkey;
-    long unsigned addr;
-    int valueSize;
-};
+
 
 int kv_get(void *kv_handle, const char *key, char **value,char* clientBuffers,int kv_id)
 {
@@ -900,39 +899,40 @@ int kv_get(void *kv_handle, const char *key, char **value,char* clientBuffers,in
         iterations--;
 
     }
-    free(recv2Msg1);
-    *value = calloc(1, mr_msg->valueSize * sizeof(char));
-    processServerGetReqResponseCmd(kv_handle, mr_msg, value);
-    int scntGetReqres = 1;
-    while (scntGetReqres) {
-        struct ibv_wc wc[2];
-        int ne;
-        do {
-            ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
-            if (ne < 0) {
-                fprintf(stderr, "poll CQ failed %d\n", ne);
-                return 1;
-            }
-
-        } while (ne < 1);
-
-        for (int i = 0; i < ne; ++i) {
-            if (wc[i].status != IBV_WC_SUCCESS) {
-                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status), wc[i].status,
-                        (int) wc[i].wr_id);
-                return 1;
-            }
-
-            switch ((int) wc[i].wr_id) {
-                case PINGPONG_SEND_WRID:
-                    scntGetReqres--;
-                    break;
-
-                default:
-                    fprintf(stderr, "Completion for unknown wr_id %d\n", (int) wc[i].wr_id);
+    if (iterations != 0) {
+        *value = calloc(1, mr_msg->valueSize * sizeof(char));
+        processServerGetReqResponseCmd(kv_handle, mr_msg, value);
+        int scntGetReqres = 1;
+        while (scntGetReqres) {
+            struct ibv_wc wc[2];
+            int ne;
+            do {
+                ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
+                if (ne < 0) {
+                    fprintf(stderr, "poll CQ failed %d\n", ne);
                     return 1;
-            }
+                }
 
+            } while (ne < 1);
+
+            for (int i = 0; i < ne; ++i) {
+                if (wc[i].status != IBV_WC_SUCCESS) {
+                    fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status),
+                            wc[i].status, (int) wc[i].wr_id);
+                    return 1;
+                }
+
+                switch ((int) wc[i].wr_id) {
+                    case PINGPONG_SEND_WRID:
+                        scntGetReqres--;
+                        break;
+
+                    default:
+                        fprintf(stderr, "Completion for unknown wr_id %d\n", (int) wc[i].wr_id);
+                        return 1;
+                }
+
+            }
         }
     }
     free(mr_msg);

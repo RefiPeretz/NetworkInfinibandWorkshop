@@ -2,18 +2,12 @@
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" assignedExecutableTargets="true" buildAllGenerated="true">
     <generated>
-      <config projectName="ex1v2" targetName="SimpleIBServer" />
-      <config projectName="ex1v2" targetName="MultiThreadTcpClient" />
       <config projectName="ex1v2" targetName="NonBlockingTcpClient" />
       <config projectName="ex1v2" targetName="ex3_1_client" />
-      <config projectName="ex1v2" targetName="server" />
       <config projectName="ex1v2" targetName="SingleStreamTcpServer" />
       <config projectName="ex1v2" targetName="rand" />
       <config projectName="ex1v2" targetName="NonBlockingTcpServer" />
-      <config projectName="ex1v2" targetName="MultiStreamSizeClient" />
-      <config projectName="ex1v2" targetName="MultiStreamIB" />
-      <config projectName="ex1v2" targetName="client" />
-      <config projectName="ex1v2" targetName="multithreadIB" />
+      <config projectName="ex1v2" targetName="ex3_clientP3" />
       <config projectName="ex1v2" targetName="MultiStreamTcpClient" />
       <config projectName="ex1v2" targetName="ex1v2" />
       <config projectName="ex1v2" targetName="SingleStreamTcpServe" />
@@ -23,6 +17,16 @@
       <config projectName="ex1v2" targetName="VaryingSizeTcpClient" />
       <config projectName="ex1v2" targetName="MultiThreadTcpServer" />
       <config projectName="ex1v2" targetName="ex3_1_server" />
+      <config projectName="ex1v2" targetName="SimpleIBServer" />
+      <config projectName="ex1v2" targetName="MultiThreadTcpClient" />
+      <config projectName="ex1v2" targetName="server" />
+      <config projectName="ex1v2" targetName="MultiStreamSizeClient" />
+      <config projectName="ex1v2" targetName="MultiStreamIB" />
+      <config projectName="ex1v2" targetName="client" />
+      <config projectName="ex1v2" targetName="multithreadIB" />
+      <config projectName="ex1v2" targetName="ex4_serverP1" />
+      <config projectName="ex1v2" targetName="ex3_1_serverP3" />
+      <config projectName="ex1v2" targetName="ex4_clientP1" />
     </generated>
   </component>
   <component name="CMakeSettings" AUTO_RELOAD="true" GENERATION_PASS_SYSTEM_ENVIRONMENT="true">
@@ -31,14 +35,22 @@
     </ADDITIONAL_GENERATION_ENVIRONMENT>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="Eager client co,piles">
+    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/eagerClient.c" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/eagerClientP2.c" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/eagerServer.c" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/eagerClientP3.c" afterPath="$PROJECT_DIR$/RandClientP1.c" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/eagerServerP3.c" afterPath="$PROJECT_DIR$/RandServerP1.c" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/eagerClient.c" afterPath="$PROJECT_DIR$/eagerClient.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CMakeLists.txt" afterPath="$PROJECT_DIR$/CMakeLists.txt" />
     </list>
-    <list id="ed5b0da3-4860-4bf5-a85a-dd6805f11d6b" name="11" comment="" />
+    <list id="ed5b0da3-4860-4bf5-a85a-dd6805f11d6b" name="11" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/alex-skalaton.c" afterPath="$PROJECT_DIR$/alex-skalaton.c" />
+    </list>
     <list id="786bcf74-7ba9-41dc-ad33-e0d7ede81f2a" name="New changelist" comment="" />
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <file path="$PROJECT_DIR$/alex-skalaton.c" ignored="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,148 +58,149 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CreatePatchCommitExecutor">
-    <option name="PATCH_PATH" value="" />
+    <option name="PATCH_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="H_CCW17" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5462529">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="CMakeLists.txt" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="288">
-                  <caret line="16" column="34" selection-start-line="16" selection-start-column="34" selection-end-line="16" selection-end-column="34" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="rdma_rand.c" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/rdma_rand.c">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="823">
-                  <caret line="617" column="16" selection-start-line="617" selection-start-column="16" selection-end-line="617" selection-end-column="16" />
-                  <folding>
-                    <element signature="e#459#519#1" expanded="false" />
-                    <element signature="e#522#605#1" expanded="false" />
-                    <element signature="e#608#672#1" expanded="false" />
-                    <element signature="e#683#728#0" expanded="false" />
-                    <element signature="e#746#813#0" expanded="false" />
-                    <element signature="e#835#905#0" expanded="false" />
-                    <element signature="e#953#1024#0" expanded="false" />
-                    <element signature="e#1046#1103#0" expanded="false" />
-                    <element signature="e#1117#1714#1" expanded="false" />
-                    <element signature="e#1717#1803#1" expanded="false" />
-                    <element signature="e#1807#3300#0" expanded="false" />
-                    <element signature="e#3302#5220#0" expanded="false" />
-                    <element signature="e#5222#7792#0" expanded="false" />
-                    <element signature="e#7794#10341#0" expanded="false" />
-                    <element signature="e#10343#11085#0" expanded="false" />
-                    <element signature="e#10616#10743#0" expanded="false" />
-                    <element signature="e#11087#11675#0" expanded="false" />
-                    <element signature="e#11677#12211#0" expanded="false" />
-                    <element signature="e#12213#13258#0" expanded="false" />
-                    <element signature="e#13269#13611#0" expanded="false" />
-                    <element signature="e#13621#14407#0" expanded="false" />
-                    <element signature="e#14409#15262#0" expanded="false" />
-                    <element signature="e#15264#16987#0" expanded="false" />
-                    <element signature="e#16990#17713#0" expanded="false" />
-                    <element signature="e#20721#25124#0" expanded="false" />
-                    <element signature="e#25127#25211#0" expanded="false" />
-                    <element signature="e#25214#25443#0" expanded="false" />
-                    <element signature="e#25446#26784#0" expanded="false" />
-                    <element signature="e#26786#27552#0" expanded="false" />
-                    <element signature="e#27554#28640#0" expanded="false" />
-                    <element signature="e#28642#29299#0" expanded="false" />
-                    <element signature="e#29301#38653#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="eagerClient.c" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/eagerClient.c">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="429">
-                  <caret line="931" column="5" selection-start-line="931" selection-start-column="5" selection-end-line="931" selection-end-column="5" />
-                  <folding>
-                    <element signature="e#18#39#0" expanded="true" />
-                    <element signature="e#7687#7709#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="eagerServer.c" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/eagerServer.c">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="14310">
-                  <caret line="795" column="20" selection-start-line="795" selection-start-column="15" selection-end-line="795" selection-end-column="20" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="alex-skalaton.c" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/alex-skalaton.c">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="446">
-                  <caret line="1016" column="0" selection-start-line="1016" selection-start-column="0" selection-end-line="1016" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#0#1434#0" expanded="false" />
-                    <element signature="e#1961#2216#1" expanded="false" />
-                    <element signature="e#2219#3433#1" expanded="false" />
-                    <element signature="e#2309#3430#1" expanded="false" />
-                    <element signature="e#2442#2622#1" expanded="false" />
-                    <element signature="e#2651#2731#1" expanded="false" />
-                    <element signature="e#2761#2802#1" expanded="false" />
-                    <element signature="e#2831#2872#1" expanded="false" />
-                    <element signature="e#2944#2985#1" expanded="false" />
-                    <element signature="e#3013#3054#1" expanded="false" />
-                    <element signature="e#3083#3124#1" expanded="false" />
-                    <element signature="e#3152#3193#1" expanded="false" />
-                    <element signature="e#3218#3244#1" expanded="false" />
-                    <element signature="e#3262#3342#1" expanded="false" />
-                    <element signature="e#3358#3414#1" expanded="false" />
-                    <element signature="e#3605#3663#1" expanded="false" />
-                    <element signature="e#3991#4065#1" expanded="false" />
-                    <element signature="e#5521#7194#0" expanded="false" />
-                    <element signature="e#7196#9434#0" expanded="false" />
-                    <element signature="e#9460#11615#0" expanded="false" />
-                    <element signature="e#11617#12335#0" expanded="false" />
-                    <element signature="e#12337#12746#0" expanded="false" />
-                    <element signature="e#12748#13388#0" expanded="false" />
-                    <element signature="e#13390#14390#0" expanded="false" />
-                    <element signature="e#14392#15104#0" expanded="false" />
-                    <element signature="e#15106#19940#0" expanded="false" />
-                    <element signature="e#19942#21753#0" expanded="false" />
-                    <element signature="e#21755#21929#0" expanded="false" />
-                    <element signature="e#21931#23299#0" expanded="false" />
-                    <element signature="e#23301#23422#0" expanded="false" />
-                    <element signature="e#23424#23490#0" expanded="false" />
-                    <element signature="e#23492#23587#0" expanded="false" />
-                    <element signature="e#23750#23900#1" expanded="false" />
-                    <element signature="e#23903#23982#1" expanded="false" />
-                    <element signature="e#23985#24220#0" expanded="false" />
-                    <element signature="e#24796#24955#0" expanded="false" />
-                    <element signature="e#25114#25277#0" expanded="false" />
-                    <element signature="e#25279#25489#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="CMakeLists.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="253">
+              <caret line="11" column="42" selection-start-line="11" selection-start-column="42" selection-end-line="11" selection-end-column="42" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="alex-skalaton.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/alex-skalaton.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="23">
+              <caret line="1011" column="1" selection-start-line="1011" selection-start-column="1" selection-end-line="1011" selection-end-column="1" />
+              <folding>
+                <element signature="e#0#1434#0" expanded="false" />
+                <element signature="e#1961#2216#1" expanded="false" />
+                <element signature="e#2442#2622#1" expanded="false" />
+                <element signature="e#2651#2731#1" expanded="false" />
+                <element signature="e#2831#2872#1" expanded="false" />
+                <element signature="e#3013#3054#1" expanded="false" />
+                <element signature="e#3083#3124#1" expanded="false" />
+                <element signature="e#3152#3193#1" expanded="false" />
+                <element signature="e#3218#3244#1" expanded="false" />
+                <element signature="e#3262#3342#1" expanded="false" />
+                <element signature="e#3358#3414#1" expanded="false" />
+                <element signature="e#3436#3602#1" expanded="false" />
+                <element signature="e#3605#3663#1" expanded="false" />
+                <element signature="e#3991#4065#1" expanded="false" />
+                <element signature="e#4068#5519#0" expanded="false" />
+                <element signature="e#5521#7194#0" expanded="false" />
+                <element signature="e#7196#9434#0" expanded="false" />
+                <element signature="e#9460#11615#0" expanded="false" />
+                <element signature="e#11617#12335#0" expanded="false" />
+                <element signature="e#12748#13388#0" expanded="false" />
+                <element signature="e#13390#14390#0" expanded="false" />
+                <element signature="e#14392#15104#0" expanded="false" />
+                <element signature="e#19942#21753#0" expanded="false" />
+                <element signature="e#21755#21929#0" expanded="false" />
+                <element signature="e#23424#23490#0" expanded="false" />
+                <element signature="e#23492#23587#0" expanded="false" />
+                <element signature="e#23859#24094#0" expanded="false" />
+                <element signature="e#24096#24667#0" expanded="false" />
+                <element signature="e#24670#24829#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RandServerP1.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/RandServerP1.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="173">
+              <caret line="785" column="34" selection-start-line="785" selection-start-column="16" selection-end-line="785" selection-end-column="34" />
+              <folding>
+                <element signature="e#7373#7456#0" expanded="false" />
+                <element signature="e#10945#11507#0" expanded="false" />
+                <element signature="e#11509#12554#0" expanded="false" />
+                <element signature="e#12556#12620#1" expanded="false" />
+                <element signature="e#12631#12679#0" expanded="false" />
+                <element signature="e#12696#12763#0" expanded="false" />
+                <element signature="e#12785#12855#0" expanded="false" />
+                <element signature="e#12908#13411#0" expanded="false" />
+                <element signature="e#13422#13494#0" expanded="false" />
+                <element signature="e#13500#13622#0" expanded="false" />
+                <element signature="e#13625#13703#0" expanded="false" />
+                <element signature="e#13747#13881#0" expanded="false" />
+                <element signature="e#14691#15097#0" expanded="false" />
+                <element signature="e#15100#15989#0" expanded="false" />
+                <element signature="e#15992#16056#0" expanded="false" />
+                <element signature="e#18633#18715#0" expanded="false" />
+                <element signature="e#18718#18951#0" expanded="false" />
+                <element signature="e#19495#21218#0" expanded="false" />
+                <element signature="e#23919#31661#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pingpong.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pingpong.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RandClientP1.c" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/RandClientP1.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-140">
+              <caret line="882" column="0" selection-start-line="882" selection-start-column="0" selection-end-line="882" selection-end-column="0" />
+              <folding>
+                <element signature="e#538#617#0" expanded="false" />
+                <element signature="e#721#894#1" expanded="false" />
+                <element signature="e#897#957#1" expanded="false" />
+                <element signature="e#1010#1268#1" expanded="false" />
+                <element signature="e#1271#1357#1" expanded="false" />
+                <element signature="e#1449#1641#1" expanded="false" />
+                <element signature="e#1644#3272#0" expanded="false" />
+                <element signature="e#3274#5295#0" expanded="false" />
+                <element signature="e#5297#7994#0" expanded="false" />
+                <element signature="e#8040#10039#0" expanded="false" />
+                <element signature="e#10043#10823#0" expanded="false" />
+                <element signature="e#10825#11443#0" expanded="false" />
+                <element signature="e#11445#12007#0" expanded="false" />
+                <element signature="e#12009#13054#0" expanded="false" />
+                <element signature="e#13064#13112#0" expanded="false" />
+                <element signature="e#13129#13488#0" expanded="false" />
+                <element signature="e#13506#13823#0" expanded="false" />
+                <element signature="e#15701#16363#0" expanded="false" />
+                <element signature="e#16548#17764#0" expanded="false" />
+                <element signature="e#21553#21781#0" expanded="false" />
+                <element signature="e#21784#22533#0" expanded="false" />
+                <element signature="e#26867#27241#0" expanded="false" />
+                <element signature="e#27242#27800#0" expanded="false" />
+                <element signature="e#27802#28431#0" expanded="false" />
+                <element signature="e#28671#29735#0" expanded="false" />
+                <element signature="e#29738#30630#0" expanded="false" />
+                <element signature="e#30632#32573#0" expanded="false" />
+                <element signature="e#32577#35562#0" expanded="false" />
+                <element signature="e#35564#40555#0" expanded="false" />
+                <marker date="1503747020017" expanded="false" signature="13900:14344" ph="{...}" />
+                <marker date="1503747020017" expanded="false" signature="14417:15699" ph="{...}" />
+                <marker date="1503747020017" expanded="false" signature="26810:26865" ph="{...}" />
+                <marker date="1503747020017" expanded="false" signature="28464:28668" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -233,7 +246,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="ex2" />
+        <entry key="$PROJECT_DIR$" value="ex3" />
       </map>
     </option>
     <option name="PUSH_TAGS">
@@ -243,17 +256,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Accept.hpp" />
-        <option value="$PROJECT_DIR$/Server.cpp" />
-        <option value="$PROJECT_DIR$/Connector.hpp" />
-        <option value="$PROJECT_DIR$/Connector.cpp" />
-        <option value="$PROJECT_DIR$/main.cpp" />
-        <option value="$PROJECT_DIR$/Client.cpp" />
-        <option value="$PROJECT_DIR$/MultiStreamSizeClient.cpp" />
-        <option value="$PROJECT_DIR$/VaryingSizeTcpClient.cpp" />
-        <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/Metrics.h" />
-        <option value="/+/usr/fimak/temp/rc_pingpong.c" />
         <option value="$PROJECT_DIR$/CommonIBUtilFuncs.hpp" />
         <option value="$PROJECT_DIR$/SimpleIBClient.cpp" />
         <option value="$PROJECT_DIR$/SimpleIBServer.cpp" />
@@ -285,15 +287,26 @@
         <option value="$PROJECT_DIR$/stack.h" />
         <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rc_pingpong.c" />
         <option value="$PROJECT_DIR$/pingpong.c" />
-        <option value="$PROJECT_DIR$/pingpong.h" />
         <option value="$PROJECT_DIR$/rdma_pp.c" />
         <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c" />
         <option value="$PROJECT_DIR$/rc_pingpong.c" />
         <option value="$PROJECT_DIR$/rdma_rand.c" />
         <option value="$PROJECT_DIR$/eager.c" />
-        <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/eagerServer.c" />
+        <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/eagerClient.c" />
         <option value="$PROJECT_DIR$/alex-skalaton.c" />
+        <option value="$PROJECT_DIR$/eagerClientP2.c" />
+        <option value="$PROJECT_DIR$/skeleton.patch" />
+        <option value="$PROJECT_DIR$/pingpong.h" />
         <option value="$PROJECT_DIR$/eagerClient.c" />
+        <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/eagerClientP3.c" />
+        <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/eagerServerP3.c" />
+        <option value="$PROJECT_DIR$/eagerClientP3.c" />
+        <option value="$PROJECT_DIR$/eagerServerP3.c" />
+        <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/RandServerP1.c" />
+        <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/RandClientP1.c" />
+        <option value="$PROJECT_DIR$/RandClientP1.c" />
       </list>
     </option>
   </component>
@@ -305,10 +318,9 @@
   </component>
   <component name="OCFindUsagesOptions" text="false" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds">
-    <option name="x" value="-4" />
     <option name="y" value="24" />
-    <option name="width" value="1928" />
-    <option name="height" value="1035" />
+    <option name="width" value="1920" />
+    <option name="height" value="1032" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -373,24 +385,7 @@
     </navigator>
     <panes>
       <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="H_CCW17" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="H_CCW17" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="H_CCW17" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
+        <subPane />
       </pane>
     </panes>
   </component>
@@ -409,8 +404,8 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/Original" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/Original" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -425,7 +420,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.ex3_1_server">
+  <component name="RunManager" selected="GDB Remote Debug.mlx-stud-01:8081">
     <configuration default="true" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="" symbolFile="" sysroot="">
       <method />
     </configuration>
@@ -593,37 +588,27 @@
       <option name="USE_KEYWORD" value="false" />
       <method />
     </configuration>
-    <configuration default="false" name="eager" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="eager" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="eager">
+    <configuration default="false" name="ex4_clientP1" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="ex4_clientP1" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="ex4_clientP1">
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="mlx-stud-01:8081" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="mlx-stud-01:8081" symbolFile="$PROJECT_DIR$/pp" sysroot="">
+    <configuration default="false" name="ex4_serverP1" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="ex4_serverP1" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="ex4_serverP1">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="mlx-stud-01:8081" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="mlx-stud-01:8081" symbolFile="$PROJECT_DIR$/randClient" sysroot="">
       <pathMapping remote=":/cs/+/usr/fimak/H_CCW17/" local="/+/usr/fimak/H_CCW17/" />
       <method />
     </configuration>
-    <configuration default="false" name="mlx-stud-02:8080" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="mlx-stud-02:8080" symbolFile="$PROJECT_DIR$/pp" sysroot="">
+    <configuration default="false" name="mlx-stud-02:8080" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="mlx-stud-02:8083" symbolFile="$PROJECT_DIR$/randserver" sysroot="">
       <pathMapping remote=":/cs/+/usr/fimak/H_CCW17/" local="/+/usr/fimak/H_CCW17/" />
       <method />
     </configuration>
-    <configuration default="false" name="rand" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="rand" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="rand">
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="false" name="ex3_1_server" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="ex3_1_server" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="ex3_1_server">
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="false" name="ex3_1_client" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="ex3_1_client" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="ex3_1_client">
-      <envs />
-      <method />
-    </configuration>
-    <list size="6">
-      <item index="0" class="java.lang.String" itemvalue="Application.eager" />
-      <item index="1" class="java.lang.String" itemvalue="GDB Remote Debug.mlx-stud-01:8081" />
-      <item index="2" class="java.lang.String" itemvalue="GDB Remote Debug.mlx-stud-02:8080" />
-      <item index="3" class="java.lang.String" itemvalue="Application.rand" />
-      <item index="4" class="java.lang.String" itemvalue="Application.ex3_1_server" />
-      <item index="5" class="java.lang.String" itemvalue="Application.ex3_1_client" />
+    <list size="4">
+      <item index="0" class="java.lang.String" itemvalue="Application.ex4_clientP1" />
+      <item index="1" class="java.lang.String" itemvalue="Application.ex4_serverP1" />
+      <item index="2" class="java.lang.String" itemvalue="GDB Remote Debug.mlx-stud-01:8081" />
+      <item index="3" class="java.lang.String" itemvalue="GDB Remote Debug.mlx-stud-02:8080" />
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
@@ -679,155 +664,11 @@
       <workItem from="1497673125935" duration="26963000" />
       <workItem from="1498287344743" duration="33767000" />
       <workItem from="1498539279110" duration="1344000" />
-      <workItem from="1498558911580" duration="7734000" />
-      <workItem from="1498577864435" duration="791000" />
-    </task>
-    <task id="LOCAL-00030" summary="Add metrics to multithread infiniband">
-      <created>1493808448436</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1493808448436</updated>
-    </task>
-    <task id="LOCAL-00031" summary="Add metrics to multithread infiniband">
-      <created>1493888072968</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1493888072968</updated>
-    </task>
-    <task id="LOCAL-00032" summary="fixed size support">
-      <created>1493890626305</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1493890626305</updated>
-    </task>
-    <task id="LOCAL-00033" summary="fixed size support">
-      <created>1493890768249</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1493890768249</updated>
-    </task>
-    <task id="LOCAL-00034" summary="fixed size support">
-      <created>1493904808850</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1493904808850</updated>
-    </task>
-    <task id="LOCAL-00035" summary="fixed size support">
-      <created>1493906869759</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1493906869759</updated>
-    </task>
-    <task id="LOCAL-00036" summary="fixed size support">
-      <created>1493906956851</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1493906956851</updated>
-    </task>
-    <task id="LOCAL-00037" summary="fixed size support">
-      <created>1493907312163</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1493907312163</updated>
-    </task>
-    <task id="LOCAL-00038" summary="fixed size support">
-      <created>1493907625670</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1493907625670</updated>
-    </task>
-    <task id="LOCAL-00039" summary="fixed size support">
-      <created>1493979875334</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1493979875334</updated>
-    </task>
-    <task id="LOCAL-00040" summary="fixed size support">
-      <created>1493983859126</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1493983859126</updated>
-    </task>
-    <task id="LOCAL-00041" summary="fixed size support">
-      <created>1493983901765</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1493983901765</updated>
-    </task>
-    <task id="LOCAL-00042" summary="Remove extern C from metrics">
-      <created>1494345563956</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1494345563956</updated>
-    </task>
-    <task id="LOCAL-00043" summary="Remove extern C from metrics">
-      <created>1494361444827</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1494361444827</updated>
-    </task>
-    <task id="LOCAL-00044" summary="Remove extern C from metrics">
-      <created>1495872850245</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1495872850245</updated>
-    </task>
-    <task id="LOCAL-00045" summary="Remove extern C from metrics">
-      <created>1495887938444</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1495887938444</updated>
-    </task>
-    <task id="LOCAL-00046" summary="Remove extern C from metrics">
-      <created>1495892073181</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1495892073181</updated>
-    </task>
-    <task id="LOCAL-00047" summary="Remove extern C from metrics">
-      <created>1495900426237</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1495900426237</updated>
-    </task>
-    <task id="LOCAL-00048" summary="Remove extern C from metrics">
-      <created>1495900636591</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1495900636591</updated>
-    </task>
-    <task id="LOCAL-00049" summary="Remove extern C from metrics">
-      <created>1495905806618</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1495905806618</updated>
-    </task>
-    <task id="LOCAL-00050" summary="Remove extern C from metrics">
-      <created>1495906005020</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1495906005021</updated>
+      <workItem from="1498558911580" duration="12426000" />
+      <workItem from="1498891118082" duration="2593000" />
+      <workItem from="1498900989666" duration="10984000" />
+      <workItem from="1501917401053" duration="29069000" />
+      <workItem from="1503729565252" duration="14588000" />
     </task>
     <task id="LOCAL-00051" summary="added KV_release">
       <created>1497674428441</created>
@@ -1025,11 +866,158 @@
       <option name="project" value="LOCAL" />
       <updated>1498577222614</updated>
     </task>
-    <option name="localTasksCounter" value="79" />
+    <task id="LOCAL-00079" summary="Eager client co,piles">
+      <created>1498577257799</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1498577257800</updated>
+    </task>
+    <task id="LOCAL-00080" summary="Eager client co,piles">
+      <created>1498579483061</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1498579483061</updated>
+    </task>
+    <task id="LOCAL-00081" summary="Eager client fix for creating servers">
+      <created>1498580036624</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1498580036624</updated>
+    </task>
+    <task id="LOCAL-00082" summary="Eager client fix for creating servers">
+      <created>1498581881488</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1498581881488</updated>
+    </task>
+    <task id="LOCAL-00083" summary="Eager client fix for creating servers">
+      <created>1498903510664</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1498903510665</updated>
+    </task>
+    <task id="LOCAL-00084" summary="Added buffer for eager client">
+      <created>1501917729135</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1501917729136</updated>
+    </task>
+    <task id="LOCAL-00085" summary="Added  eagerClientp3">
+      <created>1501920007124</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1501920007124</updated>
+    </task>
+    <task id="LOCAL-00086" summary="Created Msg que for each client on the server&#10;Added credit check and store">
+      <created>1501925853080</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1501925853080</updated>
+    </task>
+    <task id="LOCAL-00087" summary="Added eager credits">
+      <created>1501927440210</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1501927440210</updated>
+    </task>
+    <task id="LOCAL-00088" summary="Moved commend enum to pingpong header&#10;">
+      <created>1501928164410</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1501928164410</updated>
+    </task>
+    <task id="LOCAL-00089" summary="added credit api to client">
+      <created>1501928583438</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1501928583438</updated>
+    </task>
+    <task id="LOCAL-00090" summary="Added  eagerClientp3">
+      <created>1501934446490</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1501934446490</updated>
+    </task>
+    <task id="LOCAL-00091" summary="fixed credit issue and infinite loop on new return from get due to insufficent credits">
+      <created>1501934878156</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1501934878156</updated>
+    </task>
+    <task id="LOCAL-00092" summary="fixed credit issue and infinite loop on new return from get due to insufficent credits">
+      <created>1501935986865</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1501935986865</updated>
+    </task>
+    <task id="LOCAL-00093" summary="fixed server">
+      <created>1501940514807</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1501940514807</updated>
+    </task>
+    <task id="LOCAL-00094" summary="updated test">
+      <created>1501950977413</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1501950977413</updated>
+    </task>
+    <task id="LOCAL-00095" summary="updated test">
+      <created>1501953066536</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1501953066536</updated>
+    </task>
+    <task id="LOCAL-00096" summary="Started conversion of eagerClientP3 to randevous protocol&#10;">
+      <created>1503731535627</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1503731535627</updated>
+    </task>
+    <task id="LOCAL-00097" summary="Finished update kv_get">
+      <created>1503732433556</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1503732433556</updated>
+    </task>
+    <task id="LOCAL-00098" summary="Finished update kv_set">
+      <created>1503733244267</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1503733244267</updated>
+    </task>
+    <task id="LOCAL-00099" summary="finished transforming server to support randevazus protocol">
+      <created>1503737994218</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1503737994218</updated>
+    </task>
+    <option name="localTasksCounter" value="100" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="375654000" />
+    <option name="totallyTimeSpent" value="436789000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1041,27 +1029,27 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-4" y="24" width="1928" height="1035" extended-state="6" />
+    <frame x="0" y="24" width="1920" height="1032" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.100579254" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19506967" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32968238" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20568928" sideWeight="0.46761453" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3231441" sideWeight="0.48130596" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.05038335" sideWeight="0.51869404" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.06113537" sideWeight="0.48130596" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17467248" sideWeight="0.46761453" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3231106" sideWeight="0.48130596" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3702081" sideWeight="0.4330118" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17139737" sideWeight="0.5966298" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33842796" sideWeight="0.54870987" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23908296" sideWeight="0.4782123" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24866024" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.088427946" sideWeight="0.49040306" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.36899564" sideWeight="0.5669882" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23908296" sideWeight="0.4782123" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17358078" sideWeight="0.5966298" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3209607" sideWeight="0.8288573" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -1121,20 +1109,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Updated non BLocking tcp server" />
-    <MESSAGE value="Added Varying size Tcp client - sends messages with varying size.&#10;" />
-    <MESSAGE value="MultiStream now working in multistream and not multiprocess" />
-    <MESSAGE value="MultiThreadTcp client infrastructure working. Still need to work on metrics calculations." />
-    <MESSAGE value="Added timer to multiple threads.  Add metrics calculation functions" />
-    <MESSAGE value="Fix data in thread handler" />
-    <MESSAGE value="Adjust SingleStream to right structure. Small modifications in Metrics.&#10;MutliThreadClient  small modifications" />
-    <MESSAGE value="Add a save results function.&#10;Adjust singlestream client to the new save result function." />
-    <MESSAGE value="MultiThread and SingleStream are ready" />
-    <MESSAGE value="Fix SingleStreamClientLogic" />
-    <MESSAGE value="Add mirroring to SingStreamServer and Client SingleStream Server is done" />
-    <MESSAGE value="Ready for client" />
-    <MESSAGE value="Add metrics to multithread infiniband" />
-    <MESSAGE value="fixed size support" />
     <MESSAGE value="Remove extern C from metrics" />
     <MESSAGE value="added KV_release" />
     <MESSAGE value="Fix for if allocateNewElem" />
@@ -1143,28 +1117,48 @@
     <MESSAGE value="Rand fixed free of temp response value" />
     <MESSAGE value="Fixed using store MR on client" />
     <MESSAGE value="RandEager works" />
-    <MESSAGE value="Eager client co,piles" />
     <MESSAGE value="Added mkv_open" />
     <MESSAGE value="Eager client compiles" />
-    <option name="LAST_COMMIT_MESSAGE" value="Eager client compiles" />
+    <MESSAGE value="Eager client co,piles" />
+    <MESSAGE value="Eager client fix for creating servers" />
+    <MESSAGE value="Added buffer for eager client" />
+    <MESSAGE value="Created Msg que for each client on the server&#10;Added credit check and store" />
+    <MESSAGE value="Added eager credits" />
+    <MESSAGE value="Moved commend enum to pingpong header&#10;" />
+    <MESSAGE value="added credit api to client" />
+    <MESSAGE value="Added  eagerClientp3" />
+    <MESSAGE value="fixed credit issue and infinite loop on new return from get due to insufficent credits" />
+    <MESSAGE value="fixed server" />
+    <MESSAGE value="updated test" />
+    <MESSAGE value="Started conversion of eagerClientP3 to randevous protocol&#10;" />
+    <MESSAGE value="Finished update kv_get" />
+    <MESSAGE value="Finished update kv_set" />
+    <MESSAGE value="finished transforming server to support randevazus protocol" />
+    <option name="LAST_COMMIT_MESSAGE" value="finished transforming server to support randevazus protocol" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/eagerClient.c</url>
-          <line>920</line>
-          <option name="timeStamp" value="430" />
+          <url>file://$PROJECT_DIR$/RandClientP1.c</url>
+          <line>845</line>
+          <option name="timeStamp" value="494" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/eagerClient.c</url>
-          <line>827</line>
-          <option name="timeStamp" value="431" />
+          <url>file://$PROJECT_DIR$/RandClientP1.c</url>
+          <line>873</line>
+          <option name="timeStamp" value="507" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/eagerClient.c</url>
-          <line>913</line>
-          <option name="timeStamp" value="432" />
+          <url>file://$PROJECT_DIR$/RandClientP1.c</url>
+          <line>879</line>
+          <option name="timeStamp" value="508" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/RandClientP1.c</url>
+          <line>905</line>
+          <option name="timeStamp" value="509" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -1177,9 +1171,14 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="433" />
+      <option name="time" value="510" />
     </breakpoint-manager>
     <watches-manager>
+      <configuration name="CLion_Remote">
+        <watch expression="kvHandle-&gt;msgQueItemCount" />
+        <watch expression="kvHandle-&gt;front" />
+        <watch expression="kvHandle-&gt;msgQue[kvHandle-&gt;msgQueItemCount - 1]" />
+      </configuration>
       <configuration name="CMakeRunConfiguration">
         <watch expression="streams[0]" />
         <watch expression="socketNumTrue" />
@@ -1187,22 +1186,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Acceptor.cpp" />
-    <entry file="file://$PROJECT_DIR$/Acceptor.hpp" />
-    <entry file="file://$USER_HOME$/.cache/.fr-OwgMkB/rc_pingpong_multi.c" />
-    <entry file="file:///usr/include/x86_64-linux-gnu/bits/mathcalls.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="183" column="50" selection-start-line="183" selection-start-column="50" selection-end-line="183" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SingleStreamTcpServer.cpp" />
-    <entry file="file://$PROJECT_DIR$/MultiThreadTcpClient.cpp" />
-    <entry file="file:///+/usr/fimak/H_CCW17/multistreamTestRunner.c" />
-    <entry file="file://$PROJECT_DIR$/multithreadIB.h" />
-    <entry file="file://$PROJECT_DIR$/temp/SimpleIBServer.cpp" />
-    <entry file="file://$PROJECT_DIR$/multistreamTestRunner.c" />
     <entry file="file://$PROJECT_DIR$/multithreadIB.c" />
     <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
@@ -1260,7 +1243,13 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/logOrigMetNBOrig" />
-    <entry file="file://$PROJECT_DIR$/tmp/Acceptor.cpp" />
+    <entry file="file://$PROJECT_DIR$/tmp/Acceptor.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="4" column="9" selection-start-line="4" selection-start-column="9" selection-end-line="4" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/README.md" />
     <entry file="file://$PROJECT_DIR$/stack.c" />
     <entry file="file:///usr/include/stdlib.h">
@@ -1271,26 +1260,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rc_pingpong.c" />
-    <entry file="file://$PROJECT_DIR$/pingpong.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="759">
-          <caret line="33" column="22" selection-start-line="33" selection-start-column="22" selection-end-line="33" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pingpong.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="828">
           <caret line="36" column="11" selection-start-line="36" selection-start-column="11" selection-end-line="36" selection-end-column="11" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/x86_64-linux-gnu/sys/param.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="410">
-          <caret line="92" column="9" selection-start-line="92" selection-start-column="9" selection-end-line="92" selection-end-column="9" />
         </state>
       </provider>
     </entry>
@@ -1309,112 +1283,35 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/include/infiniband/verbs.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="1316" column="0" selection-start-line="1316" selection-start-column="0" selection-end-line="1316" selection-end-column="0" />
-          <folding>
-            <element signature="e#16231#16796#1" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/rdma_pp.c" />
     <entry file="file://$PROJECT_DIR$/rdma_pp.c" />
     <entry file="file://$PROJECT_DIR$/stack.h" />
-    <entry file="file://$PROJECT_DIR$/pingpong.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Original/pingpong.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/eager.c" />
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+    <entry file="file://$PROJECT_DIR$/tmp/multithreadIB.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="34" selection-start-line="16" selection-start-column="34" selection-end-line="16" selection-end-column="34" />
-          <folding />
+        <state relative-caret-position="139">
+          <caret line="875" column="4" selection-start-line="875" selection-start-column="4" selection-end-line="875" selection-end-column="4" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tmp/multithreadIB.c" />
-    <entry file="file://$PROJECT_DIR$/skeleton.patch">
+    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/pingpong.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="254" column="5" selection-start-line="254" selection-start-column="5" selection-end-line="254" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/eagerServer.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="14310">
-          <caret line="795" column="20" selection-start-line="795" selection-start-column="15" selection-end-line="795" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/eagerClient.c" />
-    <entry file="file://$PROJECT_DIR$/alex-skalaton.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="446">
-          <caret line="1016" column="0" selection-start-line="1016" selection-start-column="0" selection-end-line="1016" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#1434#0" expanded="false" />
-            <element signature="e#1961#2216#1" expanded="false" />
-            <element signature="e#2219#3433#1" expanded="false" />
-            <element signature="e#2309#3430#1" expanded="false" />
-            <element signature="e#2442#2622#1" expanded="false" />
-            <element signature="e#2651#2731#1" expanded="false" />
-            <element signature="e#2761#2802#1" expanded="false" />
-            <element signature="e#2831#2872#1" expanded="false" />
-            <element signature="e#2944#2985#1" expanded="false" />
-            <element signature="e#3013#3054#1" expanded="false" />
-            <element signature="e#3083#3124#1" expanded="false" />
-            <element signature="e#3152#3193#1" expanded="false" />
-            <element signature="e#3218#3244#1" expanded="false" />
-            <element signature="e#3262#3342#1" expanded="false" />
-            <element signature="e#3358#3414#1" expanded="false" />
-            <element signature="e#3605#3663#1" expanded="false" />
-            <element signature="e#3991#4065#1" expanded="false" />
-            <element signature="e#5521#7194#0" expanded="false" />
-            <element signature="e#7196#9434#0" expanded="false" />
-            <element signature="e#9460#11615#0" expanded="false" />
-            <element signature="e#11617#12335#0" expanded="false" />
-            <element signature="e#12337#12746#0" expanded="false" />
-            <element signature="e#12748#13388#0" expanded="false" />
-            <element signature="e#13390#14390#0" expanded="false" />
-            <element signature="e#14392#15104#0" expanded="false" />
-            <element signature="e#15106#19940#0" expanded="false" />
-            <element signature="e#19942#21753#0" expanded="false" />
-            <element signature="e#21755#21929#0" expanded="false" />
-            <element signature="e#21931#23299#0" expanded="false" />
-            <element signature="e#23301#23422#0" expanded="false" />
-            <element signature="e#23424#23490#0" expanded="false" />
-            <element signature="e#23492#23587#0" expanded="false" />
-            <element signature="e#23750#23900#1" expanded="false" />
-            <element signature="e#23903#23982#1" expanded="false" />
-            <element signature="e#23985#24220#0" expanded="false" />
-            <element signature="e#24796#24955#0" expanded="false" />
-            <element signature="e#25114#25277#0" expanded="false" />
-            <element signature="e#25279#25489#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="433">
+          <caret line="85" column="0" selection-start-line="85" selection-start-column="0" selection-end-line="85" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/rdma_rand.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="823">
-          <caret line="617" column="16" selection-start-line="617" selection-start-column="16" selection-end-line="617" selection-end-column="16" />
+        <state relative-caret-position="841">
+          <caret line="600" column="5" selection-start-line="600" selection-start-column="5" selection-end-line="600" selection-end-column="5" />
           <folding>
             <element signature="e#459#519#1" expanded="false" />
             <element signature="e#522#605#1" expanded="false" />
@@ -1440,6 +1337,7 @@
             <element signature="e#14409#15262#0" expanded="false" />
             <element signature="e#15264#16987#0" expanded="false" />
             <element signature="e#16990#17713#0" expanded="false" />
+            <element signature="e#18428#20718#0" expanded="false" />
             <element signature="e#20721#25124#0" expanded="false" />
             <element signature="e#25127#25211#0" expanded="false" />
             <element signature="e#25214#25443#0" expanded="false" />
@@ -1452,13 +1350,236 @@
         </state>
       </provider>
     </entry>
+    <entry file="file:///usr/lib/gcc/x86_64-linux-gnu/6/include/stdbool.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="410">
+          <caret line="32" column="8" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/x86_64-linux-gnu/sys/param.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="640">
+          <caret line="102" column="8" selection-start-line="102" selection-start-column="8" selection-end-line="102" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pingpong.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="703">
+          <caret line="45" column="0" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/eagerClient.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="429">
-          <caret line="931" column="5" selection-start-line="931" selection-start-column="5" selection-end-line="931" selection-end-column="5" />
+        <state relative-caret-position="222">
+          <caret line="806" column="20" selection-start-line="806" selection-start-column="16" selection-end-line="806" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/eagerClient.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="828" column="0" selection-start-line="828" selection-start-column="0" selection-end-line="828" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/eagerClientP3.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="173">
+          <caret line="825" column="1" selection-start-line="825" selection-start-column="1" selection-end-line="825" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/eagerServerP3.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="689">
+          <caret line="565" column="36" selection-start-line="565" selection-start-column="36" selection-end-line="565" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/skeleton.patch">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="749">
+          <caret line="268" column="25" selection-start-line="268" selection-start-column="25" selection-end-line="268" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/eagerClientP2.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="383">
+          <caret line="925" column="41" selection-start-line="925" selection-start-column="35" selection-end-line="925" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Original/rc_pingpong.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="562" column="13" selection-start-line="562" selection-start-column="12" selection-end-line="562" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/eagerServer.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="212">
+          <caret line="425" column="62" selection-start-line="425" selection-start-column="59" selection-end-line="425" selection-end-column="62" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pingpong.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="253">
+          <caret line="11" column="42" selection-start-line="11" selection-start-column="42" selection-end-line="11" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alex-skalaton.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="23">
+          <caret line="1011" column="1" selection-start-line="1011" selection-start-column="1" selection-end-line="1011" selection-end-column="1" />
           <folding>
-            <element signature="e#18#39#0" expanded="true" />
-            <element signature="e#7687#7709#0" expanded="true" />
+            <element signature="e#0#1434#0" expanded="false" />
+            <element signature="e#1961#2216#1" expanded="false" />
+            <element signature="e#2442#2622#1" expanded="false" />
+            <element signature="e#2651#2731#1" expanded="false" />
+            <element signature="e#2831#2872#1" expanded="false" />
+            <element signature="e#3013#3054#1" expanded="false" />
+            <element signature="e#3083#3124#1" expanded="false" />
+            <element signature="e#3152#3193#1" expanded="false" />
+            <element signature="e#3218#3244#1" expanded="false" />
+            <element signature="e#3262#3342#1" expanded="false" />
+            <element signature="e#3358#3414#1" expanded="false" />
+            <element signature="e#3436#3602#1" expanded="false" />
+            <element signature="e#3605#3663#1" expanded="false" />
+            <element signature="e#3991#4065#1" expanded="false" />
+            <element signature="e#4068#5519#0" expanded="false" />
+            <element signature="e#5521#7194#0" expanded="false" />
+            <element signature="e#7196#9434#0" expanded="false" />
+            <element signature="e#9460#11615#0" expanded="false" />
+            <element signature="e#11617#12335#0" expanded="false" />
+            <element signature="e#12748#13388#0" expanded="false" />
+            <element signature="e#13390#14390#0" expanded="false" />
+            <element signature="e#14392#15104#0" expanded="false" />
+            <element signature="e#19942#21753#0" expanded="false" />
+            <element signature="e#21755#21929#0" expanded="false" />
+            <element signature="e#23424#23490#0" expanded="false" />
+            <element signature="e#23492#23587#0" expanded="false" />
+            <element signature="e#23859#24094#0" expanded="false" />
+            <element signature="e#24096#24667#0" expanded="false" />
+            <element signature="e#24670#24829#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/infiniband/verbs.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="206">
+          <caret line="1524" column="0" selection-start-line="1524" selection-start-column="0" selection-end-line="1524" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/RandServerP1.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="328">
+          <caret line="1141" column="0" selection-start-line="1141" selection-start-column="0" selection-end-line="1141" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RandServerP1.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="173">
+          <caret line="785" column="34" selection-start-line="785" selection-start-column="16" selection-end-line="785" selection-end-column="34" />
+          <folding>
+            <element signature="e#7373#7456#0" expanded="false" />
+            <element signature="e#10945#11507#0" expanded="false" />
+            <element signature="e#11509#12554#0" expanded="false" />
+            <element signature="e#12556#12620#1" expanded="false" />
+            <element signature="e#12631#12679#0" expanded="false" />
+            <element signature="e#12696#12763#0" expanded="false" />
+            <element signature="e#12785#12855#0" expanded="false" />
+            <element signature="e#12908#13411#0" expanded="false" />
+            <element signature="e#13422#13494#0" expanded="false" />
+            <element signature="e#13500#13622#0" expanded="false" />
+            <element signature="e#13625#13703#0" expanded="false" />
+            <element signature="e#13747#13881#0" expanded="false" />
+            <element signature="e#14691#15097#0" expanded="false" />
+            <element signature="e#15100#15989#0" expanded="false" />
+            <element signature="e#15992#16056#0" expanded="false" />
+            <element signature="e#18633#18715#0" expanded="false" />
+            <element signature="e#18718#18951#0" expanded="false" />
+            <element signature="e#19495#21218#0" expanded="false" />
+            <element signature="e#23919#31661#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/RandClientP1.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1">
+          <caret line="837" column="5" selection-start-line="837" selection-start-column="5" selection-end-line="837" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RandClientP1.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-140">
+          <caret line="882" column="0" selection-start-line="882" selection-start-column="0" selection-end-line="882" selection-end-column="0" />
+          <folding>
+            <element signature="e#538#617#0" expanded="false" />
+            <element signature="e#721#894#1" expanded="false" />
+            <element signature="e#897#957#1" expanded="false" />
+            <element signature="e#1010#1268#1" expanded="false" />
+            <element signature="e#1271#1357#1" expanded="false" />
+            <element signature="e#1449#1641#1" expanded="false" />
+            <element signature="e#1644#3272#0" expanded="false" />
+            <element signature="e#3274#5295#0" expanded="false" />
+            <element signature="e#5297#7994#0" expanded="false" />
+            <element signature="e#8040#10039#0" expanded="false" />
+            <element signature="e#10043#10823#0" expanded="false" />
+            <element signature="e#10825#11443#0" expanded="false" />
+            <element signature="e#11445#12007#0" expanded="false" />
+            <element signature="e#12009#13054#0" expanded="false" />
+            <element signature="e#13064#13112#0" expanded="false" />
+            <element signature="e#13129#13488#0" expanded="false" />
+            <element signature="e#13506#13823#0" expanded="false" />
+            <element signature="e#15701#16363#0" expanded="false" />
+            <element signature="e#16548#17764#0" expanded="false" />
+            <element signature="e#21553#21781#0" expanded="false" />
+            <element signature="e#21784#22533#0" expanded="false" />
+            <element signature="e#26867#27241#0" expanded="false" />
+            <element signature="e#27242#27800#0" expanded="false" />
+            <element signature="e#27802#28431#0" expanded="false" />
+            <element signature="e#28671#29735#0" expanded="false" />
+            <element signature="e#29738#30630#0" expanded="false" />
+            <element signature="e#30632#32573#0" expanded="false" />
+            <element signature="e#32577#35562#0" expanded="false" />
+            <element signature="e#35564#40555#0" expanded="false" />
+            <marker date="1503747020017" expanded="false" signature="13900:14344" ph="{...}" />
+            <marker date="1503747020017" expanded="false" signature="14417:15699" ph="{...}" />
+            <marker date="1503747020017" expanded="false" signature="26810:26865" ph="{...}" />
+            <marker date="1503747020017" expanded="false" signature="28464:28668" ph="{...}" />
           </folding>
         </state>
       </provider>
