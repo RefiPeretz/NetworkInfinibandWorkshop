@@ -632,7 +632,6 @@ int sendMsgLogic(handle *kv_handle,  char *msg)
         return 1;
     }
 
-
     int scnt = 0;
     int iterations = 1000;
     while (scnt == 0 || iterations > 0)
@@ -673,14 +672,102 @@ int sendMsgLogic(handle *kv_handle,  char *msg)
 
 }
 
+int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, char *actualMessage) {
+    printf("Processing server message: %s\n", msg);
+    if (strlen(msg) == 0) {
+        fprintf(stderr, "Msg is empty!\n");
+        return 0;
+    }
+    struct ibv_mr *sendMr = ibv_reg_mr(kv_handle->ctx->pd, actualMessage, strlen(actualMessage) + 1,
+                                       IBV_ACCESS_LOCAL_WRITE);
+
+
+    struct message *mr_msg = (struct message *) calloc(1, sizeof(struct message));
+    char *delim = ":";
+    mr_msg->addr = strtoul(strtok(msg, delim), NULL, 10);
+    mr_msg->mr_rkey = (uint32_t) atoi(strtok(NULL, delim));
+    printf("Parsed server message - addr: %lu, rkey: %d\n", mr_msg->addr, mr_msg->mr_rkey);
+
+    struct ibv_sge list = {.addr    = (uintptr_t) actualMessage, .length = strlen(actualMessage) + 1, .lkey = sendMr
+            ->lkey};
+
+    struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_RDMA_WRITE, .send_flags = IBV_SEND_SIGNALED, .wr.rdma.remote_addr = (uintptr_t) mr_msg
+            ->addr, .wr.rdma.rkey = mr_msg->mr_rkey};
+    struct ibv_send_wr *bad_wr;
+
+    if (ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr)) {
+        printf("Error in processServerRdmaWriteResponseCmd");
+    };
+
+    return 0;
+}
+
+int
 int kv_set(void *kv_handle, const char *key, const char *value)
 {
+    handle *kvHandle = kv_handle;
     kv_cmd cmd = SET_CMD;
     char *msg = malloc(1 + strlen(key) + strlen(value) + 2 +1);
     sprintf(msg, "%d:%s:%s", cmd, key, value);
     printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
 
-    return sendMsgLogic(kv_handle, msg);
+    //return sendMsgLogic(kv_handle, msg);
+
+    //first send msg to server with size and MR to read from.
+
+    size_t actualMsgSize = roundup(strlen(value) + 1, page_size);
+    char *actualMsg = (char *) malloc(actualMsgSize);
+    sprintf(actualMsg, "%d:%s:%s", cmd, key, value);
+    sprintf(msg, "%d:%s:%d", cmd, key, strlen(value) + 1);
+    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
+    if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg, strlen(msg) + 1)) {
+        perror("Couldn't post send: ");
+        return 1;
+    }
+
+    char *remoteMrMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
+    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, remoteMrMsg, roundup(kvHandle->defMsgSize, page_size))) <
+        0) {
+        perror("Couldn't post receive:");
+        return 1;
+    }
+    int scnt = 2, rcvd = 1;
+    while (scnt || rcvd) {
+        struct ibv_wc wc[2];
+        int ne;
+        do {
+            ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
+            if (ne < 0) {
+                fprintf(stderr, "poll CQ failed %d\n", ne);
+                return 1;
+            }
+
+        } while (ne < 1);
+
+        for (int i = 0; i < ne; ++i) {
+            if (wc[i].status != IBV_WC_SUCCESS) {
+                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status), wc[i].status,
+                        (int) wc[i].wr_id);
+                return 1;
+            }
+            if (wc[i].wr_id == PINGPONG_SEND_WRID) {
+
+                scnt--;
+            } else if (wc[i].wr_id == PINGPONG_RECV_WRID) {
+                //now we should have gotten his the server MR and we should
+                // write our actual message
+                printf("Got server set result msg: %s\n", remoteMrMsg);
+                processServerRdmaWriteResponseCmd(kv_handle, remoteMrMsg, value);
+                rcvd--;
+            } else {
+                fprintf(stderr, "Wrong wr_id %d\n", (int) wc[i].wr_id);
+                return 1;
+            }
+        }
+    }
+
+
+
 };
 
 int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value)
