@@ -6,11 +6,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/socket.h>
-#include <sys/time.h>
 #include <netdb.h>
-#include <stdlib.h>
 #include <getopt.h>
 #include <arpa/inet.h>
 #include <time.h>
@@ -75,7 +72,7 @@ typedef struct mkv_handle {
 } mkv_handle;
 
 struct dkv_ctx {
-    struct mkv_ctx *mkv;
+    struct mkv_handle *mkv;
     struct handle *indexer;
 };
 struct kv_server_address {
@@ -318,8 +315,10 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
     return rem_dest;
 }
 
-#include <sys/param.h>
 #include <assert.h>
+#include <dirent.h>
+#include <fcntl.h>
+#include <sys/mman.h>
 
 static struct pingpong_context *
 pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use_event, int is_server) {
@@ -539,9 +538,9 @@ int kv_open(char *servername, void **kv_handle) {
     return 0;
 };
 
-int mkv_set(void *mkv_h, unsigned kv_id, const char *key, const char *value) {
+int mkv_set(void *mkv_h, unsigned kv_id, const char *key, const char *value, unsigned int length) {
     struct mkv_handle *m_handle = mkv_h;
-    return kv_set(m_handle->kv_handle[kv_id], key, value);
+    return kv_set(m_handle->kv_handle[kv_id], key, value, length);
 }
 
 
@@ -615,7 +614,7 @@ int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, char *actual
 }
 
 
-int kv_set(void *kv_handle, const char *key, const char *value) {
+int kv_set(void *kv_handle, const char *key, const char *value, unsigned int length) {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = SET_CMD;
     //first send msg to server with size and MR to read from.
@@ -673,7 +672,6 @@ int kv_set(void *kv_handle, const char *key, const char *value) {
             }
         }
     }
-
 
     return 0;
 };
@@ -991,7 +989,7 @@ int pp_wait_completions(struct handle *pContext, int i) {
             }
             switch ((int) wc[i].wr_id) {
                 case PINGPONG_SEND_WRID:
-                    ++scnt;
+                    +scnt;
                     break;
 
                 case PINGPONG_RECV_WRID:
@@ -1005,7 +1003,7 @@ int pp_wait_completions(struct handle *pContext, int i) {
                         perror("Couldn't post receive:");
                         return 1;
                     }
-                    ++rcnt;
+                    +rcnt;
                     break;
 
                 default:
@@ -1089,7 +1087,7 @@ kvHandleFactory(struct kv_server_address *server, unsigned size, int argc, char 
                 break;
 
             case 'e':
-                ++use_event;
+                +use_event;
                 break;
 
             default:
@@ -1183,9 +1181,103 @@ int dkv_open(struct kv_server_address *servers, /* array of servers */
     *dkv_h = ctx;
 }
 
-int dkv_set(void *dkv_h, const char *key, const char *value, unsigned length) {
+int find_key_server(void *dkv_h, const char *key, char **findResultMsg) {
+    struct dkv_ctx *m_handle = dkv_h;
+    kv_cmd cmd = FIND_KEY_SERVER;
+    char *msg = malloc(sizeof(char) * 20);
+    sprintf(msg, "%d:%s:%d", cmd, key, m_handle->mkv->num_servers);
+    printf("Sending FIND key - server for key: %s -  msg: %s with size %d\n", key, msg, strlen(msg) + 1);
+
+    cstm_post_recv(m_handle->indexer->ctx->pd, m_handle->indexer->ctx->qp, *findResultMsg,
+                   roundup(m_handle->indexer->defMsgSize, page_size));
+    cstm_post_send(m_handle->indexer->ctx->pd, m_handle->indexer->ctx->qp, msg, strlen(msg) + 1);
+    printf("Pooling for result value \n");
+    int scnt = 1, recved = 1;
+    int iterations = 10000;
+
+    while ((scnt || recved) && iterations > 0) {
+        struct ibv_wc wc[2];
+        int ne;
+        int pollIterations = 10000;
+        do {
+            ne = ibv_poll_cq(m_handle->indexer->ctx->cq, 2, wc);
+            if (ne < 0) {
+                fprintf(stderr, "poll CQ failed %d\n", ne);
+                return 1;
+            }
+            pollIterations--;
+        } while (ne < 1 && pollIterations > 0);
+
+        for (int i = 0; i < ne; ++i) {
+            if (wc[i].status != IBV_WC_SUCCESS) {
+                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status), wc[i].status,
+                        (int) wc[i].wr_id);
+                return 1;
+            }
+
+            switch ((int) wc[i].wr_id) {
+                case PINGPONG_SEND_WRID:
+                    scnt--;
+                    break;
+
+                case PINGPONG_RECV_WRID:
+                    printf("Got server get prep msg: %s\n", *findResultMsg);
+
+
+                    recved--;
+                    break;
+
+
+                default:
+                    fprintf(stderr, "Completion for unknown wr_id %d\n", (int) wc[i].wr_id);
+                    return 1;
+            }
+
+        }
+        iterations--;
+
+    }
+
+    if (iterations == 0) {
+        printf("Failed getting response from server for location of a proper key server for key: %s\n", key);
+        return -1;
+    }
 
 }
+
+int dkv_set(void *dkv_h, const char *key, const char *value, unsigned length) {
+    struct dkv_ctx *ctx = dkv_h;
+
+    /* Step #1: The client sends the Index server FIND(key, #kv-servers) */
+
+    char *findResultMsg = malloc(roundup(ctx->mkv->defMsgSize, page_size));
+    int foundKey = find_key_server(dkv_h, key, &findResultMsg);
+    if (foundKey == -1) {
+        return -1;
+    }
+
+    /* Step #2: The Index server responds with LOCATION(#kv-server-id) */
+
+    printf("Processing server Message: %s\n", findResultMsg);
+    if (strlen(findResultMsg) == 0) {
+        fprintf(stderr, "Msg is empty!\n");
+        return 0;
+    };
+    char *delim = ":";
+    int CMD = atoi(strtok(findResultMsg, delim));
+    int keyServerLocationID = atoi(strtok(NULL, delim));
+
+    free(findResultMsg);
+
+    if (CMD != KEY_SERVER_LOCATION) {
+        printf("Didn't get correct message after sending request for key server location, got CMD: %d\n", CMD);
+        return 1;
+    }
+
+    /* Step #3: The client contacts KV-server with the ID returned in LOCATION, using SET/GET messages. */
+    return mkv_set(dkv_h, keyServerLocationID, key, value, 0);
+}
+
 
 int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length) {
 
@@ -1196,7 +1288,40 @@ void dkv_release(char *value) {
 }
 
 int dkv_close(void *dkv_h) {
+    struct dkv_ctx *ctx = dkv_h;
+    pp_close_ctx(ctx->indexer);
+    mkv_close(ctx->mkv);
+    free(ctx);
+}
 
+void recursive_fill_kv(char const *dirname, void *dkv_h) {
+    struct dirent *curr_ent;
+    DIR *dirp = opendir(dirname);
+    if (dirp == NULL) {
+        return;
+    }
+
+    while ((curr_ent = readdir(dirp)) != NULL) {
+        if (!((strcmp(curr_ent->d_name, ".") == 0) || (strcmp(curr_ent->d_name, "..") == 0))) {
+            char *path = malloc(strlen(dirname) + strlen(curr_ent->d_name) + 2);
+            strcpy(path, dirname);
+            strcat(path, "/");
+            strcat(path, curr_ent->d_name);
+            if (curr_ent->d_type == DT_DIR) {
+                recursive_fill_kv(path, dkv_h);
+            } else if (curr_ent->d_type == DT_REG) {
+                int fd = open(path, O_RDONLY);
+                size_t fsize = lseek(fd, (size_t) 0, SEEK_END);
+                void *p = mmap(0, fsize, PROT_READ, MAP_PRIVATE, fd, 0);
+                /* TODO (1LOC): Add a print here to see you found the full paths... */
+                dkv_set(dkv_h, path, p, fsize);
+                munmap(p, fsize);
+                close(fd);
+            }
+            free(path);
+        }
+    }
+    closedir(dirp);
 }
 
 int main(int argc, char *argv[]) {

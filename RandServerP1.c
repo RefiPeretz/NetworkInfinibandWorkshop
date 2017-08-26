@@ -57,7 +57,6 @@ struct pingpong_dest
 
 
 
-
 static int pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn,
                           enum ibv_mtu mtu, int sl, struct pingpong_dest *dest,
                           int sgid_idx)
@@ -869,8 +868,6 @@ int processClientCmd(handle *kv_handle, char *msg)
 
     return 0;
 }
-
-
 
 int main(int argc, char *argv[])
 {
