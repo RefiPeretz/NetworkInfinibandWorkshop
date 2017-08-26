@@ -38,7 +38,46 @@ typedef struct Message {
     int valueSize;
 } Message;
 
+typedef struct kvMsg {
+    char *key;
+    char *value;
+} kvMsg;
 
+typedef struct handle {
+    struct ibv_device **dev_list;
+    struct ibv_device *ib_dev;
+    struct pingpong_context *ctx;
+    long defMsgSize;
+    int kvListSize;
+    int ib_port;
+    int rx_depth;
+    int usedBuffers;
+    struct pingpong_dest my_dest;
+    struct pingpong_dest *rem_dest;
+    char gid[33];
+    int isUsed[NUMBER_OF_BUFFERS];
+    kvMsg **kvMsgDict;
+} handle;
+
+typedef struct mkv_handle {
+    unsigned num_servers;
+    struct handle *kv_handle[0];
+    int defMsgSize;
+    int kvListSize;
+    int ib_port;
+    int rx_depth;
+    struct pingpong_dest my_dest;
+    struct pingpong_dest *rem_dest;
+    char gid[33];
+    kvMsg **kvMsgDict;
+    char *clientBuffers;
+    int clientBuffersNum;
+} mkv_handle;
+
+struct dkv_ctx {
+    struct mkv_ctx *mkv;
+    struct handle *indexer;
+};
 struct kv_server_address {
     char *servername; /* In the last item of an array this is NULL */
     unsigned int port; /* This is useful for multiple servers on a host */
@@ -65,15 +104,12 @@ struct pingpong_context {
 
 };
 
-struct pingpong_dest
-{
+struct pingpong_dest {
     int lid;
     int qpn;
     int psn;
     union ibv_gid gid;
 };
-
-#define EAGER_PROTOCOL_LIMIT (1 << 22) /* 4KB limit */
 
 #define EAGER_BUFFER_LIMIT (10)
 
@@ -82,28 +118,22 @@ struct kv_client_eager_buffer {
     char data[EAGER_PROTOCOL_LIMIT]; /* give only this to ibv_post_recv() or the user */
 };
 
-static int pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn,
-                          enum ibv_mtu mtu, int sl, struct pingpong_dest *dest,
-                          int sgid_idx)
-{
-    struct ibv_qp_attr attr =
-            {.qp_state        = IBV_QPS_RTR, .path_mtu        = mtu, .dest_qp_num        = dest
-                    ->qpn, .rq_psn            = dest
-                    ->psn, .max_dest_rd_atomic    = 1, .min_rnr_timer        = 12, .ah_attr        = {.is_global    = 0, .dlid        = dest
-                    ->lid, .sl        = sl, .src_path_bits    = 0, .port_num    = port}};
+static int
+pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn, enum ibv_mtu mtu, int sl, struct pingpong_dest *dest,
+               int sgid_idx) {
+    struct ibv_qp_attr attr = {.qp_state        = IBV_QPS_RTR, .path_mtu        = mtu, .dest_qp_num        = dest
+            ->qpn, .rq_psn            = dest
+            ->psn, .max_dest_rd_atomic    = 1, .min_rnr_timer        = 12, .ah_attr        = {.is_global    = 0, .dlid        = dest
+            ->lid, .sl        = sl, .src_path_bits    = 0, .port_num    = port}};
 
-    if (dest->gid.global.interface_id)
-    {
+    if (dest->gid.global.interface_id) {
         attr.ah_attr.is_global = 1;
         attr.ah_attr.grh.hop_limit = 1;
         attr.ah_attr.grh.dgid = dest->gid;
         attr.ah_attr.grh.sgid_index = sgid_idx;
     }
-    if (ibv_modify_qp(ctx->qp, &attr,
-                      IBV_QP_STATE | IBV_QP_AV | IBV_QP_PATH_MTU |
-                      IBV_QP_DEST_QPN | IBV_QP_RQ_PSN |
-                      IBV_QP_MAX_DEST_RD_ATOMIC | IBV_QP_MIN_RNR_TIMER))
-    {
+    if (ibv_modify_qp(ctx->qp, &attr, IBV_QP_STATE | IBV_QP_AV | IBV_QP_PATH_MTU | IBV_QP_DEST_QPN | IBV_QP_RQ_PSN |
+                                      IBV_QP_MAX_DEST_RD_ATOMIC | IBV_QP_MIN_RNR_TIMER)) {
         fprintf(stderr, "Failed to modify QP to RTR\n");
         return 1;
     }
@@ -115,10 +145,8 @@ static int pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn,
     attr.sq_psn = my_psn;
     attr.max_rd_atomic = 1;
     if (ibv_modify_qp(ctx->qp, &attr,
-                      IBV_QP_STATE | IBV_QP_TIMEOUT | IBV_QP_RETRY_CNT |
-                      IBV_QP_RNR_RETRY | IBV_QP_SQ_PSN |
-                      IBV_QP_MAX_QP_RD_ATOMIC))
-    {
+                      IBV_QP_STATE | IBV_QP_TIMEOUT | IBV_QP_RETRY_CNT | IBV_QP_RNR_RETRY | IBV_QP_SQ_PSN |
+                      IBV_QP_MAX_QP_RD_ATOMIC)) {
         fprintf(stderr, "Failed to modify QP to RTS\n");
         return 1;
     }
@@ -127,12 +155,9 @@ static int pp_connect_ctx(struct pingpong_context *ctx, int port, int my_psn,
 }
 
 static struct pingpong_dest *
-pp_client_exch_dest(const char *servername, int port,
-                    const struct pingpong_dest *my_dest)
-{
+pp_client_exch_dest(const char *servername, int port, const struct pingpong_dest *my_dest) {
     struct addrinfo *res, *t;
-    struct addrinfo
-            hints = {.ai_family   = AF_INET, .ai_socktype = SOCK_STREAM};
+    struct addrinfo hints = {.ai_family   = AF_INET, .ai_socktype = SOCK_STREAM};
     char *service;
     char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
     int n;
@@ -140,27 +165,22 @@ pp_client_exch_dest(const char *servername, int port,
     struct pingpong_dest *rem_dest = NULL;
     char gid[33];
 
-    if (asprintf(&service, "%d", port) < 0)
-    {
+    if (asprintf(&service, "%d", port) < 0) {
         return NULL;
     }
 
     n = getaddrinfo(servername, service, &hints, &res);
 
-    if (n < 0)
-    {
+    if (n < 0) {
         fprintf(stderr, "%s for %s:%d\n", gai_strerror(n), servername, port);
         free(service);
         return NULL;
     }
 
-    for (t = res; t; t = t->ai_next)
-    {
+    for (t = res; t; t = t->ai_next) {
         sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
-        if (sockfd >= 0)
-        {
-            if (!connect(sockfd, t->ai_addr, t->ai_addrlen))
-            {
+        if (sockfd >= 0) {
+            if (!connect(sockfd, t->ai_addr, t->ai_addrlen)) {
                 break;
             }
             close(sockfd);
@@ -171,23 +191,19 @@ pp_client_exch_dest(const char *servername, int port,
     freeaddrinfo(res);
     free(service);
 
-    if (sockfd < 0)
-    {
+    if (sockfd < 0) {
         fprintf(stderr, "Couldn't connect to %s:%d\n", servername, port);
         return NULL;
     }
 
     gid_to_wire_gid(&my_dest->gid, gid);
-    sprintf(msg, "%04x:%06x:%06x:%s", my_dest->lid, my_dest->qpn, my_dest->psn,
-            gid);
-    if (write(sockfd, msg, sizeof msg) != sizeof msg)
-    {
+    sprintf(msg, "%04x:%06x:%06x:%s", my_dest->lid, my_dest->qpn, my_dest->psn, gid);
+    if (write(sockfd, msg, sizeof msg) != sizeof msg) {
         fprintf(stderr, "Couldn't send local address\n");
         goto out;
     }
 
-    if (read(sockfd, msg, sizeof msg) != sizeof msg)
-    {
+    if (read(sockfd, msg, sizeof msg) != sizeof msg) {
         perror("client read");
         fprintf(stderr, "Couldn't read remote address\n");
         goto out;
@@ -196,13 +212,11 @@ pp_client_exch_dest(const char *servername, int port,
     write(sockfd, "done", sizeof "done");
 
     rem_dest = malloc(sizeof *rem_dest);
-    if (!rem_dest)
-    {
+    if (!rem_dest) {
         goto out;
     }
 
-    sscanf(msg, "%x:%x:%x:%s", &rem_dest->lid, &rem_dest->qpn, &rem_dest->psn,
-           gid);
+    sscanf(msg, "%x:%x:%x:%s", &rem_dest->lid, &rem_dest->qpn, &rem_dest->psn, gid);
     wire_gid_to_gid(gid, &rem_dest->gid);
 
     out:
@@ -211,13 +225,10 @@ pp_client_exch_dest(const char *servername, int port,
 }
 
 static struct pingpong_dest *
-pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
-                    int port, int sl, const struct pingpong_dest *my_dest,
-                    int sgid_idx)
-{
+pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu, int port, int sl,
+                    const struct pingpong_dest *my_dest, int sgid_idx) {
     struct addrinfo *res, *t;
-    struct addrinfo hints =
-            {.ai_flags    = AI_PASSIVE, .ai_family   = AF_INET, .ai_socktype = SOCK_STREAM};
+    struct addrinfo hints = {.ai_flags    = AI_PASSIVE, .ai_family   = AF_INET, .ai_socktype = SOCK_STREAM};
     char *service;
     char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
     int n;
@@ -225,31 +236,26 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
     struct pingpong_dest *rem_dest = NULL;
     char gid[33];
 
-    if (asprintf(&service, "%d", port) < 0)
-    {
+    if (asprintf(&service, "%d", port) < 0) {
         return NULL;
     }
 
     n = getaddrinfo(NULL, service, &hints, &res);
 
-    if (n < 0)
-    {
+    if (n < 0) {
         fprintf(stderr, "%s for port %d\n", gai_strerror(n), port);
         free(service);
         return NULL;
     }
 
-    for (t = res; t; t = t->ai_next)
-    {
+    for (t = res; t; t = t->ai_next) {
         sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
-        if (sockfd >= 0)
-        {
+        if (sockfd >= 0) {
             n = 1;
 
             setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &n, sizeof n);
 
-            if (!bind(sockfd, t->ai_addr, t->ai_addrlen))
-            {
+            if (!bind(sockfd, t->ai_addr, t->ai_addrlen)) {
                 break;
             }
             close(sockfd);
@@ -260,8 +266,7 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
     freeaddrinfo(res);
     free(service);
 
-    if (sockfd < 0)
-    {
+    if (sockfd < 0) {
         fprintf(stderr, "Couldn't listen to port %d\n", port);
         return NULL;
     }
@@ -269,33 +274,27 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
     listen(sockfd, 1);
     connfd = accept(sockfd, NULL, 0);
     close(sockfd);
-    if (connfd < 0)
-    {
+    if (connfd < 0) {
         fprintf(stderr, "accept() failed\n");
         return NULL;
     }
 
     n = read(connfd, msg, sizeof msg);
-    if (n != sizeof msg)
-    {
+    if (n != sizeof msg) {
         perror("server read");
-        fprintf(stderr, "%d/%d: Couldn't read remote address\n", n,
-                (int) sizeof msg);
+        fprintf(stderr, "%d/%d: Couldn't read remote address\n", n, (int) sizeof msg);
         goto out;
     }
 
     rem_dest = malloc(sizeof *rem_dest);
-    if (!rem_dest)
-    {
+    if (!rem_dest) {
         goto out;
     }
 
-    sscanf(msg, "%x:%x:%x:%s", &rem_dest->lid, &rem_dest->qpn, &rem_dest->psn,
-           gid);
+    sscanf(msg, "%x:%x:%x:%s", &rem_dest->lid, &rem_dest->qpn, &rem_dest->psn, gid);
     wire_gid_to_gid(gid, &rem_dest->gid);
 
-    if (pp_connect_ctx(ctx, ib_port, my_dest->psn, mtu, sl, rem_dest, sgid_idx))
-    {
+    if (pp_connect_ctx(ctx, ib_port, my_dest->psn, mtu, sl, rem_dest, sgid_idx)) {
         fprintf(stderr, "Couldn't connect to remote QP\n");
         free(rem_dest);
         rem_dest = NULL;
@@ -304,10 +303,8 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
 
 
     gid_to_wire_gid(&my_dest->gid, gid);
-    sprintf(msg, "%04x:%06x:%06x:%s", my_dest->lid, my_dest->qpn, my_dest->psn,
-            gid);
-    if (write(connfd, msg, sizeof msg) != sizeof msg)
-    {
+    sprintf(msg, "%04x:%06x:%06x:%s", my_dest->lid, my_dest->qpn, my_dest->psn, gid);
+    if (write(connfd, msg, sizeof msg) != sizeof msg) {
         fprintf(stderr, "Couldn't send local address\n");
         free(rem_dest);
         rem_dest = NULL;
@@ -325,14 +322,11 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
 #include <assert.h>
 
 static struct pingpong_context *
-pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
-            int use_event, int is_server)
-{
+pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use_event, int is_server) {
     struct pingpong_context *ctx;
 
     ctx = calloc(1, sizeof *ctx);
-    if (!ctx)
-    {
+    if (!ctx) {
         return NULL;
     }
 
@@ -340,40 +334,31 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
     ctx->rx_depth = rx_depth;
 
 
-
     ctx->context = ibv_open_device(ib_dev);
-    if (!ctx->context)
-    {
-        fprintf(stderr, "Couldn't get context for %s\n",
-                ibv_get_device_name(ib_dev));
+    if (!ctx->context) {
+        fprintf(stderr, "Couldn't get context for %s\n", ibv_get_device_name(ib_dev));
         return NULL;
     }
 
-    if (use_event)
-    {
+    if (use_event) {
         ctx->channel = ibv_create_comp_channel(ctx->context);
-        if (!ctx->channel)
-        {
+        if (!ctx->channel) {
             fprintf(stderr, "Couldn't create completion channel\n");
             return NULL;
         }
-    } else
-    {
+    } else {
         ctx->channel = NULL;
     }
 
     ctx->pd = ibv_alloc_pd(ctx->context);
-    if (!ctx->pd)
-    {
+    if (!ctx->pd) {
         fprintf(stderr, "Couldn't allocate PD\n");
         return NULL;
     }
 
 
-
     ctx->cq = ibv_create_cq(ctx->context, rx_depth + 1, NULL, ctx->channel, 0);
-    if (!ctx->cq)
-    {
+    if (!ctx->cq) {
         fprintf(stderr, "Couldn't create CQ\n");
         return NULL;
     }
@@ -383,21 +368,16 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
                 ->cq, .cap     = {.max_send_wr  = rx_depth, .max_recv_wr  = rx_depth, .max_send_sge = 1, .max_recv_sge = 1}, .qp_type = IBV_QPT_RC};
 
         ctx->qp = ibv_create_qp(ctx->pd, &attr);
-        if (!ctx->qp)
-        {
+        if (!ctx->qp) {
             fprintf(stderr, "Couldn't create QP\n");
             return NULL;
         }
     }
 
     {
-        struct ibv_qp_attr attr =
-                {.qp_state        = IBV_QPS_INIT, .pkey_index      = 0, .port_num        = port, .qp_access_flags = 0};
+        struct ibv_qp_attr attr = {.qp_state        = IBV_QPS_INIT, .pkey_index      = 0, .port_num        = port, .qp_access_flags = 0};
 
-        if (ibv_modify_qp(ctx->qp, &attr,
-                          IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT |
-                          IBV_QP_ACCESS_FLAGS))
-        {
+        if (ibv_modify_qp(ctx->qp, &attr, IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS)) {
             fprintf(stderr, "Failed to modify QP to INIT\n");
             return NULL;
         }
@@ -407,17 +387,13 @@ pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
 }
 
 
-
-int pp_close_ctx(struct pingpong_context *ctx)
-{
-    if (ibv_destroy_qp(ctx->qp))
-    {
+int pp_close_ctx(struct pingpong_context *ctx) {
+    if (ibv_destroy_qp(ctx->qp)) {
         fprintf(stderr, "Couldn't destroy QP\n");
         return 1;
     }
 
-    if (ibv_destroy_cq(ctx->cq))
-    {
+    if (ibv_destroy_cq(ctx->cq)) {
         fprintf(stderr, "Couldn't destroy CQ\n");
         return 1;
     }
@@ -428,17 +404,14 @@ int pp_close_ctx(struct pingpong_context *ctx)
     //        return 1;
     //    }
 
-    if (ctx->channel)
-    {
-        if (ibv_destroy_comp_channel(ctx->channel))
-        {
+    if (ctx->channel) {
+        if (ibv_destroy_comp_channel(ctx->channel)) {
             fprintf(stderr, "Couldn't destroy completion channel\n");
             return 1;
         }
     }
 
-    if (ibv_close_device(ctx->context))
-    {
+    if (ibv_close_device(ctx->context)) {
         fprintf(stderr, "Couldn't release context\n");
         return 1;
     }
@@ -448,44 +421,33 @@ int pp_close_ctx(struct pingpong_context *ctx)
     return 0;
 }
 
-static int
-cstm_post_send(struct ibv_pd *pd, struct ibv_qp *qp, char *buf, int length)
-{
+static int cstm_post_send(struct ibv_pd *pd, struct ibv_qp *qp, char *buf, int length) {
     struct ibv_mr *mr = ibv_reg_mr(pd, buf, length, IBV_ACCESS_LOCAL_WRITE);
-    if (!mr)
-    {
+    if (!mr) {
         fprintf(stderr, "Couldn't register MR\n");
         return 1;
     }
-    struct ibv_sge list =
-            {.addr    = (uintptr_t) buf, .length = length, .lkey    = mr->lkey};
-    struct ibv_send_wr wr =
-            {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,};
+    struct ibv_sge list = {.addr    = (uintptr_t) buf, .length = length, .lkey    = mr->lkey};
+    struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,};
     struct ibv_send_wr *bad_wr;
 
     return ibv_post_send(qp, &wr, &bad_wr);
 }
 
-static int
-cstm_post_recv(struct ibv_pd *pd, struct ibv_qp *qp, char *buf, int length)
-{
+static int cstm_post_recv(struct ibv_pd *pd, struct ibv_qp *qp, char *buf, int length) {
     struct ibv_mr *mr = ibv_reg_mr(pd, buf, length, IBV_ACCESS_LOCAL_WRITE);
-    if (!mr)
-    {
+    if (!mr) {
         fprintf(stderr, "Couldn't register MR\n");
         return 1;
     }
-    struct ibv_sge list =
-            {.addr    = (uintptr_t) buf, .length = length, .lkey    = mr->lkey};
-    struct ibv_recv_wr wr =
-            {.wr_id        = PINGPONG_RECV_WRID, .sg_list    = &list, .num_sge    = 1,};
+    struct ibv_sge list = {.addr    = (uintptr_t) buf, .length = length, .lkey    = mr->lkey};
+    struct ibv_recv_wr wr = {.wr_id        = PINGPONG_RECV_WRID, .sg_list    = &list, .num_sge    = 1,};
     struct ibv_recv_wr *bad_wr;
 
     return ibv_post_recv(qp, &wr, &bad_wr);
 }
 
-static void usage(const char *argv0)
-{
+static void usage(const char *argv0) {
     printf("Usage:\n");
     printf("  %s            start a server and wait for connection\n", argv0);
     printf("  %s <host>     connect to server at <host>\n", argv0);
@@ -503,53 +465,13 @@ static void usage(const char *argv0)
     printf("  -g, --gid-idx=<gid index> local port gid index\n");
 }
 
-typedef struct kvMsg
-{
-    char *key;
-    char *value;
-} kvMsg;
 
-typedef struct handle
-{
-    struct ibv_device **dev_list;
-    struct ibv_device *ib_dev;
-    struct pingpong_context *ctx;
-    long defMsgSize;
-    int kvListSize;
-    int ib_port;
-    int rx_depth;
-    int usedBuffers;
-    struct pingpong_dest my_dest;
-    struct pingpong_dest *rem_dest;
-    char gid[33];
-    int isUsed[NUMBER_OF_BUFFERS];
-    kvMsg **kvMsgDict;
-} handle;
-
-typedef struct mkv_handle
-{
-    unsigned num_servers;
-    struct handle *kv_handle[0];
-    int defMsgSize;
-    int kvListSize;
-    int ib_port;
-    int rx_depth;
-    struct pingpong_dest my_dest;
-    struct pingpong_dest *rem_dest;
-    char gid[33];
-    kvMsg **kvMsgDict;
-    char* clientBuffers;
-    int clientBuffersNum;
-} mkv_handle;
-
-int getFromStore(handle *store, const char *key, char **value)
-{
+int getFromStore(handle *store, const char *key, char **value) {
     int listSize = store->kvListSize;
-    for(int i=0; i < listSize; i++){
-        if(strcmp(store->kvMsgDict[i]->key, key) == 0){
-            *value = malloc(strlen(store->kvMsgDict[i]->value)+1);
-            memcpy(*value, store->kvMsgDict[i]->value, strlen
-                                                               (store->kvMsgDict[i]->value)+1);
+    for (int i = 0; i < listSize; i++) {
+        if (strcmp(store->kvMsgDict[i]->key, key) == 0) {
+            *value = malloc(strlen(store->kvMsgDict[i]->value) + 1);
+            memcpy(*value, store->kvMsgDict[i]->value, strlen(store->kvMsgDict[i]->value) + 1);
             return 0;
         }
     }
@@ -557,11 +479,9 @@ int getFromStore(handle *store, const char *key, char **value)
     return 1; // Didn't find any suitable key
 }
 
-void addElement(const char* key, char* value,struct handle* curHandle)
-{
+void addElement(const char *key, char *value, struct handle *curHandle) {
 
-    if (!curHandle->kvListSize)
-    {
+    if (!curHandle->kvListSize) {
         struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
         curMsg->key = malloc(strlen(key) + 1);
         curMsg->value = malloc(strlen(value) + 1);
@@ -571,12 +491,9 @@ void addElement(const char* key, char* value,struct handle* curHandle)
         curHandle->kvMsgDict = malloc(sizeof(kvMsg) * 1);
         curHandle->kvMsgDict[0] = curMsg;
         curHandle->kvListSize++;
-    } else
-    {
-        for (int i = 0; i < curHandle->kvListSize; i++)
-        {
-            if (strcmp(curHandle->kvMsgDict[i]->key, key) == 0)
-            {
+    } else {
+        for (int i = 0; i < curHandle->kvListSize; i++) {
+            if (strcmp(curHandle->kvMsgDict[i]->key, key) == 0) {
                 strcpy(curHandle->kvMsgDict[i]->value, value);
                 return;
             }
@@ -590,8 +507,7 @@ void addElement(const char* key, char* value,struct handle* curHandle)
 
 
         struct kvMsg **newList = malloc(sizeof(kvMsg) * curHandle->kvListSize);
-        for (int i = 0; i < curHandle->kvListSize - 1; i++)
-        {
+        for (int i = 0; i < curHandle->kvListSize - 1; i++) {
             newList[i] = curHandle->kvMsgDict[i];
         }
         newList[curHandle->kvListSize - 1] = curMsg;
@@ -600,78 +516,63 @@ void addElement(const char* key, char* value,struct handle* curHandle)
     }
 }
 
-int kv_open(char *servername, void **kv_handle)
-{
+int kv_open(char *servername, void **kv_handle) {
     handle *kvHandle = *kv_handle;
     kvHandle->dev_list = ibv_get_device_list(NULL);
-    if (!kvHandle->dev_list)
-    {
+    if (!kvHandle->dev_list) {
         perror("Failed to get IB devices list");
         return 1;
     }
 
     kvHandle->ib_dev = *kvHandle->dev_list;
-    if (!kvHandle->ib_dev)
-    {
+    if (!kvHandle->ib_dev) {
         fprintf(stderr, "No IB devices found\n");
         return 1;
     }
 
 
-    kvHandle->ctx = pp_init_ctx(kvHandle->ib_dev, kvHandle->defMsgSize, 500,
-                                kvHandle->ib_port, kvHandle->rx_depth,
+    kvHandle->ctx = pp_init_ctx(kvHandle->ib_dev, kvHandle->defMsgSize, 500, kvHandle->ib_port, kvHandle->rx_depth,
                                 !servername);
-    if (!kvHandle->ctx)
-    {
+    if (!kvHandle->ctx) {
         return 1;
     }
     return 0;
 };
 
-int mkv_set(void *mkv_h, unsigned kv_id, const char *key, const char *value){
+int mkv_set(void *mkv_h, unsigned kv_id, const char *key, const char *value) {
     struct mkv_handle *m_handle = mkv_h;
     return kv_set(m_handle->kv_handle[kv_id], key, value);
 }
 
 
-int sendMsgLogic(handle *kv_handle,  char *msg)
-{
-    if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, msg,
-                       strlen(msg) + 1))
-    {
+int sendMsgLogic(handle *kv_handle, char *msg) {
+    if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, msg, strlen(msg) + 1)) {
         perror("Couldn't post send: ");
         return 1;
     }
 
     int scnt = 0;
     int iterations = 1000;
-    while (scnt == 0 || iterations > 0)
-    {
+    while (scnt == 0 || iterations > 0) {
         struct ibv_wc wc[101];
         int ne;
         int pollIterations = 100;
-        do
-        {
+        do {
             ne = ibv_poll_cq(kv_handle->ctx->cq, 101, wc);
-            if (ne < 0)
-            {
+            if (ne < 0) {
                 fprintf(stderr, "poll CQ failed %d\n", ne);
                 return 1;
             }
             pollIterations--;
         } while (ne < 1 && pollIterations > 0);
 
-        for (int i = 0; i < ne; ++i)
-        {
-            if (wc[i].status != IBV_WC_SUCCESS)
-            {
-                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n",
-                        ibv_wc_status_str(wc[i].status), wc[i].status,
+        for (int i = 0; i < ne; ++i) {
+            if (wc[i].status != IBV_WC_SUCCESS) {
+                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status), wc[i].status,
                         (int) wc[i].wr_id);
                 return 1;
             }
-            if (wc[i].wr_id == PINGPONG_SEND_WRID)
-            {
+            if (wc[i].wr_id == PINGPONG_SEND_WRID) {
                 scnt++;
                 break;
             }
@@ -714,8 +615,7 @@ int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, char *actual
 }
 
 
-int kv_set(void *kv_handle, const char *key, const char *value)
-{
+int kv_set(void *kv_handle, const char *key, const char *value) {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = SET_CMD;
     //first send msg to server with size and MR to read from.
@@ -779,15 +679,14 @@ int kv_set(void *kv_handle, const char *key, const char *value)
 };
 
 
-int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value)
-{
+int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value) {
     struct mkv_handle *m_handle = mkv_h;
-    return kv_get(m_handle->kv_handle[kv_id], key, value,m_handle->clientBuffers,kv_id);
+    return kv_get(m_handle->kv_handle[kv_id], key, value, m_handle->clientBuffers, kv_id);
 }
 
-int getFreeBufferIndex(handle *kvHandle){
-    for(int i = 0; i < NUMBER_OF_BUFFERS; i++){
-        if(kvHandle->isUsed[i] == UN_USED_BUFFER){
+int getFreeBufferIndex(handle *kvHandle) {
+    for (int i = 0; i < NUMBER_OF_BUFFERS; i++) {
+        if (kvHandle->isUsed[i] == UN_USED_BUFFER) {
             kvHandle->isUsed[i] = USED_BUFFER;
             return i;
         }
@@ -811,9 +710,7 @@ int processServerGetReqResponseCmd(handle *kv_handle, struct Message *msg, char 
 }
 
 
-
-int kv_get(void *kv_handle, const char *key, char **value,char* clientBuffers,int kv_id)
-{
+int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, int kv_id) {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = GET_CMD;
     struct Message *mr_msg;
@@ -821,16 +718,14 @@ int kv_get(void *kv_handle, const char *key, char **value,char* clientBuffers,in
     char *vmsg = malloc(roundup(kvHandle->defMsgSize, page_size));
     sprintf(vmsg, "%d:%s:%s", cmd, key, "");
     printf("Sending get msg: %s\n", vmsg);
-    if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, vmsg,
-                       strlen(vmsg) + 1))
-    {
+    if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, vmsg, strlen(vmsg) + 1)) {
         perror("Couldn't post send: ");
         return 1;
     }
     char *recv2Msg1;
-    if(kvHandle->usedBuffers < NUMBER_OF_BUFFERS ){
+    if (kvHandle->usedBuffers < NUMBER_OF_BUFFERS) {
         int freeIndex = getFreeBufferIndex(kv_handle);
-        recv2Msg1 = clientBuffers + (kv_id*MAX_MSG_TEST + freeIndex*MAX_MSG_TEST);
+        recv2Msg1 = clientBuffers + (kv_id * MAX_MSG_TEST + freeIndex * MAX_MSG_TEST);
         kvHandle->usedBuffers++;
     } else {
         recv2Msg1 = calloc(1, 4096);
@@ -846,16 +741,13 @@ int kv_get(void *kv_handle, const char *key, char **value,char* clientBuffers,in
     char *recv2Msg;
     int scnt = 1, recved = 1;
     int iterations = 10000;
-    while ((scnt || recved) && iterations > 0)
-    {
+    while ((scnt || recved) && iterations > 0) {
         struct ibv_wc wc[2];
         int ne;
         int pollIterations = 10000;
-        do
-        {
+        do {
             ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
-            if (ne < 0)
-            {
+            if (ne < 0) {
                 fprintf(stderr, "poll CQ failed %d\n", ne);
                 return 1;
             }
@@ -944,8 +836,8 @@ void kv_release(char *value) {
         free(value);
     }
 };
-void mkv_send_credit(void *mkv_h, unsigned kv_id, unsigned how_many_credits)
-{
+
+void mkv_send_credit(void *mkv_h, unsigned kv_id, unsigned how_many_credits) {
     struct mkv_handle *m_handle = mkv_h;
     kv_cmd cmd = SET_CREDIT;
     char *msg = malloc(sizeof(char) * 20);
@@ -954,8 +846,8 @@ void mkv_send_credit(void *mkv_h, unsigned kv_id, unsigned how_many_credits)
 
     sendMsgLogic(m_handle->kv_handle[kv_id], msg);
 }
-void mkv_close(void *mkv_h)
-{
+
+void mkv_close(void *mkv_h) {
     unsigned count;
     struct mkv_handle *master_handle = mkv_h;
     for (count = 0; count < master_handle->num_servers; count++) {
@@ -970,14 +862,13 @@ void mkv_close(void *mkv_h)
     free(master_handle);
 }
 
-void mkv_release(char *value,int kv_id,void *mkv_h)
-{
+void mkv_release(char *value, int kv_id, void *mkv_h) {
     struct mkv_handle *m_handle = mkv_h;
     struct handle *cur_handle = m_handle->kv_handle[kv_id];
-    for(int i = 0 ;i < NUMBER_OF_BUFFERS;i++){
-        if(cur_handle->isUsed[i] == USED_BUFFER){
-            char* temp = m_handle->clientBuffers + (kv_id*MAX_MSG_TEST + i*MAX_MSG_TEST);
-            if(strcmp(value, temp)){
+    for (int i = 0; i < NUMBER_OF_BUFFERS; i++) {
+        if (cur_handle->isUsed[i] == USED_BUFFER) {
+            char *temp = m_handle->clientBuffers + (kv_id * MAX_MSG_TEST + i * MAX_MSG_TEST);
+            if (strcmp(value, temp)) {
                 //clear bufffer
                 //memset(temp, 0, MAX_MSG_TEST);
                 cur_handle->isUsed[i] = UN_USED_BUFFER;
@@ -990,11 +881,9 @@ void mkv_release(char *value,int kv_id,void *mkv_h)
 }
 
 
-int kv_close(void *kv_handle)
-{
+int kv_close(void *kv_handle) {
 
-    if (pp_close_ctx(((handle *) kv_handle)->ctx))
-    {
+    if (pp_close_ctx(((handle *) kv_handle)->ctx)) {
         return 1;
     }
 
@@ -1058,7 +947,7 @@ int mkv_open(struct kv_server_address *servers, void **mkv_h) {
     ctx->num_servers = count;
     //TODO maby change to limit number of buffers
     ctx->clientBuffersNum = NUMBER_OF_BUFFERS;
-    ctx->clientBuffers = calloc(0,MAX_MSG_TEST*ctx->num_servers*ctx->clientBuffersNum);
+    ctx->clientBuffers = calloc(0, MAX_MSG_TEST * ctx->num_servers * ctx->clientBuffersNum);
 
     for (count = 0; count < ctx->num_servers; count++) {
         if (kvHandleFactory(&servers[count], MAX_MSG_TEST, g_argc, g_argv, &ctx->kv_handle[count])) {
@@ -1074,12 +963,11 @@ int pp_wait_completions(struct handle *pContext, int i) {
     char *recvMsg = NULL;
     recvMsg = malloc(roundup(pContext->defMsgSize, page_size));
 
-    if ((cstm_post_recv(pContext->ctx->pd, pContext->ctx->qp, recvMsg, roundup(pContext->defMsgSize, page_size))) <
-        0) {
+    if ((cstm_post_recv(pContext->ctx->pd, pContext->ctx->qp, recvMsg, roundup(pContext->defMsgSize, page_size))) < 0) {
         perror("Couldn't post receive:");
         return 1;
     }
-    int rcnt=0,scnt = 0;
+    int rcnt = 0, scnt = 0;
     int iters = 1000;
     while (rcnt < iters || scnt < iters) {
 
@@ -1097,8 +985,8 @@ int pp_wait_completions(struct handle *pContext, int i) {
 
         for (i = 0; i < ne; ++i) {
             if (wc[i].status != IBV_WC_SUCCESS) {
-                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status),
-                        wc[i].status, (int) wc[i].wr_id);
+                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status), wc[i].status,
+                        (int) wc[i].wr_id);
                 return 1;
             }
             switch ((int) wc[i].wr_id) {
@@ -1126,119 +1014,6 @@ int pp_wait_completions(struct handle *pContext, int i) {
             }
         }
     }
-    return 0;
-}
-
-
-
-int main(int argc, char *argv[]) {
-    void *kv_ctx; /* handle to internal KV-client context */
-
-    g_argc = argc;
-    g_argv = argv;
-
-    struct kv_server_address servers[2] = {
-            {
-                    .servername = "mlx-stud-04",
-                    .port = 65433
-            },{.servername = NULL, .port = 0}
-    };
-
-    assert(0 == mkv_open(servers, &kv_ctx));
-    char key[4] = "red";
-    char value[10] = "wedding";
-    char key2[5] = "red2";
-    char value2[11] = "wedding2";
-    mkv_send_credit(kv_ctx, 0, 2);
-
-    if (mkv_set(kv_ctx,0, key, value)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    char* retVal = malloc(4096);
-    if (mkv_get(kv_ctx,0, key, &retVal)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    retVal = malloc(4096);
-    if (mkv_get(kv_ctx,0, key, &retVal)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    mkv_release(retVal,0,kv_ctx);
-
-    if (mkv_set(kv_ctx,0, key2, value2)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    retVal = malloc(4096);
-    if (mkv_get(kv_ctx,0, key2, &retVal)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    retVal = malloc(4096);
-    if (mkv_get(kv_ctx,0, key2, &retVal)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    retVal = malloc(4096);
-    if (mkv_get(kv_ctx,0, key, &retVal)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    mkv_release(retVal,0,kv_ctx);
-
-    //mkv_send_credit(kv_ctx, 0, 50);
-    struct mkv_handle *m_handle = kv_ctx;
-    //mkv_close(kv_ctx);
-    mkv_send_credit(kv_ctx, 0, 2);
-
-//    //Complicated Test:
-//    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
-//    memset(msg,'w', MAX_MSG_TEST);
-//    msg[MAX_MSG_TEST] = '\0';
-//    printf("Start test\n");
-//
-//    char key[MAX_KEY];
-//    for(int i = 0; i < LOOP_ITER;i++){
-//        sprintf(key, "test%d", i);
-//        if (kv_set(kvHandle, key, msg))
-//        {
-//            fprintf(stderr, "Couldn't post send\n");
-//            return 1;
-//        }
-//    }
-//    for(int i = 0; i < LOOP_ITER;i++){
-//        char *returnedVal = malloc(MAX_MSG_TEST + 1);
-//        sprintf(key, "test%d", i);
-//        if (kv_get(kvHandle, key, &returnedVal))
-//        {
-//            fprintf(stderr, "Couldn't kv get the requested key\n");
-//            return 1;
-//        }
-//        //printf("Got value: %s", returnedVal);
-//        kv_release(returnedVal);
-//    }
-//    for(int i = 0; i < LOOP_ITER;i++){
-//        char *returnedVal = malloc(MAX_MSG_TEST + 1);
-//        sprintf(key, "test%d", i);
-//        if (kv_get(kvHandle, key, &returnedVal))
-//        {
-//            fprintf(stderr, "Couldn't kv get the requested key\n");
-//            return 1;
-//        }
-//        //printf("Got value: %s", returnedVal);
-//        kv_release(returnedVal);
-//    }
-//
-//    printf("Stop test\n");
-
-
-
-
-
-
-
     return 0;
 }
 
@@ -1393,4 +1168,141 @@ kvHandleFactory(struct kv_server_address *server, unsigned size, int argc, char 
     return 0;
 }
 
+
+int dkv_open(struct kv_server_address *servers, /* array of servers */
+             struct kv_server_address *indexer, /* single indexer */
+             void **dkv_h) {
+
+    struct dkv_ctx *ctx = malloc(sizeof(*ctx));
+    if (kvHandleFactory(indexer, MAX_MSG_TEST, g_argc, g_argv, &ctx->indexer)) {
+        return 1;
+    }
+    if (mkv_open(servers, (void **) &ctx->mkv)) {
+        return 1;
+    }
+    *dkv_h = ctx;
+}
+
+int dkv_set(void *dkv_h, const char *key, const char *value, unsigned length) {
+
+}
+
+int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length) {
+
+}
+
+void dkv_release(char *value) {
+
+}
+
+int dkv_close(void *dkv_h) {
+
+}
+
+int main(int argc, char *argv[]) {
+    void *kv_ctx; /* handle to internal KV-client context */
+
+    g_argc = argc;
+    g_argv = argv;
+
+    struct kv_server_address servers[2] = {{.servername = "mlx-stud-04", .port = 65433},
+                                           {.servername = NULL, .port = 0}};
+
+    assert(0 == mkv_open(servers, &kv_ctx));
+    char key[4] = "red";
+    char value[10] = "wedding";
+    char key2[5] = "red2";
+    char value2[11] = "wedding2";
+    mkv_send_credit(kv_ctx, 0, 2);
+
+    if (mkv_set(kv_ctx, 0, key, value)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    char *retVal = malloc(4096);
+    if (mkv_get(kv_ctx, 0, key, &retVal)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    retVal = malloc(4096);
+    if (mkv_get(kv_ctx, 0, key, &retVal)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    mkv_release(retVal, 0, kv_ctx);
+
+    if (mkv_set(kv_ctx, 0, key2, value2)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    retVal = malloc(4096);
+    if (mkv_get(kv_ctx, 0, key2, &retVal)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    retVal = malloc(4096);
+    if (mkv_get(kv_ctx, 0, key2, &retVal)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    retVal = malloc(4096);
+    if (mkv_get(kv_ctx, 0, key, &retVal)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    mkv_release(retVal, 0, kv_ctx);
+
+    //mkv_send_credit(kv_ctx, 0, 50);
+    struct mkv_handle *m_handle = kv_ctx;
+    //mkv_close(kv_ctx);
+    mkv_send_credit(kv_ctx, 0, 2);
+
+    //    //Complicated Test:
+    //    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
+    //    memset(msg,'w', MAX_MSG_TEST);
+    //    msg[MAX_MSG_TEST] = '\0';
+    //    printf("Start test\n");
+    //
+    //    char key[MAX_KEY];
+    //    for(int i = 0; i < LOOP_ITER;i++){
+    //        sprintf(key, "test%d", i);
+    //        if (kv_set(kvHandle, key, msg))
+    //        {
+    //            fprintf(stderr, "Couldn't post send\n");
+    //            return 1;
+    //        }
+    //    }
+    //    for(int i = 0; i < LOOP_ITER;i++){
+    //        char *returnedVal = malloc(MAX_MSG_TEST + 1);
+    //        sprintf(key, "test%d", i);
+    //        if (kv_get(kvHandle, key, &returnedVal))
+    //        {
+    //            fprintf(stderr, "Couldn't kv get the requested key\n");
+    //            return 1;
+    //        }
+    //        //printf("Got value: %s", returnedVal);
+    //        kv_release(returnedVal);
+    //    }
+    //    for(int i = 0; i < LOOP_ITER;i++){
+    //        char *returnedVal = malloc(MAX_MSG_TEST + 1);
+    //        sprintf(key, "test%d", i);
+    //        if (kv_get(kvHandle, key, &returnedVal))
+    //        {
+    //            fprintf(stderr, "Couldn't kv get the requested key\n");
+    //            return 1;
+    //        }
+    //        //printf("Got value: %s", returnedVal);
+    //        kv_release(returnedVal);
+    //    }
+    //
+    //    printf("Stop test\n");
+
+
+
+
+
+
+
+    return 0;
+}
 

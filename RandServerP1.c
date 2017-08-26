@@ -722,7 +722,6 @@ int kv_close(void *kv_handle)
     return 0;
 };
 
-
 int getCmdMsgLogic(handle* kv_handle, char* key){
     kv_handle->credits--;
     char **retValue = malloc(sizeof(char*));
@@ -870,7 +869,6 @@ int processClientCmd(handle *kv_handle, char *msg)
 
     return 0;
 }
-
 
 
 
