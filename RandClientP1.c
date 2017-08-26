@@ -677,7 +677,7 @@ int kv_set(void *kv_handle, const char *key, const char *value, unsigned int len
 };
 
 
-int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value) {
+int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value, unsigned *length) {
     struct mkv_handle *m_handle = mkv_h;
     return kv_get(m_handle->kv_handle[kv_id], key, value, m_handle->clientBuffers, kv_id);
 }
@@ -1280,7 +1280,36 @@ int dkv_set(void *dkv_h, const char *key, const char *value, unsigned length) {
 
 
 int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length) {
+    struct dkv_ctx *ctx = dkv_h;
 
+    /* Step #1: The client sends the Index server FIND(key, #kv-servers) */
+
+    char *findResultMsg = malloc(roundup(ctx->mkv->defMsgSize, page_size));
+    int foundKey = find_key_server(dkv_h, key, &findResultMsg);
+    if (foundKey == -1) {
+        return -1;
+    }
+
+    /* Step #2: The Index server responds with LOCATION(#kv-server-id) */
+
+    printf("Processing server Message: %s\n", findResultMsg);
+    if (strlen(findResultMsg) == 0) {
+        fprintf(stderr, "Msg is empty!\n");
+        return 0;
+    };
+    char *delim = ":";
+    int CMD = atoi(strtok(findResultMsg, delim));
+    int keyServerLocationID = atoi(strtok(NULL, delim));
+
+    free(findResultMsg);
+
+    if (CMD != KEY_SERVER_LOCATION) {
+        printf("Didn't get correct message after sending request for key server location, got CMD: %d\n", CMD);
+        return 1;
+    }
+
+    /* Step #3: The client contacts KV-server with the ID returned in LOCATION, using SET/GET messages. */
+    return mkv_get(dkv_h, keyServerLocationID, key, value, 0);
 }
 
 void dkv_release(char *value) {
