@@ -1455,10 +1455,12 @@ int main(int argc, char *argv[]) {
     struct kv_server_address servers[2] = {{.servername = "mlx-stud-02", .port = 65433},
                                            {.servername = NULL, .port = 0}};
 
-    struct kv_server_address indexer[2] = {{.servername = "mlx-stud-04", .port = 65833},
+    struct kv_server_address indexer[2] = {{.servername = "mlx-stud-04", .port = 63335},
                                            {0}};
-    assert(0 == mkv_open(servers, &kv_ctx));
-//    char key[4] = "red";
+    //assert(0 == mkv_open(servers, &kv_ctx));
+    assert(0 == dkv_open(servers, indexer, &kv_ctx));
+
+    //    char key[4] = "red";
 //    char value[10] = "wedding";
 //    char key2[5] = "red2";
 //    char value2[11] = "wedding2";
