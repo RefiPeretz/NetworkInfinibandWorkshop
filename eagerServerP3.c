@@ -300,6 +300,12 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
 #include <sys/param.h>
 #include <stdbool.h>
 
+typedef struct message {
+    uint32_t mr_rkey;
+    long unsigned addr;
+    int valueSize;
+} message;
+
 static struct pingpong_context *
 pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port,
             int use_event, int is_server)
@@ -478,14 +484,28 @@ static void usage(const char *argv0)
     printf("  -g, --gid-idx=<gid index> local port gid index\n");
 }
 
-
+struct msgKeyMr {
+    struct ibv_mr *curMr;
+    int valueSize;
+};
 
 typedef struct kvMsg
 {
     char *key;
     char *value;
 } kvMsg;
+
+typedef struct keyMrEntry {
+    char *key;
+    struct msgKeyMr *curValue;
+} keyMrEntry;
+
+typedef struct clientMrEntry {
+    char *key;
+    struct message *mrDetails;
+} clientMrEntry;
 #define MAX_KV_MSG_QUE 100
+
 
 typedef struct handle
 {
@@ -500,8 +520,9 @@ typedef struct handle
     struct pingpong_dest my_dest;
     struct pingpong_dest *rem_dest;
     char gid[33];
-    kvMsg **kvMsgDict;
-
+    //kvMsg **kvMsgDict;
+    keyMrEntry **kvMsgDict;
+    clientMrEntry **clientMrDict;
 
     char* msgQue[MAX_KV_MSG_QUE];
     char* front;
@@ -576,68 +597,83 @@ char* pop(handle* kvHandle) {
 }
 
 
-
-
-
-
-
-int getFromStore(handle *store, const char *key, char **value)
-{
+int getFromStore(handle *store, const char *key, char **value) {
     int listSize = store->kvListSize;
-    for(int i=0; i < listSize; i++){
-        if(strcmp(store->kvMsgDict[i]->key, key) == 0){
-            *value = malloc(strlen(store->kvMsgDict[i]->value)+1);
-            memcpy(*value, store->kvMsgDict[i]->value, strlen
-                                                               (store->kvMsgDict[i]->value)+1);
+    for (int i = 0; i < listSize; i++) {
+        if (strcmp(store->kvMsgDict[i]->key, key) == 0) {
+
+            size_t mr_msg_size = roundup(sizeof((uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr) +
+                                         sizeof(store->kvMsgDict[i]->curValue->curMr->rkey) +
+                                         sizeof(store->kvMsgDict[i]->curValue->valueSize) + 3, page_size);
+            *value = (char *) malloc(mr_msg_size);
+            sprintf(*value, "%lu:%d:%d", (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr,
+                    store->kvMsgDict[i]->curValue->curMr->rkey, store->kvMsgDict[i]->curValue->valueSize);
+            printf("Prepared the MR info from store - %s\n", *value);
             return 0;
         }
     }
 
-    return 1; // Didn't find any suitable key
+    return 1;
 }
 
-void addElement(const char* key, char* value,struct handle* curHandle)
-{
 
-    if (!curHandle->kvListSize)
-    {
-        struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
-        curMsg->key = malloc(strlen(key) + 1);
-        curMsg->value = malloc(strlen(value) + 1);
+//int getFromStore(handle *store, const char *key, char **value)
+//{
+//    int listSize = store->kvListSize;
+//    for(int i=0; i < listSize; i++){
+//        if(strcmp(store->kvMsgDict[i]->key, key) == 0){
+//            *value = malloc(strlen(store->kvMsgDict[i]->value)+1);
+//            memcpy(*value, store->kvMsgDict[i]->value, strlen
+//                                                               (store->kvMsgDict[i]->value)+1);
+//            return 0;
+//        }
+//    }
+//
+//    return 1; // Didn't find any suitable key
+//}
 
-        strcpy(curMsg->key, key);
-        strcpy(curMsg->value, value);
-        curHandle->kvMsgDict = malloc(sizeof(kvMsg) * 1);
-        curHandle->kvMsgDict[0] = curMsg;
-        curHandle->kvListSize++;
-    } else
-    {
-        for (int i = 0; i < curHandle->kvListSize; i++)
-        {
-            if (strcmp(curHandle->kvMsgDict[i]->key, key) == 0)
-            {
-                strcpy(curHandle->kvMsgDict[i]->value, value);
-                return;
-            }
-        }
-        struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
-        curMsg->key = malloc(strlen(key) + 1);
-        curMsg->value = malloc(strlen(value) + 1);
-        strcpy(curMsg->key, key);
-        strcpy(curMsg->value, value);
-        curHandle->kvListSize++;
-
-
-        struct kvMsg **newList = malloc(sizeof(kvMsg) * curHandle->kvListSize);
-        for (int i = 0; i < curHandle->kvListSize - 1; i++)
-        {
-            newList[i] = curHandle->kvMsgDict[i];
-        }
-        newList[curHandle->kvListSize - 1] = curMsg;
-        free(curHandle->kvMsgDict);
-        curHandle->kvMsgDict = newList;
-    }
-}
+//void addElement(const char* key, char* value,struct handle* curHandle)
+//{
+//
+//    if (!curHandle->kvListSize)
+//    {
+//        struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
+//        curMsg->key = malloc(strlen(key) + 1);
+//        curMsg->value = malloc(strlen(value) + 1);
+//
+//        strcpy(curMsg->key, key);
+//        strcpy(curMsg->value, value);
+//        curHandle->kvMsgDict = malloc(sizeof(kvMsg) * 1);
+//        curHandle->kvMsgDict[0] = curMsg;
+//        curHandle->kvListSize++;
+//    } else
+//    {
+//        for (int i = 0; i < curHandle->kvListSize; i++)
+//        {
+//            if (strcmp(curHandle->kvMsgDict[i]->key, key) == 0)
+//            {
+//                strcpy(curHandle->kvMsgDict[i]->value, value);
+//                return;
+//            }
+//        }
+//        struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
+//        curMsg->key = malloc(strlen(key) + 1);
+//        curMsg->value = malloc(strlen(value) + 1);
+//        strcpy(curMsg->key, key);
+//        strcpy(curMsg->value, value);
+//        curHandle->kvListSize++;
+//
+//
+//        struct kvMsg **newList = malloc(sizeof(kvMsg) * curHandle->kvListSize);
+//        for (int i = 0; i < curHandle->kvListSize - 1; i++)
+//        {
+//            newList[i] = curHandle->kvMsgDict[i];
+//        }
+//        newList[curHandle->kvListSize - 1] = curMsg;
+//        free(curHandle->kvMsgDict);
+//        curHandle->kvMsgDict = newList;
+//    }
+//}
 
 int kv_open(char *servername, void **kv_handle)
 {
@@ -666,11 +702,6 @@ int kv_open(char *servername, void **kv_handle)
     }
     return 0;
 };
-
-
-
-
-
 
 void kv_release(char *value)
 {
@@ -712,6 +743,84 @@ int getCmdMsgLogic(handle* kv_handle, char* key){
     return 0;
 }
 
+void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct handle *curHandle) {
+    if (curHandle->kvListSize == 0) {
+        struct keyMrEntry *curMsg = calloc(1, sizeof(keyMrEntry));
+        curMsg->key = malloc(strlen(key) + 1);
+        strcpy(curMsg->key, key);
+        curMsg->curValue = malloc(sizeof(struct msgKeyMr *));
+        curMsg->curValue->curMr = curMr;
+        curMsg->curValue->valueSize = msgSize;
+        curHandle->kvMsgDict = malloc(sizeof(keyMrEntry) * 1);
+        curHandle->kvMsgDict[0] = curMsg;
+        curHandle->kvListSize++;
+    } else {
+        for (int i = 0; i < curHandle->kvListSize; i++) {
+            if (strcmp(curHandle->kvMsgDict[i]->key, key) == 0) {
+                free(curHandle->kvMsgDict[i]->curValue);
+                curHandle->kvMsgDict[i]->curValue = malloc(sizeof(struct msgKeyMr *));
+                curHandle->kvMsgDict[i]->curValue->curMr = curMr;
+                curHandle->kvMsgDict[i]->curValue->valueSize = msgSize;
+                return;
+            }
+        }
+
+        struct keyMrEntry *curMsg = calloc(1, sizeof(keyMrEntry));
+        curMsg->key = malloc(strlen(key) + 1);
+        strcpy(curMsg->key, key);
+        curMsg->curValue = malloc(sizeof(struct msgKeyMr *));
+        curMsg->curValue->curMr = curMr;
+        curMsg->curValue->valueSize = msgSize;
+        curHandle->kvListSize++;
+
+        struct keyMrEntry **newList = malloc(sizeof(keyMrEntry) * curHandle->kvListSize);
+        for (int i = 0; i < curHandle->kvListSize - 1; i++) {
+            newList[i] = curHandle->kvMsgDict[i];
+        }
+        newList[curHandle->kvListSize - 1] = curMsg;
+        free(curHandle->kvMsgDict);
+        curHandle->kvMsgDict = newList;
+    }
+}
+
+struct message *allocateNewElement(const char *key, size_t valueSize, struct handle *curHandle) {
+    char *value = calloc(1, valueSize * sizeof(char));
+
+    struct ibv_mr *curMr = ibv_reg_mr(curHandle->ctx->pd, value, valueSize,
+                                      IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_REMOTE_READ);
+    if (!curMr) {
+        perror("Couldn't register MR for remote set op");
+        return NULL;
+    }
+
+    struct message *mr_msg = (struct message *) calloc(1, sizeof(struct message));
+    mr_msg->addr = (uintptr_t) curMr->addr;
+    mr_msg->mr_rkey = curMr->rkey;
+    mr_msg->valueSize = valueSize;
+
+
+    addKeyMrElement(key, curMr, valueSize, curHandle);
+    return mr_msg;
+
+}
+
+int processClientPrepWriteCmd(handle *kv_handle, char *key, int expectedMsgSize) {
+
+    struct message *mr_msg = allocateNewElement(key, expectedMsgSize, kv_handle);
+
+    size_t mr_msg_size = roundup(sizeof(mr_msg->addr) + sizeof(mr_msg->mr_rkey) + 2, page_size);
+    char *mr_msg_char = (char *) malloc(mr_msg_size);
+    sprintf(mr_msg_char, "%lu:%d", mr_msg->addr, mr_msg->mr_rkey);
+    printf("Sending mr msg: %s with size %d\n", mr_msg_char, strlen(mr_msg_char) + 1);
+
+    if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, mr_msg_char, strlen(mr_msg_char) + 1)) {
+        perror("Couldn't post send: ");
+        return 1;
+    }
+
+    return 0;
+}
+
 int processClientCmd(handle *kv_handle, char *msg)
 {
     printf("Processing message %s\n", msg);
@@ -722,16 +831,18 @@ int processClientCmd(handle *kv_handle, char *msg)
     int cmd = 0;
     char *key;
     char *value;
+    int expectedMsgSize;
     const char *delim = ":";
     cmd = atoi(strtok(msg, delim));
     key = strtok(NULL, delim);
-    value = strtok(NULL, delim);
+    //value = strtok(NULL, delim);
 
 
 
     if (cmd == SET_CMD) {
-
-        addElement(key, value, kv_handle);
+        //addElement(key, value, kv_handle);
+        expectedMsgSize = atoi(strtok(NULL, delim));
+        processClientPrepWriteCmd(kv_handle, key, expectedMsgSize);
 
     } else if (cmd == GET_CMD) {
 
