@@ -957,64 +957,6 @@ int mkv_open(struct kv_server_address *servers, void **mkv_h) {
     return 0;
 }
 
-int pp_wait_completions(struct handle *pContext, int i) {
-    char *recvMsg = NULL;
-    recvMsg = malloc(roundup(pContext->defMsgSize, page_size));
-
-    if ((cstm_post_recv(pContext->ctx->pd, pContext->ctx->qp, recvMsg, roundup(pContext->defMsgSize, page_size))) < 0) {
-        perror("Couldn't post receive:");
-        return 1;
-    }
-    int rcnt = 0, scnt = 0;
-    int iters = 1000;
-    while (rcnt < iters || scnt < iters) {
-
-        struct ibv_wc wc[5];
-        int ne, i;
-
-        do {
-            ne = ibv_poll_cq(pContext->ctx->cq, 5, wc);
-            if (ne < 0) {
-                fprintf(stderr, "poll CQ failed %d\n", ne);
-                return 1;
-            }
-
-        } while (ne < 1);
-
-        for (i = 0; i < ne; ++i) {
-            if (wc[i].status != IBV_WC_SUCCESS) {
-                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status), wc[i].status,
-                        (int) wc[i].wr_id);
-                return 1;
-            }
-            switch ((int) wc[i].wr_id) {
-                case PINGPONG_SEND_WRID:
-                    +scnt;
-                    break;
-
-                case PINGPONG_RECV_WRID:
-                    printf("Got msg: %s\n", recvMsg);
-                    processClientCmd(pContext, recvMsg);
-                    free(recvMsg);
-                    recvMsg = malloc(roundup(pContext->defMsgSize, page_size));
-
-                    if ((cstm_post_recv(pContext->ctx->pd, pContext->ctx->qp, recvMsg,
-                                        roundup(pContext->defMsgSize, page_size))) < 0) {
-                        perror("Couldn't post receive:");
-                        return 1;
-                    }
-                    +rcnt;
-                    break;
-
-                default:
-                    fprintf(stderr, "Completion for unknown wr_id %d\n", (int) wc[i].wr_id);
-                    return 1;
-            }
-        }
-    }
-    return 0;
-}
-
 int
 kvHandleFactory(struct kv_server_address *server, unsigned size, int argc, char *argv[], struct handle **p_kvHandle) {
     struct timeval start, end;
