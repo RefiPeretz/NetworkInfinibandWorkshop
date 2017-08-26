@@ -8,7 +8,7 @@ SET(GCC_COVERAGE_LINK_FLAGS "-lm -g -libverbs")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LDFLAGS} -g -lm -Wall -Wextra -o")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LDFLAGS} -g -lm -Wall -Wextra -o")
 
-set(ex2_1 rc_pingpong.c pingpong.c pingpong.h stack.c stack.h MetricsIBV.c MetricsIBV.h)
+set(ex2_1 eagerClientServer.c pingpong.c pingpong.h MetricsIBV.c MetricsIBV.h)
 add_executable(eager ${ex2_1})
 target_link_libraries(eager "${GCC_COVERAGE_LINK_FLAGS}")
 
