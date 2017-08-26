@@ -3,6 +3,8 @@ refi950
 fimak
 
 ===================Description===================
+*It was approved by Alex to divide the servers and clients insted of if.
+
 This ex desgin to simulate connections between two types of approaches:
 Eager and Rendezvous.
 
@@ -31,6 +33,8 @@ This mpa store our key and values both in EagerClientServer and RandClientServer
 Also we add a smart cache for the RandClient to maitain a key and address for key we alreay
 read. In this way we don't have to ask for an address of certain key we can just read it
 from memory.
+
+
 
 
 ===================Tests===================
