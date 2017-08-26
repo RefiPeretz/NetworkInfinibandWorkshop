@@ -18,7 +18,6 @@
 
 
 #include "pingpong.h"
-#include "stack.h"
 
 #define MAX_KEY 10
 #define MAX_MSG_TEST 4000
@@ -593,7 +592,7 @@ int kv_set(void *kv_handle, const char *key, const char *value)
     kv_cmd cmd = SET_CMD;
     char *msg = malloc(roundup(kvHandle->defMsgSize, page_size));
     sprintf(msg, "%d:%s:%s", cmd, key, value);
-    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
+    //printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
 
     if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg,
                        strlen(msg) + 1))
@@ -699,7 +698,7 @@ int kv_get(void *kv_handle, const char *key, char **value)
 
                 case PINGPONG_RECV_WRID:
 
-                    printf("Got msg: %s\n", recv2Msg1);
+                    //printf("Got msg: %s\n", recv2Msg1);
 
                     recved--;
                     break;
@@ -740,7 +739,7 @@ int kv_close(void *kv_handle)
 
 int processClientCmd(handle *kv_handle, char *msg)
 {
-    printf("Processing message %s\n", msg);
+    printf("Processing message\n");
     if(strlen(msg) == 0){
         fprintf(stderr, "Msg is empty!: %s\n",msg);
         return  0;
@@ -768,7 +767,7 @@ int processClientCmd(handle *kv_handle, char *msg)
             fprintf(stderr, "Error in fetching value!\n");
             return 1;
         }
-        printf("Sending value after 'get' msg: %s\n", *retValue);
+        //printf("Sending value after 'get' msg: %s\n", *retValue);
         if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, *retValue,
                            strlen(*retValue) + 1))
         {
@@ -1012,7 +1011,7 @@ int main(int argc, char *argv[])
         printf("Stop test\n");
         double testTime = timeDifference(start,end);
         double rdmaThroughput = calcAverageThroughput(LOOP_ITER*3,MAX_MSG_TEST,testTime);
-        printf("Rdma overall throughput:%f\n",rdmaThroughput);
+        printf("Eager overall throughput:%f\n",rdmaThroughput);
 
 
 //        char *returnedVal = malloc(roundup(kvHandle->defMsgSize, page_size));
@@ -1099,7 +1098,7 @@ int main(int argc, char *argv[])
                             break;
 
                         case PINGPONG_RECV_WRID:
-                            printf("Got msg: %s\n", recvMsg);
+                            //printf("Got msg: %s\n", recvMsg);
                             processClientCmd(kvHandle, recvMsg);
                             free(recvMsg);
                             recvMsg = malloc(roundup(kvHandle->defMsgSize,

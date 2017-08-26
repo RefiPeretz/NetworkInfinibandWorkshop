@@ -1,0 +1,56 @@
+===================EX2===================
+refi950
+fimak
+
+===================Description===================
+This ex desgin to simulate connections between two types of approaches:
+Eager and Rendezvous.
+
+Base on ex1 IBVSeverClient we build the following:
+
+EagerClientServer:
+This Client/Server designed for small messages communication up to 4096[Bytes] in size.
+Implementing Key-store value EagerClientServer has two options set or get.
+
+Set: setting key and value to server "database"
+Get: send request to server for certain key value the sever should response
+ with the value of the key.
+
+randClientServer:
+This Client/Server designed for large messages in size.
+The seg and the get functions works the same as in EagerClientServer however the
+implementing the communication with RDMA. When we are setting key we request
+a set through regular Eager infrastructure. We get back and address to wirte to and we
+write our value.
+
+When we produce a get request we get back from ther server the address we need to read
+from using RDMA.
+
+In order the maintain the database of the sever we implement a dictionary map in c.
+This mpa store our key and values both in EagerClientServer and RandClientServer.
+Also we add a smart cache for the RandClient to maitain a key and address for key we alreay
+read. In this way we don't have to ask for an address of certain key we can just read it
+from memory.
+
+
+===================Tests===================
+We create similar test case for both EagerServerClient and RandServerClient
+You can run it as described in the Useage section.
+
+LOOP_ITER = 50
+We run LOOP_ITER set request with LOOP_ITER different keys "test_i" 0 < i < LOOP_ITER
+We run LOOP_ITER get request on all the keys "test_i" 0< i < LOOP_ITER.
+We run another LOOP_ITER of get request(key we already read) "test_i" 0 < i < LOOP_ITER
+rand size message for each get/set request value is 1000000[Bytes].
+eager size message for each get/set request value is 4096[Bytes].
+
+Throughput results:
+Rand: 16879.404602[Mbit/s]
+Eager: 70.2354[bit/s]
+
+
+===================Useage===================
+run make
+
+server: rand/eager
+client rand/eager servername

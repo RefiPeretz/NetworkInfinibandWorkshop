@@ -18,11 +18,11 @@
 
 
 #include "pingpong.h"
-#include "stack.h"
+
 
 
 #define MAX_KEY 10
-#define MAX_MSG_TEST 1000000000
+#define MAX_MSG_TEST 1000000
 #define LOOP_ITER 50
 
 
@@ -621,7 +621,7 @@ int kv_set(void *kv_handle, const char *key, const char *value) {
     //first send msg to server with size and MR to read from.
     char *msg = (char *) malloc(roundup(kvHandle->defMsgSize, page_size));
     sprintf(msg, "%d:%s:%d", cmd, key, strlen(value) + 1);
-    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
+    //printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
 
     if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg, strlen(msg) + 1)) {
         perror("Couldn't post send: ");
@@ -732,7 +732,7 @@ int kv_get(void *kv_handle, const char *key, char **value) {
 
                     case PINGPONG_RECV_WRID:
                         printf("Got server get prep msg: %s\n", recv2Msg1);
-                        printf("Processing server message: %s\n", recv2Msg1);
+                        //printf("Processing server message: %s\n", recv2Msg1);
                         if (strlen(recv2Msg1) == 0) {
                             fprintf(stderr, "Msg is empty!\n");
                             return 0;
@@ -874,7 +874,7 @@ int processServerGetReqResponseCmd(handle *kv_handle, struct message *msg, char 
 }
 
 int processClientCmd(handle *kv_handle, char *msg) {
-    printf("Processing message %s\n", msg);
+    printf("Processing message server\n");
     if (strlen(msg) == 0) {
         fprintf(stderr, "Msg is empty!: %s\n", msg);
         return 0;
