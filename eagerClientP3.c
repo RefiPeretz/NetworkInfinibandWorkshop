@@ -700,6 +700,23 @@ int getFreeBufferIndex(handle *kvHandle){
 
 }
 
+
+int processServerGetReqResponseCmd(handle *kv_handle, struct message *msg, char **value) {
+    struct ibv_mr *sendMr = ibv_reg_mr(kv_handle->ctx->pd, *value, msg->valueSize, IBV_ACCESS_LOCAL_WRITE);
+
+    struct ibv_sge list = {.addr    = (uintptr_t) (*value), .length = msg->valueSize, .lkey = sendMr->lkey};
+    struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_RDMA_READ, .send_flags = IBV_SEND_SIGNALED, .wr.rdma.remote_addr = (uintptr_t) msg
+            ->addr, .wr.rdma.rkey = msg->mr_rkey};
+    struct ibv_send_wr *bad_wr;
+
+    if (ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr)) {
+        printf("processServerGetReqResponseCmd: Err during RDMA READ");
+    };
+
+
+    return 0;
+}
+
 /**
  * allocate free buffer
  * @param kv_id
