@@ -833,9 +833,6 @@ int processClientCmd(handle *kv_handle, char *msg)
     const char *delim = ":";
     cmd = atoi(strtok(msg, delim));
     key = strtok(NULL, delim);
-    //value = strtok(NULL, delim);
-
-
 
     if (cmd == SET_CMD) {
         //addElement(key, value, kv_handle);

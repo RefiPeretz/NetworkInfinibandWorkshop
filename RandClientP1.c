@@ -107,7 +107,6 @@ struct pingpong_context {
 };
 
 
-
 #define EAGER_BUFFER_LIMIT (10)
 
 struct kv_client_eager_buffer {
@@ -319,6 +318,7 @@ pp_server_exch_dest(struct pingpong_context *ctx, int ib_port, enum ibv_mtu mtu,
 #include <dirent.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <stdbool.h>
 
 static struct pingpong_context *
 pp_init_ctx(struct ibv_device *ib_dev, int size, int rx_depth, int port, int use_event, int is_server) {
@@ -706,7 +706,6 @@ int processServerGetReqResponseCmd(handle *kv_handle, struct Message *msg, char 
     };
     return 0;
 }
-
 
 int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, int kv_id) {
     handle *kvHandle = kv_handle;
@@ -1123,9 +1122,12 @@ int dkv_open(struct kv_server_address *servers, /* array of servers */
     *dkv_h = ctx;
 }
 
-int find_key_server(void *dkv_h, const char *key, char **findResultMsg) {
+int find_key_server(void *dkv_h, const char *key, char **findResultMsg, bool new_val) {
     struct dkv_ctx *m_handle = dkv_h;
     kv_cmd cmd = FIND_KEY_SERVER;
+    if (new_val) {
+        cmd = SET_FIND_KEY_SERVER;
+    }
     char *msg = malloc(sizeof(char) * 20);
     sprintf(msg, "%d:%s:%d", cmd, key, m_handle->mkv->num_servers);
     printf("Sending FIND key - server for key: %s -  msg: %s with size %d\n", key, msg, strlen(msg) + 1);
@@ -1193,7 +1195,7 @@ int dkv_set(void *dkv_h, const char *key, const char *value, unsigned length) {
     /* Step #1: The client sends the Index server FIND(key, #kv-servers) */
 
     char *findResultMsg = malloc(roundup(ctx->mkv->defMsgSize, page_size));
-    int foundKey = find_key_server(dkv_h, key, &findResultMsg);
+    int foundKey = find_key_server(dkv_h, key, &findResultMsg, true);
     if (foundKey == -1) {
         return -1;
     }
@@ -1227,7 +1229,7 @@ int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length) {
     /* Step #1: The client sends the Index server FIND(key, #kv-servers) */
 
     char *findResultMsg = malloc(roundup(ctx->mkv->defMsgSize, page_size));
-    int foundKey = find_key_server(dkv_h, key, &findResultMsg);
+    int foundKey = find_key_server(dkv_h, key, &findResultMsg, false);
     if (foundKey == -1) {
         return -1;
     }
@@ -1257,7 +1259,7 @@ int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length) {
 void dkv_release(const char *key, char *value, int kv_id, void *dkv_h) {
     struct dkv_ctx *ctx = dkv_h;
     char *findResultMsg = malloc(roundup(ctx->mkv->defMsgSize, page_size));
-    int foundKey = find_key_server(dkv_h, key, &findResultMsg);
+    int foundKey = find_key_server(dkv_h, key, &findResultMsg, false);
     if (foundKey == -1) {
         return;
     }
@@ -1288,6 +1290,7 @@ int dkv_close(void *dkv_h) {
     pp_close_ctx(ctx->indexer);
     mkv_close(ctx->mkv);
     free(ctx);
+    return 0;
 }
 
 void recursive_fill_kv(char const *dirname, void *dkv_h) {
@@ -1329,6 +1332,8 @@ int main(int argc, char *argv[]) {
     struct kv_server_address servers[2] = {{.servername = "mlx-stud-04", .port = 65433},
                                            {.servername = NULL, .port = 0}};
 
+    struct kv_server_address indexer[2] = {{.servername = "mlx-stud-04", .port = 6583},
+                                           {0}};
     assert(0 == mkv_open(servers, &kv_ctx));
     char key[4] = "red";
     char value[10] = "wedding";

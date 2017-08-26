@@ -15,3 +15,7 @@ target_link_libraries(ex4_serverP1 "${GCC_COVERAGE_LINK_FLAGS}")
 set(ex4_clientP1 RandClientP1.c pingpong.c pingpong.h)
 add_executable(ex4_clientP1 ${ex4_clientP1})
 target_link_libraries(ex4_clientP1 "${GCC_COVERAGE_LINK_FLAGS}")
+
+set(ex4_indexerP1 RandIndexerServerP1.c pingpong.c pingpong.h)
+add_executable(ex4_indexerP1 ${ex4_indexerP1})
+target_link_libraries(ex4_indexerP1 "${GCC_COVERAGE_LINK_FLAGS}")

@@ -370,7 +370,7 @@ static int cstm_post_send(struct ibv_pd *pd, struct ibv_qp *qp, char *buf, int l
         return 1;
     }
     struct ibv_sge list = {.addr    = (uintptr_t) buf, .length = length, .lkey    = mr->lkey};
-    struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,};
+    struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_SEND, .send_flags = 0,};
     struct ibv_send_wr *bad_wr;
 
     return ibv_post_send(qp, &wr, &bad_wr);
@@ -407,26 +407,13 @@ static void usage(const char *argv0) {
     printf("  -g, --gid-idx=<gid index> local port gid index\n");
 }
 
-struct msgKeyMr {
-    struct ibv_mr *curMr;
-    int valueSize;
+struct DataItem {
+    int key;
+    int serverID;
 };
 
-typedef struct kvMsg {
-    char *key;
-    char *value;
-} kvMsg;
-
-typedef struct keyMrEntry {
-    char *key;
-    struct msgKeyMr *curValue;
-} keyMrEntry;
-
-typedef struct clientMrEntry {
-    char *key;
-    struct message *mrDetails;
-} clientMrEntry;
 #define MAX_KV_MSG_QUE 100
+#define DEFAULT_KV_DICT_SIZE 100
 
 
 typedef struct handle {
@@ -441,9 +428,7 @@ typedef struct handle {
     struct pingpong_dest my_dest;
     struct pingpong_dest *rem_dest;
     char gid[33];
-    //kvMsg **kvMsgDict;
-    keyMrEntry **kvMsgDict;
-    clientMrEntry **clientMrDict;
+    struct DataItem *serverKeyMap[DEFAULT_KV_DICT_SIZE];
 
     char *msgQue[MAX_KV_MSG_QUE];
     char *front;
@@ -517,83 +502,16 @@ char *pop(handle *kvHandle) {
 }
 
 
-int getFromStore(handle *store, const char *key, char **value) {
+int getFromStore(handle *store, int key) {
     int listSize = store->kvListSize;
     for (int i = 0; i < listSize; i++) {
-        if (strcmp(store->kvMsgDict[i]->key, key) == 0) {
-
-            size_t mr_msg_size = roundup(sizeof((uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr) +
-                                         sizeof(store->kvMsgDict[i]->curValue->curMr->rkey) +
-                                         sizeof(store->kvMsgDict[i]->curValue->valueSize) + 3, page_size);
-            *value = (char *) malloc(mr_msg_size);
-            sprintf(*value, "%lu:%d:%d", (uintptr_t) store->kvMsgDict[i]->curValue->curMr->addr,
-                    store->kvMsgDict[i]->curValue->curMr->rkey, store->kvMsgDict[i]->curValue->valueSize);
-            printf("Prepared the MR info from store - %s\n", *value);
-            return 0;
+        if (store->serverKeyMap[i]->key == key) {
+            return store->serverKeyMap[i]->serverID;
         }
     }
 
-    return 1;
+    return -1;
 }
-
-
-//int getFromStore(handle *store, const char *key, char **value)
-//{
-//    int listSize = store->kvListSize;
-//    for(int i=0; i < listSize; i++){
-//        if(strcmp(store->kvMsgDict[i]->key, key) == 0){
-//            *value = malloc(strlen(store->kvMsgDict[i]->value)+1);
-//            memcpy(*value, store->kvMsgDict[i]->value, strlen
-//                                                               (store->kvMsgDict[i]->value)+1);
-//            return 0;
-//        }
-//    }
-//
-//    return 1; // Didn't find any suitable key
-//}
-
-//void addElement(const char* key, char* value,struct handle* curHandle)
-//{
-//
-//    if (!curHandle->kvListSize)
-//    {
-//        struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
-//        curMsg->key = malloc(strlen(key) + 1);
-//        curMsg->value = malloc(strlen(value) + 1);
-//
-//        strcpy(curMsg->key, key);
-//        strcpy(curMsg->value, value);
-//        curHandle->kvMsgDict = malloc(sizeof(kvMsg) * 1);
-//        curHandle->kvMsgDict[0] = curMsg;
-//        curHandle->kvListSize++;
-//    } else
-//    {
-//        for (int i = 0; i < curHandle->kvListSize; i++)
-//        {
-//            if (strcmp(curHandle->kvMsgDict[i]->key, key) == 0)
-//            {
-//                strcpy(curHandle->kvMsgDict[i]->value, value);
-//                return;
-//            }
-//        }
-//        struct kvMsg *curMsg = calloc(1, sizeof(kvMsg));
-//        curMsg->key = malloc(strlen(key) + 1);
-//        curMsg->value = malloc(strlen(value) + 1);
-//        strcpy(curMsg->key, key);
-//        strcpy(curMsg->value, value);
-//        curHandle->kvListSize++;
-//
-//
-//        struct kvMsg **newList = malloc(sizeof(kvMsg) * curHandle->kvListSize);
-//        for (int i = 0; i < curHandle->kvListSize - 1; i++)
-//        {
-//            newList[i] = curHandle->kvMsgDict[i];
-//        }
-//        newList[curHandle->kvListSize - 1] = curMsg;
-//        free(curHandle->kvMsgDict);
-//        curHandle->kvMsgDict = newList;
-//    }
-//}
 
 int kv_open(char *servername, void **kv_handle) {
     handle *kvHandle = *kv_handle;
@@ -633,24 +551,6 @@ int kv_close(void *kv_handle) {
     free(((handle *) kv_handle)->rem_dest);
     return 0;
 };
-
-int getCmdMsgLogic(handle *kv_handle, char *key) {
-    kv_handle->credits--;
-    char **retValue = malloc(sizeof(char *));
-    int ret = getFromStore(kv_handle, key, retValue);
-    if (ret) {
-        fprintf(stderr, "Error in fetching value!\n");
-        return 1;
-    }
-
-    printf("Sending value after 'get' msg: %s\n", *retValue);
-    if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, *retValue, strlen(*retValue) + 1)) {
-        perror("Couldn't post send: ");
-        return 1;
-    }
-
-    return 0;
-}
 
 void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct handle *curHandle) {
     if (curHandle->kvListSize == 0) {
@@ -713,21 +613,12 @@ struct message *allocateNewElement(const char *key, size_t valueSize, struct han
 
 }
 
-int processClientPrepWriteCmd(handle *kv_handle, char *key, int expectedMsgSize) {
-
-    struct message *mr_msg = allocateNewElement(key, expectedMsgSize, kv_handle);
-
-    size_t mr_msg_size = roundup(sizeof(mr_msg->addr) + sizeof(mr_msg->mr_rkey) + 2, page_size);
-    char *mr_msg_char = (char *) malloc(mr_msg_size);
-    sprintf(mr_msg_char, "%lu:%d", mr_msg->addr, mr_msg->mr_rkey);
-    printf("Sending mr msg: %s with size %d\n", mr_msg_char, strlen(mr_msg_char) + 1);
-
-    if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, mr_msg_char, strlen(mr_msg_char) + 1)) {
-        perror("Couldn't post send: ");
-        return 1;
-    }
-
-    return 0;
+//Our super delicious hash function.
+static unsigned int getKeyHash(const char *cp, unsigned int numberOfServers) {
+    unsigned int hash = 0;
+    while (*cp)
+        hash = (hash * 10) + *cp++ - '0';
+    return (hash % numberOfServers);
 }
 
 int processClientCmd(handle *kv_handle, char *msg) {
@@ -738,37 +629,32 @@ int processClientCmd(handle *kv_handle, char *msg) {
     }
     int cmd = 0;
     char *key;
-    char *value;
-    int expectedMsgSize;
+    int serverNumber;
     const char *delim = ":";
     cmd = atoi(strtok(msg, delim));
     key = strtok(NULL, delim);
-    //value = strtok(NULL, delim);
+    serverNumber = atoi(strtok(NULL, delim));
 
     if (cmd == FIND_KEY_SERVER) {
-
-    }
-
-    if (cmd == SET_CMD) {
-        expectedMsgSize = atoi(strtok(NULL, delim));
-        processClientPrepWriteCmd(kv_handle, key, expectedMsgSize);
-
-    } else if (cmd == GET_CMD) {
-
-        printf("Checking client credits:  %d\n", kv_handle->credits);
-        if (kv_handle->credits == 0) {
-            insert(kv_handle, key);
-            printf("Storing msg due to insufficient funds :( \n");
-            return 0;
+        //We need to find location for the value using hash of the requested key and number of servers as input.
+        unsigned int hashedKey = getKeyHash(key, serverNumber);
+        int serverId = getFromStore(kv_handle, hashedKey);
+        if (serverId == -1) {
+            fprintf(stderr, "couldn't find any server holding this key!\n");
         }
-        return getCmdMsgLogic(kv_handle, key);
+        char *answer = malloc(roundup(kv_handle->defMsgSize, page_size));
+        sprintf(answer, "%d:%d", KEY_SERVER_LOCATION, serverId);
+        printf("Prepared the key server location info from store - %s\n", answer);
 
-    } else if (cmd == SET_CREDIT) {
-
-        kv_handle->credits += atoi(key);
-        while (!isKvMsgQueEmpty(kv_handle) && kv_handle->credits > 0) {
-            char *pendingMsgKey = pop(kv_handle);
-            return getCmdMsgLogic(kv_handle, pendingMsgKey);
+        char *recv2Msg1 = malloc(roundup(kv_handle->defMsgSize, page_size));
+        if ((cstm_post_recv(kv_handle->ctx->pd, kv_handle->ctx->qp, recv2Msg1,
+                            roundup(kv_handle->defMsgSize, page_size))) < 0) {
+            perror("Couldn't post receive:");
+            return 1;
+        }
+        if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, *retValue, strlen(*retValue) + 1)) {
+            perror("Couldn't post send: ");
+            return 1;
         }
 
     } else {
@@ -776,7 +662,7 @@ int processClientCmd(handle *kv_handle, char *msg) {
         fprintf(stderr, "Coudln't decide what's the msg! MsgCmd - %d\n", cmd);
 
     }
-
+    free(recv2Msg1);
     return 0;
 }
 
