@@ -1329,10 +1329,10 @@ int main(int argc, char *argv[]) {
     g_argc = argc;
     g_argv = argv;
 
-    struct kv_server_address servers[2] = {{.servername = "mlx-stud-04", .port = 65433},
+    struct kv_server_address servers[2] = {{.servername = "mlx-stud-02", .port = 65433},
                                            {.servername = NULL, .port = 0}};
 
-    struct kv_server_address indexer[2] = {{.servername = "mlx-stud-04", .port = 6583},
+    struct kv_server_address indexer[2] = {{.servername = "mlx-stud-04", .port = 65833},
                                            {0}};
     assert(0 == mkv_open(servers, &kv_ctx));
     char key[4] = "red";

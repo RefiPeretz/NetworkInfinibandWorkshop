@@ -644,7 +644,7 @@ int processClientCmd(handle *kv_handle, char *msg) {
 int main(int argc, char *argv[]) {
     struct timeval start, end;
     char *servername = NULL;
-    int port = 65483;
+    int port = 65833;
     int ib_port = 1;
     int size = 4096;
     enum ibv_mtu mtu = IBV_MTU_1024;
