@@ -675,7 +675,6 @@ int sendMsgLogic(handle *kv_handle,  char *msg)
 
 int kv_set(void *kv_handle, const char *key, const char *value)
 {
-    handle *kvHandle = kv_handle;
     kv_cmd cmd = SET_CMD;
     char *msg = malloc(1 + strlen(key) + strlen(value) + 2 +1);
     sprintf(msg, "%d:%s:%s", cmd, key, value);
@@ -712,8 +711,6 @@ int processServerGetReqResponseCmd(handle *kv_handle, struct message *msg, char 
     if (ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr)) {
         printf("processServerGetReqResponseCmd: Err during RDMA READ");
     };
-
-
     return 0;
 }
 
@@ -723,11 +720,18 @@ int processServerGetReqResponseCmd(handle *kv_handle, struct message *msg, char 
  * @param usedBuffer
  * @return
  */
+struct Message {
+    uint32_t mr_rkey;
+    long unsigned addr;
+    int valueSize;
+};
 
 int kv_get(void *kv_handle, const char *key, char **value,char* clientBuffers,int kv_id)
 {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = GET_CMD;
+    struct Message *mr_msg;
+    mr_msg = (struct Message *) calloc(1, sizeof(struct Message));
     char *vmsg = malloc(roundup(kvHandle->defMsgSize, page_size));
     sprintf(vmsg, "%d:%s:%s", cmd, key, "");
     printf("Sending get msg: %s\n", vmsg);
@@ -786,11 +790,19 @@ int kv_get(void *kv_handle, const char *key, char **value,char* clientBuffers,in
                     break;
 
                 case PINGPONG_RECV_WRID:
-
-                    printf("Got msg: %s\n", recv2Msg1);
-
+                    printf("Got server get prep msg: %s\n", recv2Msg1);
+                    printf("Processing server Message: %s\n", recv2Msg1);
+                    if (strlen(recv2Msg1) == 0) {
+                        fprintf(stderr, "Msg is empty!\n");
+                        return 0;
+                    };
+                    char *delim = ":";
+                    mr_msg->addr = strtoul(strtok(recv2Msg1, delim), NULL, 10);
+                    mr_msg->mr_rkey = atoi(strtok(NULL, delim));
+                    mr_msg->valueSize = atoi(strtok(NULL, delim));
                     recved--;
                     break;
+
 
                 default:
                     fprintf(stderr, "Completion for unknown wr_id %d\n", (int) wc[i].wr_id);
@@ -801,8 +813,42 @@ int kv_get(void *kv_handle, const char *key, char **value,char* clientBuffers,in
         iterations--;
 
     }
+    free(recv2Msg1);
+    *value = calloc(1, mr_msg->valueSize * sizeof(char));
+    processServerGetReqResponseCmd(kv_handle, mr_msg, value);
+    int scntGetReqres = 1;
+    while (scntGetReqres) {
+        struct ibv_wc wc[2];
+        int ne;
+        do {
+            ne = ibv_poll_cq(kvHandle->ctx->cq, 2, wc);
+            if (ne < 0) {
+                fprintf(stderr, "poll CQ failed %d\n", ne);
+                return 1;
+            }
 
-    memcpy(*value, recv2Msg, strlen(recv2Msg) + 1);
+        } while (ne < 1);
+
+        for (int i = 0; i < ne; ++i) {
+            if (wc[i].status != IBV_WC_SUCCESS) {
+                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status), wc[i].status,
+                        (int) wc[i].wr_id);
+                return 1;
+            }
+
+            switch ((int) wc[i].wr_id) {
+                case PINGPONG_SEND_WRID:
+                    scntGetReqres--;
+                    break;
+
+                default:
+                    fprintf(stderr, "Completion for unknown wr_id %d\n", (int) wc[i].wr_id);
+                    return 1;
+            }
+
+        }
+    }
+    free(mr_msg);
     return 0;
 };
 
@@ -871,7 +917,7 @@ int kv_close(void *kv_handle)
 };
 
 int processClientCmd(handle *kv_handle, char *msg) {
-    printf("Processing message %s\n", msg);
+    printf("Processing Message %s\n", msg);
     if (strlen(msg) == 0) {
         fprintf(stderr, "Msg is empty!: %s\n", msg);
         return 0;
