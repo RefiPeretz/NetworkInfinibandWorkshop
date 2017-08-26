@@ -35,7 +35,7 @@
     </ADDITIONAL_GENERATION_ENVIRONMENT>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="DKV_SET finished skalaton with minimal impl'">
+    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandClientP1.c" afterPath="$PROJECT_DIR$/RandClientP1.c" />
     </list>
@@ -60,7 +60,7 @@
     <favorites_list name="H_CCW17" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.4727945">
+    <splitter split-orientation="horizontal" split-proportion="0.6201796">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file leaf-file-name="CMakeLists.txt" pinned="false" current-in-tab="false">
@@ -122,8 +122,8 @@
           <file leaf-file-name="RandClientP1.c" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/RandClientP1.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="76">
-                  <caret line="1281" column="72" selection-start-line="1281" selection-start-column="54" selection-end-line="1281" selection-end-column="72" />
+                <state relative-caret-position="123">
+                  <caret line="1314" column="71" selection-start-line="1314" selection-start-column="71" selection-end-line="1314" selection-end-column="71" />
                   <folding>
                     <element signature="e#473#552#0" expanded="false" />
                     <element signature="e#561#644#0" expanded="false" />
@@ -145,27 +145,28 @@
                     <element signature="e#15846#16954#0" expanded="false" />
                     <element signature="e#18259#20551#0" expanded="false" />
                     <element signature="e#27639#27869#0" expanded="false" />
-                    <marker date="1503754432672" expanded="false" signature="5994:8364" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="8366:8385" ph="..." />
-                    <marker date="1503754432672" expanded="false" signature="8584:10301" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="11149:11652" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="11741:12188" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="15061:15631" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="17045:18256" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="20823:21015" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="21107:21767" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="26000:26055" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="26462:26992" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="27048:27636" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="27923:28936" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="29001:29836" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="29894:30930" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="29894:31772" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="31895:36764" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="36934:37183" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="41594:41598" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="41627:41735" ph="{...}" />
-                    <marker date="1503754432672" expanded="false" signature="42879:45970" ph="{...}" />
+                    <element signature="e#40436#41562#0" expanded="false" />
+                    <element signature="e#41564#42473#0" expanded="false" />
+                    <marker date="1503754974902" expanded="false" signature="5994:8364" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="8366:8385" ph="..." />
+                    <marker date="1503754974902" expanded="false" signature="8584:10301" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="11149:11652" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="11741:12188" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="15061:15631" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="17045:18256" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="20823:21015" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="21107:21767" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="26000:26055" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="26462:26992" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="27048:27636" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="27923:28936" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="29001:29836" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="29894:30930" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="29894:31772" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="31895:36764" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="36934:37183" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="42502:42610" ph="{...}" />
+                    <marker date="1503754974902" expanded="false" signature="43754:46845" ph="{...}" />
                   </folding>
                 </state>
               </provider>
@@ -185,21 +186,21 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="RandClientP1.c" pinned="false" current-in-tab="true">
+          <file leaf-file-name="RandClientP1.c" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/RandClientP1.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="267">
-                  <caret line="677" column="0" selection-start-line="677" selection-start-column="0" selection-end-line="677" selection-end-column="0" />
+                <state relative-caret-position="283">
+                  <caret line="862" column="52" selection-start-line="862" selection-start-column="28" selection-end-line="862" selection-end-column="52" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="skeleton.patch" pinned="false" current-in-tab="false">
+          <file leaf-file-name="skeleton.patch" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/skeleton.patch">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-198">
-                  <caret line="490" column="59" selection-start-line="490" selection-start-column="48" selection-end-line="490" selection-end-column="59" />
+                <state relative-caret-position="283">
+                  <caret line="558" column="16" selection-start-line="558" selection-start-column="9" selection-end-line="558" selection-end-column="16" />
                   <folding />
                 </state>
               </provider>
@@ -676,14 +677,7 @@
       <workItem from="1498891118082" duration="2593000" />
       <workItem from="1498900989666" duration="10984000" />
       <workItem from="1501917401053" duration="29069000" />
-      <workItem from="1503729565252" duration="21086000" />
-    </task>
-    <task id="LOCAL-00054" summary="Strated RDMA">
-      <created>1498289648386</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1498289648386</updated>
+      <workItem from="1503729565252" duration="21454000" />
     </task>
     <task id="LOCAL-00055" summary="Strated RDMA">
       <created>1498292618418</created>
@@ -1021,11 +1015,18 @@
       <option name="project" value="LOCAL" />
       <updated>1503752366539</updated>
     </task>
-    <option name="localTasksCounter" value="103" />
+    <task id="LOCAL-00103" summary="Added dkv_get skalation">
+      <created>1503754623055</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1503754623056</updated>
+    </task>
+    <option name="localTasksCounter" value="104" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="443287000" />
+    <option name="totallyTimeSpent" value="443655000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1117,7 +1118,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="fixed rdma set operation on client with set lkey&#10;" />
     <MESSAGE value="Strated RDMA" />
     <MESSAGE value="Rand fixed free of temp response value" />
     <MESSAGE value="Fixed using store MR on client" />
@@ -1142,7 +1142,8 @@
     <MESSAGE value="Finished converting the rand server and client combining ex2 and ex 3&#10;" />
     <MESSAGE value="DKV_open added" />
     <MESSAGE value="DKV_SET finished skalaton with minimal impl'" />
-    <option name="LAST_COMMIT_MESSAGE" value="DKV_SET finished skalaton with minimal impl'" />
+    <MESSAGE value="Added dkv_get skalation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added dkv_get skalation" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1514,14 +1515,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/skeleton.patch">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-198">
-          <caret line="490" column="59" selection-start-line="490" selection-start-column="48" selection-end-line="490" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/RandServerP1.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="567">
@@ -1566,11 +1559,62 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/skeleton.patch">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="283">
+          <caret line="558" column="16" selection-start-line="558" selection-start-column="9" selection-end-line="558" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/RandClientP1.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="677" column="0" selection-start-line="677" selection-start-column="0" selection-end-line="677" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="123">
+          <caret line="1314" column="71" selection-start-line="1314" selection-start-column="71" selection-end-line="1314" selection-end-column="71" />
+          <folding>
+            <element signature="e#473#552#0" expanded="false" />
+            <element signature="e#561#644#0" expanded="false" />
+            <element signature="e#663#711#0" expanded="false" />
+            <element signature="e#728#1087#0" expanded="false" />
+            <element signature="e#1105#1422#0" expanded="false" />
+            <element signature="e#1436#1510#1" expanded="false" />
+            <element signature="e#1512#1685#1" expanded="false" />
+            <element signature="e#1688#1748#1" expanded="false" />
+            <element signature="e#1801#2059#1" expanded="false" />
+            <element signature="e#2062#2148#1" expanded="false" />
+            <element signature="e#2184#2376#1" expanded="false" />
+            <element signature="e#2379#3872#0" expanded="false" />
+            <element signature="e#3874#5792#0" expanded="false" />
+            <element signature="e#10304#11060#0" expanded="false" />
+            <element signature="e#12190#13235#0" expanded="false" />
+            <element signature="e#13238#13691#0" expanded="false" />
+            <element signature="e#13693#15011#0" expanded="false" />
+            <element signature="e#15846#16954#0" expanded="false" />
+            <element signature="e#18259#20551#0" expanded="false" />
+            <element signature="e#27639#27869#0" expanded="false" />
+            <element signature="e#40436#41562#0" expanded="false" />
+            <element signature="e#41564#42473#0" expanded="false" />
+            <marker date="1503754974902" expanded="false" signature="5994:8364" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="8366:8385" ph="..." />
+            <marker date="1503754974902" expanded="false" signature="8584:10301" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="11149:11652" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="11741:12188" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="15061:15631" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="17045:18256" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="20823:21015" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="21107:21767" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="26000:26055" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="26462:26992" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="27048:27636" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="27923:28936" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="29001:29836" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="29894:30930" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="29894:31772" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="31895:36764" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="36934:37183" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="42502:42610" ph="{...}" />
+            <marker date="1503754974902" expanded="false" signature="43754:46845" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>

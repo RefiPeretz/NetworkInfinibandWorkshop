@@ -1312,8 +1312,33 @@ int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length) {
     return mkv_get(dkv_h, keyServerLocationID, key, value, 0);
 }
 
-void dkv_release(char *value) {
+void dkv_release(const char *key, char *value, int kv_id, void *dkv_h) {
+    struct dkv_ctx *ctx = dkv_h;
+    char *findResultMsg = malloc(roundup(ctx->mkv->defMsgSize, page_size));
+    int foundKey = find_key_server(dkv_h, key, &findResultMsg);
+    if (foundKey == -1) {
+        return;
+    }
 
+    /* Step #2: The Index server responds with LOCATION(#kv-server-id) */
+
+    printf("Processing server Message: %s\n", findResultMsg);
+    if (strlen(findResultMsg) == 0) {
+        fprintf(stderr, "Msg is empty!\n");
+        return;
+    };
+    char *delim = ":";
+    int CMD = atoi(strtok(findResultMsg, delim));
+    int keyServerLocationID = atoi(strtok(NULL, delim));
+
+    free(findResultMsg);
+
+    if (CMD != KEY_SERVER_LOCATION) {
+        printf("Didn't get correct message after sending request for key server location, got CMD: %d\n", CMD);
+        return;
+    }
+
+    mkv_release(value, kv_id, ctx->mkv);
 }
 
 int dkv_close(void *dkv_h) {
