@@ -36,10 +36,9 @@
     </ADDITIONAL_GENERATION_ENVIRONMENT>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="Indexer store support hashed key support">
+    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandClientP1.c" afterPath="$PROJECT_DIR$/RandClientP1.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandIndexerServerP1.c" afterPath="$PROJECT_DIR$/RandIndexerServerP1.c" />
     </list>
     <list id="ed5b0da3-4860-4bf5-a85a-dd6805f11d6b" name="11" comment="11" />
     <list id="786bcf74-7ba9-41dc-ad33-e0d7ede81f2a" name="New changelist" comment="" />
@@ -59,14 +58,14 @@
     <favorites_list name="H_CCW17" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.40021065">
+    <splitter split-orientation="horizontal" split-proportion="0.6761453">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="RandServerP1.c" pinned="false" current-in-tab="true">
+          <file leaf-file-name="RandServerP1.c" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/RandServerP1.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="430">
-                  <caret line="812" column="0" selection-start-line="812" selection-start-column="0" selection-end-line="812" selection-end-column="0" />
+                <state relative-caret-position="545">
+                  <caret line="817" column="0" selection-start-line="817" selection-start-column="0" selection-end-line="817" selection-end-column="0" />
                   <folding>
                     <element signature="e#529#589#1" expanded="false" />
                     <element signature="e#615#873#1" expanded="false" />
@@ -140,80 +139,8 @@
           <file leaf-file-name="RandClientP1.c" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/RandClientP1.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="6308">
-                  <caret line="830" column="0" selection-start-line="830" selection-start-column="0" selection-end-line="830" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="pingpong.h" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/pingpong.h">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="657">
-                  <caret line="48" column="111" selection-start-line="48" selection-start-column="92" selection-end-line="48" selection-end-column="111" />
-                  <folding>
-                    <marker date="1503759750370" expanded="true" signature="1871:1991" ph="{...}" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file leaf-file-name="skeleton.patch" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/skeleton.patch">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="187">
-                  <caret line="603" column="5" selection-start-line="603" selection-start-column="5" selection-end-line="603" selection-end-column="52" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="RandIndexerServerP1.c" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/RandIndexerServerP1.c">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="716">
-                  <caret line="667" column="9" selection-start-line="667" selection-start-column="9" selection-end-line="667" selection-end-column="9" />
-                  <folding>
-                    <element signature="e#362#526#1" expanded="false" />
-                    <element signature="e#529#589#1" expanded="false" />
-                    <element signature="e#615#873#1" expanded="false" />
-                    <element signature="e#876#962#1" expanded="false" />
-                    <element signature="e#966#2459#0" expanded="false" />
-                    <element signature="e#2461#4379#0" expanded="false" />
-                    <element signature="e#4381#6951#0" expanded="false" />
-                    <element signature="e#7006#7089#0" expanded="false" />
-                    <element signature="e#7100#9035#0" expanded="false" />
-                    <element signature="e#9038#9794#0" expanded="false" />
-                    <element signature="e#9796#10370#0" expanded="false" />
-                    <element signature="e#10372#10906#0" expanded="false" />
-                    <element signature="e#10908#11953#0" expanded="false" />
-                    <element signature="e#12557#12629#0" expanded="false" />
-                    <element signature="e#12635#12760#0" expanded="false" />
-                    <element signature="e#12763#12842#0" expanded="false" />
-                    <element signature="e#12886#13023#0" expanded="false" />
-                    <element signature="e#13068#13833#0" expanded="false" />
-                    <element signature="e#13835#14244#0" expanded="false" />
-                    <element signature="e#14246#14504#0" expanded="false" />
-                    <element signature="e#14506#15124#0" expanded="false" />
-                    <element signature="e#15127#15211#0" expanded="false" />
-                    <element signature="e#15214#15443#0" expanded="false" />
-                    <element signature="e#16371#16677#0" expanded="false" />
-                    <element signature="e#16679#18879#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="RandClientP1.c" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/RandClientP1.c">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="384">
-                  <caret line="1457" column="86" selection-start-line="1457" selection-start-column="81" selection-end-line="1457" selection-end-column="86" />
+                <state relative-caret-position="802">
+                  <caret line="1526" column="37" selection-start-line="1526" selection-start-column="32" selection-end-line="1526" selection-end-column="37" />
                   <folding>
                     <element signature="e#703#748#1" expanded="false" />
                     <element signature="e#1095#2587#0" expanded="false" />
@@ -256,13 +183,143 @@
                     <element signature="e#32884#33948#0" expanded="false" />
                     <element signature="e#33951#34848#0" expanded="false" />
                     <element signature="e#34850#39840#0" expanded="false" />
-                    <element signature="e#39843#40259#0" expanded="false" />
-                    <element signature="e#40261#42451#0" expanded="false" />
-                    <element signature="e#42453#43589#0" expanded="false" />
-                    <element signature="e#43592#44725#0" expanded="false" />
-                    <element signature="e#44727#45643#0" expanded="false" />
-                    <element signature="e#45645#45794#0" expanded="false" />
-                    <element signature="e#45796#46903#0" expanded="false" />
+                    <element signature="e#40275#42465#0" expanded="false" />
+                    <element signature="e#42467#43603#0" expanded="false" />
+                    <element signature="e#43606#44739#0" expanded="false" />
+                    <element signature="e#44741#45657#0" expanded="false" />
+                    <element signature="e#45659#45808#0" expanded="false" />
+                    <element signature="e#45810#46917#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="RandClientP1.c" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/RandClientP1.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="181">
+                  <caret line="1249" column="0" selection-start-line="1249" selection-start-column="0" selection-end-line="1249" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="pingpong.h" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/pingpong.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="657">
+                  <caret line="48" column="111" selection-start-line="48" selection-start-column="92" selection-end-line="48" selection-end-column="111" />
+                  <folding>
+                    <marker date="1503759750370" expanded="true" signature="1871:1991" ph="{...}" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="skeleton.patch" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/skeleton.patch">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="187">
+                  <caret line="603" column="5" selection-start-line="603" selection-start-column="5" selection-end-line="603" selection-end-column="52" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="RandIndexerServerP1.c" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/RandIndexerServerP1.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="647">
+                  <caret line="754" column="7" selection-start-line="754" selection-start-column="7" selection-end-line="754" selection-end-column="7" />
+                  <folding>
+                    <element signature="e#362#526#1" expanded="false" />
+                    <element signature="e#529#589#1" expanded="false" />
+                    <element signature="e#615#873#1" expanded="false" />
+                    <element signature="e#876#962#1" expanded="false" />
+                    <element signature="e#966#2459#0" expanded="false" />
+                    <element signature="e#2461#4379#0" expanded="false" />
+                    <element signature="e#4381#6951#0" expanded="false" />
+                    <element signature="e#7006#7089#0" expanded="false" />
+                    <element signature="e#7100#9035#0" expanded="false" />
+                    <element signature="e#9038#9794#0" expanded="false" />
+                    <element signature="e#9796#10370#0" expanded="false" />
+                    <element signature="e#10372#10906#0" expanded="false" />
+                    <element signature="e#10908#11953#0" expanded="false" />
+                    <element signature="e#12557#12629#0" expanded="false" />
+                    <element signature="e#12635#12760#0" expanded="false" />
+                    <element signature="e#12763#12842#0" expanded="false" />
+                    <element signature="e#12886#13023#0" expanded="false" />
+                    <element signature="e#13068#13833#0" expanded="false" />
+                    <element signature="e#13835#14244#0" expanded="false" />
+                    <element signature="e#14246#14504#0" expanded="false" />
+                    <element signature="e#14506#15124#0" expanded="false" />
+                    <element signature="e#15127#15211#0" expanded="false" />
+                    <element signature="e#15214#15443#0" expanded="false" />
+                    <element signature="e#16371#16677#0" expanded="false" />
+                    <element signature="e#16679#18879#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="RandClientP1.c" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/RandClientP1.c">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-700">
+                  <caret line="1483" column="6" selection-start-line="1483" selection-start-column="6" selection-end-line="1483" selection-end-column="6" />
+                  <folding>
+                    <element signature="e#703#748#1" expanded="false" />
+                    <element signature="e#1095#2587#0" expanded="false" />
+                    <element signature="e#2589#5442#0" expanded="false" />
+                    <element signature="e#5444#5523#0" expanded="false" />
+                    <element signature="e#5532#5615#0" expanded="false" />
+                    <element signature="e#5634#5682#0" expanded="false" />
+                    <element signature="e#5698#5784#0" expanded="false" />
+                    <element signature="e#5808#6167#0" expanded="false" />
+                    <element signature="e#6185#6502#0" expanded="false" />
+                    <element signature="e#6516#6590#1" expanded="false" />
+                    <element signature="e#6592#6765#1" expanded="false" />
+                    <element signature="e#6768#6828#1" expanded="false" />
+                    <element signature="e#6881#7139#1" expanded="false" />
+                    <element signature="e#7176#7368#1" expanded="false" />
+                    <element signature="e#7371#8864#0" expanded="false" />
+                    <element signature="e#8866#10784#0" expanded="false" />
+                    <element signature="e#10786#13356#0" expanded="false" />
+                    <element signature="e#13461#15314#0" expanded="false" />
+                    <element signature="e#15317#16073#0" expanded="false" />
+                    <element signature="e#16075#16665#0" expanded="false" />
+                    <element signature="e#16667#17201#0" expanded="false" />
+                    <element signature="e#17203#18248#0" expanded="false" />
+                    <element signature="e#18251#18704#0" expanded="false" />
+                    <element signature="e#18706#20024#0" expanded="false" />
+                    <element signature="e#20026#20644#0" expanded="false" />
+                    <element signature="e#20647#20856#0" expanded="false" />
+                    <element signature="e#20859#21967#0" expanded="false" />
+                    <element signature="e#21969#23269#0" expanded="false" />
+                    <element signature="e#23272#25564#0" expanded="false" />
+                    <element signature="e#25568#25793#0" expanded="false" />
+                    <element signature="e#25795#26028#0" expanded="false" />
+                    <element signature="e#26031#26780#0" expanded="false" />
+                    <element signature="e#26782#30980#0" expanded="false" />
+                    <element signature="e#30983#31067#0" expanded="false" />
+                    <element signature="e#31070#31444#0" expanded="false" />
+                    <element signature="e#31446#32004#0" expanded="false" />
+                    <element signature="e#32006#32648#0" expanded="false" />
+                    <element signature="e#32651#32881#0" expanded="false" />
+                    <element signature="e#32884#33948#0" expanded="false" />
+                    <element signature="e#33951#34848#0" expanded="false" />
+                    <element signature="e#34850#39840#0" expanded="false" />
+                    <element signature="e#39843#40273#0" expanded="false" />
+                    <element signature="e#40275#42465#0" expanded="false" />
+                    <element signature="e#42467#43603#0" expanded="false" />
+                    <element signature="e#43606#44739#0" expanded="false" />
+                    <element signature="e#44741#45657#0" expanded="false" />
+                    <element signature="e#45659#45808#0" expanded="false" />
+                    <element signature="e#45810#46917#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -371,12 +428,12 @@
         <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/eagerServerP3.c" />
         <option value="$PROJECT_DIR$/eagerClientP3.c" />
         <option value="$PROJECT_DIR$/eagerServerP3.c" />
-        <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/RandClientP1.c" />
         <option value="$PROJECT_DIR$/pingpong.h" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/RandServerP1.c" />
-        <option value="$PROJECT_DIR$/RandClientP1.c" />
         <option value="$PROJECT_DIR$/RandIndexerServerP1.c" />
+        <option value="$PROJECT_DIR$/RandClientP1.c" />
+        <option value="$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/RandClientP1.c" />
       </list>
     </option>
   </component>
@@ -602,7 +659,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.ex4_clientP1">
+  <component name="RunManager" selected="GDB Remote Debug.mlx-stud-01:8081">
     <configuration default="true" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="" symbolFile="" sysroot="">
       <method />
     </configuration>
@@ -778,7 +835,11 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="mlx-stud-01:8081" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="mlx-stud-01:8081" symbolFile="$PROJECT_DIR$/randClient" sysroot="">
+    <configuration default="false" name="ex4_indexerP1" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="ex4_indexerP1" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="ex4_indexerP1">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="mlx-stud-01:8081" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="mlx-stud-01:8085" symbolFile="$PROJECT_DIR$/randClient" sysroot="">
       <pathMapping remote=":/cs/+/usr/fimak/H_CCW17/" local="/+/usr/fimak/H_CCW17/" />
       <method />
     </configuration>
@@ -786,16 +847,12 @@
       <pathMapping remote=":/cs/+/usr/fimak/H_CCW17/" local="/+/usr/fimak/H_CCW17/" />
       <method />
     </configuration>
-    <configuration default="false" name="ex4_indexerP1" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ex1v2" TARGET_NAME="ex4_indexerP1" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ex1v2" RUN_TARGET_NAME="ex4_indexerP1">
-      <envs />
-      <method />
-    </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Application.ex4_clientP1" />
       <item index="1" class="java.lang.String" itemvalue="Application.ex4_serverP1" />
-      <item index="2" class="java.lang.String" itemvalue="GDB Remote Debug.mlx-stud-01:8081" />
-      <item index="3" class="java.lang.String" itemvalue="GDB Remote Debug.mlx-stud-02:8080" />
-      <item index="4" class="java.lang.String" itemvalue="Application.ex4_indexerP1" />
+      <item index="2" class="java.lang.String" itemvalue="Application.ex4_indexerP1" />
+      <item index="3" class="java.lang.String" itemvalue="GDB Remote Debug.mlx-stud-01:8081" />
+      <item index="4" class="java.lang.String" itemvalue="GDB Remote Debug.mlx-stud-02:8080" />
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
@@ -855,14 +912,7 @@
       <workItem from="1498891118082" duration="2593000" />
       <workItem from="1498900989666" duration="10984000" />
       <workItem from="1501917401053" duration="29069000" />
-      <workItem from="1503729565252" duration="29472000" />
-    </task>
-    <task id="LOCAL-00061" summary="Strated RDMA">
-      <created>1498304834090</created>
-      <option name="number" value="00061" />
-      <option name="presentableId" value="LOCAL-00061" />
-      <option name="project" value="LOCAL" />
-      <updated>1498304834090</updated>
+      <workItem from="1503729565252" duration="30023000" />
     </task>
     <task id="LOCAL-00062" summary="Strated RDMA">
       <created>1498307125731</created>
@@ -1200,11 +1250,18 @@
       <option name="project" value="LOCAL" />
       <updated>1503762494441</updated>
     </task>
-    <option name="localTasksCounter" value="110" />
+    <task id="LOCAL-00110" summary="Indexer store support hashed key support">
+      <created>1503763008194</created>
+      <option name="number" value="00110" />
+      <option name="presentableId" value="LOCAL-00110" />
+      <option name="project" value="LOCAL" />
+      <updated>1503763008194</updated>
+    </task>
+    <option name="localTasksCounter" value="111" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="451673000" />
+    <option name="totallyTimeSpent" value="452224000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1217,20 +1274,20 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="24" width="1920" height="1032" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20695102" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32968238" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17248908" sideWeight="0.5055292" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3231106" sideWeight="0.48130596" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.0" sideWeight="0.4555029" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.45087337" sideWeight="0.43549237" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18449782" sideWeight="0.5966298" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.0" sideWeight="0.54449713" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.0" sideWeight="0.54449713" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23799127" sideWeight="0.4782123" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24866024" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.088427946" sideWeight="0.49040306" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24454148" sideWeight="0.5669882" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.45087337" sideWeight="0.56450766" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1326,6 +1383,33 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/RandClientP1.c</url>
+          <line>1461</line>
+          <option name="timeStamp" value="523" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/RandClientP1.c</url>
+          <line>1455</line>
+          <option name="timeStamp" value="524" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/RandClientP1.c</url>
+          <line>1458</line>
+          <option name="timeStamp" value="525" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/RandClientP1.c</url>
+          <line>1452</line>
+          <option name="timeStamp" value="526" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/RandClientP1.c</url>
+          <line>1455</line>
+          <option name="timeStamp" value="527" />
+        </line-breakpoint>
+      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
@@ -1336,7 +1420,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="523" />
+      <option name="time" value="530" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="CLion_Remote">
@@ -1601,14 +1685,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/RandClientP1.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1">
-          <caret line="837" column="5" selection-start-line="837" selection-start-column="5" selection-end-line="837" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/include/infiniband/verbs.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
@@ -1648,10 +1724,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/skeleton.patch">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="603" column="5" selection-start-line="603" selection-start-column="5" selection-end-line="603" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/RandServerP1.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="430">
-          <caret line="812" column="0" selection-start-line="812" selection-start-column="0" selection-end-line="812" selection-end-column="0" />
+        <state relative-caret-position="545">
+          <caret line="817" column="0" selection-start-line="817" selection-start-column="0" selection-end-line="817" selection-end-column="0" />
           <folding>
             <element signature="e#529#589#1" expanded="false" />
             <element signature="e#615#873#1" expanded="false" />
@@ -1687,18 +1771,42 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/skeleton.patch">
+    <entry file="file://$PROJECT_DIR$/RandIndexerServerP1.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="603" column="5" selection-start-line="603" selection-start-column="5" selection-end-line="603" selection-end-column="52" />
-          <folding />
+        <state relative-caret-position="2263">
+          <caret line="510" column="0" selection-start-line="510" selection-start-column="0" selection-end-line="510" selection-end-column="0" />
+          <folding>
+            <element signature="e#362#526#1" expanded="false" />
+            <element signature="e#529#589#1" expanded="false" />
+            <element signature="e#615#873#1" expanded="false" />
+            <element signature="e#876#962#1" expanded="false" />
+            <element signature="e#966#2459#0" expanded="false" />
+            <element signature="e#2461#4379#0" expanded="false" />
+            <element signature="e#4381#6951#0" expanded="false" />
+            <element signature="e#7006#7089#0" expanded="false" />
+            <element signature="e#7100#9035#0" expanded="false" />
+            <element signature="e#9038#9794#0" expanded="false" />
+            <element signature="e#10372#10906#0" expanded="false" />
+            <element signature="e#10908#11953#0" expanded="false" />
+            <element signature="e#12557#12629#0" expanded="false" />
+            <element signature="e#12635#12760#0" expanded="false" />
+            <element signature="e#12763#12842#0" expanded="false" />
+            <element signature="e#12886#13023#0" expanded="false" />
+            <element signature="e#13068#13833#0" expanded="false" />
+            <element signature="e#13835#14244#0" expanded="false" />
+            <element signature="e#14506#15124#0" expanded="false" />
+            <element signature="e#15127#15211#0" expanded="false" />
+            <element signature="e#15214#15443#0" expanded="false" />
+            <element signature="e#15446#16368#0" expanded="false" />
+            <element signature="e#18881#26191#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/RandClientP1.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="384">
-          <caret line="1457" column="86" selection-start-line="1457" selection-start-column="81" selection-end-line="1457" selection-end-column="86" />
+        <state relative-caret-position="802">
+          <caret line="1526" column="37" selection-start-line="1526" selection-start-column="32" selection-end-line="1526" selection-end-column="37" />
           <folding>
             <element signature="e#703#748#1" expanded="false" />
             <element signature="e#1095#2587#0" expanded="false" />
@@ -1741,48 +1849,21 @@
             <element signature="e#32884#33948#0" expanded="false" />
             <element signature="e#33951#34848#0" expanded="false" />
             <element signature="e#34850#39840#0" expanded="false" />
-            <element signature="e#39843#40259#0" expanded="false" />
-            <element signature="e#40261#42451#0" expanded="false" />
-            <element signature="e#42453#43589#0" expanded="false" />
-            <element signature="e#43592#44725#0" expanded="false" />
-            <element signature="e#44727#45643#0" expanded="false" />
-            <element signature="e#45645#45794#0" expanded="false" />
-            <element signature="e#45796#46903#0" expanded="false" />
+            <element signature="e#40275#42465#0" expanded="false" />
+            <element signature="e#42467#43603#0" expanded="false" />
+            <element signature="e#43606#44739#0" expanded="false" />
+            <element signature="e#44741#45657#0" expanded="false" />
+            <element signature="e#45659#45808#0" expanded="false" />
+            <element signature="e#45810#46917#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/RandIndexerServerP1.c">
+    <entry file="file://$PROJECT_DIR$/../../../../+/usr/fimak/H_CCW17/RandClientP1.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="716">
-          <caret line="667" column="9" selection-start-line="667" selection-start-column="9" selection-end-line="667" selection-end-column="9" />
-          <folding>
-            <element signature="e#362#526#1" expanded="false" />
-            <element signature="e#529#589#1" expanded="false" />
-            <element signature="e#615#873#1" expanded="false" />
-            <element signature="e#876#962#1" expanded="false" />
-            <element signature="e#966#2459#0" expanded="false" />
-            <element signature="e#2461#4379#0" expanded="false" />
-            <element signature="e#4381#6951#0" expanded="false" />
-            <element signature="e#7006#7089#0" expanded="false" />
-            <element signature="e#7100#9035#0" expanded="false" />
-            <element signature="e#9038#9794#0" expanded="false" />
-            <element signature="e#9796#10370#0" expanded="false" />
-            <element signature="e#10372#10906#0" expanded="false" />
-            <element signature="e#10908#11953#0" expanded="false" />
-            <element signature="e#12557#12629#0" expanded="false" />
-            <element signature="e#12635#12760#0" expanded="false" />
-            <element signature="e#12763#12842#0" expanded="false" />
-            <element signature="e#12886#13023#0" expanded="false" />
-            <element signature="e#13068#13833#0" expanded="false" />
-            <element signature="e#13835#14244#0" expanded="false" />
-            <element signature="e#14246#14504#0" expanded="false" />
-            <element signature="e#14506#15124#0" expanded="false" />
-            <element signature="e#15127#15211#0" expanded="false" />
-            <element signature="e#15214#15443#0" expanded="false" />
-            <element signature="e#16371#16677#0" expanded="false" />
-            <element signature="e#16679#18879#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="181">
+          <caret line="1249" column="0" selection-start-line="1249" selection-start-column="0" selection-end-line="1249" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

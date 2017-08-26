@@ -1242,6 +1242,7 @@ int dkv_open(struct kv_server_address *servers, /* array of servers */
         return 1;
     }
     *dkv_h = ctx;
+    return 0;
 }
 
 int find_key_server(void *dkv_h, const char *key, char **findResultMsg, bool new_val) {
@@ -1460,53 +1461,53 @@ int main(int argc, char *argv[]) {
     //assert(0 == mkv_open(servers, &kv_ctx));
     assert(0 == dkv_open(servers, indexer, &kv_ctx));
 
-    //    char key[4] = "red";
-//    char value[10] = "wedding";
-//    char key2[5] = "red2";
-//    char value2[11] = "wedding2";
-//    mkv_send_credit(kv_ctx, 0, 2);
-//
-//    if (mkv_set(kv_ctx, 0, key, value, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    char *retVal = malloc(4096);
-//    if (mkv_get(kv_ctx, 0, key, &retVal, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    retVal = malloc(4096);
-//    if (mkv_get(kv_ctx, 0, key, &retVal, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    mkv_release(retVal, 0, kv_ctx);
-//
-//    if (mkv_set(kv_ctx, 0, key2, value2, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    retVal = malloc(4096);
-//    if (mkv_get(kv_ctx, 0, key2, &retVal, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    retVal = malloc(4096);
-//    if (mkv_get(kv_ctx, 0, key2, &retVal, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    retVal = malloc(4096);
-//    if (mkv_get(kv_ctx, 0, key, &retVal, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    mkv_release(retVal, 0, kv_ctx);
-//
-//    //mkv_send_credit(kv_ctx, 0, 50);
-//    struct mkv_handle *m_handle = kv_ctx;
-//    //mkv_close(kv_ctx);
-//    mkv_send_credit(kv_ctx, 0, 2);
+    char key[4] = "red";
+    char value[10] = "wedding";
+    char key2[5] = "red2";
+    char value2[11] = "wedding2";
+    mkv_send_credit(kv_ctx, 0, 2);
+
+    if (dkv_set(kv_ctx, key, value, 0)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    char *retVal = malloc(4096);
+    if (dkv_get(kv_ctx, key, &retVal, 0)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    retVal = malloc(4096);
+    if (dkv_get(kv_ctx, key, &retVal, 0)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    //dkv_release(retVal, key, kv_ctx);
+
+    if (dkv_set(kv_ctx, key2, value2, 0)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    retVal = malloc(4096);
+    if (dkv_get(kv_ctx, key2, &retVal, 0)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    retVal = malloc(4096);
+    if (dkv_get(kv_ctx, key2, &retVal, 0)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    retVal = malloc(4096);
+    if (dkv_get(kv_ctx, key, &retVal, 0)) {
+        fprintf(stderr, "Couldn't post send\n");
+        return 1;
+    }
+    //dkv_release(retVal, 0, kv_ctx);
+
+    //dkv_send_credit(kv_ctx, 0, 50);
+    struct dkv_handle *m_handle = kv_ctx;
+    //dkv_close(kv_ctx);
+    mkv_send_credit(kv_ctx, 0, 2);
 
     //    //Complicated Test:
     //    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
