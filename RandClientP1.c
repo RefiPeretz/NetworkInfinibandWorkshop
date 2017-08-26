@@ -39,7 +39,12 @@ typedef struct kvMsg {
     char *key;
     char *value;
 } kvMsg;
-
+typedef struct pingpong_dest {
+    int lid;
+    int qpn;
+    int psn;
+    union ibv_gid gid;
+} pingpong_dest;
 typedef struct handle {
     struct ibv_device **dev_list;
     struct ibv_device *ib_dev;
@@ -101,12 +106,7 @@ struct pingpong_context {
 
 };
 
-struct pingpong_dest {
-    int lid;
-    int qpn;
-    int psn;
-    union ibv_gid gid;
-};
+
 
 #define EAGER_BUFFER_LIMIT (10)
 
@@ -1336,38 +1336,38 @@ int main(int argc, char *argv[]) {
     char value2[11] = "wedding2";
     mkv_send_credit(kv_ctx, 0, 2);
 
-    if (mkv_set(kv_ctx, 0, key, value)) {
+    if (mkv_set(kv_ctx, 0, key, value, 0)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
     char *retVal = malloc(4096);
-    if (mkv_get(kv_ctx, 0, key, &retVal)) {
+    if (mkv_get(kv_ctx, 0, key, &retVal, 0)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
     retVal = malloc(4096);
-    if (mkv_get(kv_ctx, 0, key, &retVal)) {
+    if (mkv_get(kv_ctx, 0, key, &retVal, 0)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
     mkv_release(retVal, 0, kv_ctx);
 
-    if (mkv_set(kv_ctx, 0, key2, value2)) {
+    if (mkv_set(kv_ctx, 0, key2, value2, 0)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
     retVal = malloc(4096);
-    if (mkv_get(kv_ctx, 0, key2, &retVal)) {
+    if (mkv_get(kv_ctx, 0, key2, &retVal, 0)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
     retVal = malloc(4096);
-    if (mkv_get(kv_ctx, 0, key2, &retVal)) {
+    if (mkv_get(kv_ctx, 0, key2, &retVal, 0)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
     retVal = malloc(4096);
-    if (mkv_get(kv_ctx, 0, key, &retVal)) {
+    if (mkv_get(kv_ctx, 0, key, &retVal, 0)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
