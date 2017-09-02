@@ -1508,9 +1508,9 @@ int main(int argc, char *argv[]) {
     //dkv_release(retVal, 0, kv_ctx);
 
     //dkv_send_credit(kv_ctx, 0, 50);
-    struct dkv_handle *m_handle = kv_ctx;
+    //    struct dkv_handle *m_handle = kv_ctx;
     //dkv_close(kv_ctx);
-    mkv_send_credit(kv_ctx, 0, 2);
+    //    mkv_send_credit(kv_ctx, 0, 2);
 
     //    //Complicated Test:
     //    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);

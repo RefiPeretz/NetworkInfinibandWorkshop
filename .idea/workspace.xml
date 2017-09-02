@@ -39,7 +39,7 @@
     </ADDITIONAL_GENERATION_ENVIRONMENT>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="added support in length parameter">
+    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandClientP1.c" afterPath="$PROJECT_DIR$/RandClientP1.c" />
     </list>
@@ -140,8 +140,8 @@
           <file leaf-file-name="RandClientP1.c" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/RandClientP1.c">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="321">
-                  <caret line="1376" column="5" selection-start-line="1376" selection-start-column="5" selection-end-line="1376" selection-end-column="5" />
+                <state relative-caret-position="528">
+                  <caret line="1512" column="13" selection-start-line="1512" selection-start-column="13" selection-end-line="1512" selection-end-column="13" />
                   <folding>
                     <element signature="e#703#748#1" expanded="false" />
                     <element signature="e#1095#2587#0" expanded="false" />
@@ -787,14 +787,7 @@
       <workItem from="1498900989666" duration="10984000" />
       <workItem from="1501917401053" duration="29069000" />
       <workItem from="1503729565252" duration="30044000" />
-      <workItem from="1504345548257" duration="4777000" />
-    </task>
-    <task id="LOCAL-00066" summary="Strated RDMA">
-      <created>1498309947169</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
-      <option name="project" value="LOCAL" />
-      <updated>1498309947169</updated>
+      <workItem from="1504345548257" duration="4854000" />
     </task>
     <task id="LOCAL-00067" summary="RandEager works">
       <created>1498315359029</created>
@@ -1132,11 +1125,18 @@
       <option name="project" value="LOCAL" />
       <updated>1504349964751</updated>
     </task>
-    <option name="localTasksCounter" value="115" />
+    <task id="LOCAL-00115" summary="fixed support for length property">
+      <created>1504350409133</created>
+      <option name="number" value="00115" />
+      <option name="presentableId" value="LOCAL-00115" />
+      <option name="project" value="LOCAL" />
+      <updated>1504350409133</updated>
+    </task>
+    <option name="localTasksCounter" value="116" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="457022000" />
+    <option name="totallyTimeSpent" value="457099000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1207,7 +1207,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Eager client co,piles" />
     <MESSAGE value="Eager client fix for creating servers" />
     <MESSAGE value="Added buffer for eager client" />
     <MESSAGE value="Created Msg que for each client on the server&#10;Added credit check and store" />
@@ -1232,7 +1231,8 @@
     <MESSAGE value="Indexer store support hashed key support" />
     <MESSAGE value="fixed routing messages between indexer and servers" />
     <MESSAGE value="added support in length parameter" />
-    <option name="LAST_COMMIT_MESSAGE" value="added support in length parameter" />
+    <MESSAGE value="fixed support for length property" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed support for length property" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1514,6 +1514,37 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/RandIndexerServerP1.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="693">
+          <caret line="667" column="88" selection-start-line="667" selection-start-column="88" selection-end-line="667" selection-end-column="88" />
+          <folding>
+            <element signature="e#362#526#1" expanded="false" />
+            <element signature="e#529#589#1" expanded="false" />
+            <element signature="e#615#873#1" expanded="false" />
+            <element signature="e#876#962#1" expanded="false" />
+            <element signature="e#966#2459#0" expanded="false" />
+            <element signature="e#2461#4379#0" expanded="false" />
+            <element signature="e#4381#6951#0" expanded="false" />
+            <element signature="e#7006#7089#0" expanded="false" />
+            <element signature="e#7100#9035#0" expanded="false" />
+            <element signature="e#9038#9794#0" expanded="false" />
+            <element signature="e#10372#10906#0" expanded="false" />
+            <element signature="e#10908#11953#0" expanded="false" />
+            <element signature="e#12557#12629#0" expanded="false" />
+            <element signature="e#12635#12760#0" expanded="false" />
+            <element signature="e#12763#12842#0" expanded="false" />
+            <element signature="e#12886#13023#0" expanded="false" />
+            <element signature="e#13068#13833#0" expanded="false" />
+            <element signature="e#13835#14244#0" expanded="false" />
+            <element signature="e#14506#15124#0" expanded="false" />
+            <element signature="e#15127#15211#0" expanded="false" />
+            <element signature="e#15214#15443#0" expanded="false" />
+            <element signature="e#15446#16368#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/RandServerP1.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="284">
@@ -1552,41 +1583,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/RandIndexerServerP1.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="693">
-          <caret line="667" column="88" selection-start-line="667" selection-start-column="88" selection-end-line="667" selection-end-column="88" />
-          <folding>
-            <element signature="e#362#526#1" expanded="false" />
-            <element signature="e#529#589#1" expanded="false" />
-            <element signature="e#615#873#1" expanded="false" />
-            <element signature="e#876#962#1" expanded="false" />
-            <element signature="e#966#2459#0" expanded="false" />
-            <element signature="e#2461#4379#0" expanded="false" />
-            <element signature="e#4381#6951#0" expanded="false" />
-            <element signature="e#7006#7089#0" expanded="false" />
-            <element signature="e#7100#9035#0" expanded="false" />
-            <element signature="e#9038#9794#0" expanded="false" />
-            <element signature="e#10372#10906#0" expanded="false" />
-            <element signature="e#10908#11953#0" expanded="false" />
-            <element signature="e#12557#12629#0" expanded="false" />
-            <element signature="e#12635#12760#0" expanded="false" />
-            <element signature="e#12763#12842#0" expanded="false" />
-            <element signature="e#12886#13023#0" expanded="false" />
-            <element signature="e#13068#13833#0" expanded="false" />
-            <element signature="e#13835#14244#0" expanded="false" />
-            <element signature="e#14506#15124#0" expanded="false" />
-            <element signature="e#15127#15211#0" expanded="false" />
-            <element signature="e#15214#15443#0" expanded="false" />
-            <element signature="e#15446#16368#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/RandClientP1.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="321">
-          <caret line="1376" column="5" selection-start-line="1376" selection-start-column="5" selection-end-line="1376" selection-end-column="5" />
+        <state relative-caret-position="528">
+          <caret line="1512" column="13" selection-start-line="1512" selection-start-column="13" selection-end-line="1512" selection-end-column="13" />
           <folding>
             <element signature="e#703#748#1" expanded="false" />
             <element signature="e#1095#2587#0" expanded="false" />
