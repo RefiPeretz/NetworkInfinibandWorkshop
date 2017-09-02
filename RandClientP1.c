@@ -1453,11 +1453,11 @@ int main(int argc, char *argv[]) {
     g_argc = argc;
     g_argv = argv;
 
-    struct kv_server_address servers[2] = {{.servername = "mlx-stud-02", .port = 65433},
+    struct kv_server_address indexer[2] = {{.servername = "mlx-stud-03", .port = 63335},
                                            {.servername = NULL, .port = 0}};
 
-    struct kv_server_address indexer[2] = {{.servername = "mlx-stud-04", .port = 63335},
-                                           {0}};
+    struct kv_server_address servers[2] = {{.servername = "mlx-stud-02", .port = 65433},
+                                           {.servername = NULL, .port = 0}};
     //assert(0 == mkv_open(servers, &kv_ctx));
     assert(0 == dkv_open(servers, indexer, &kv_ctx));
 
