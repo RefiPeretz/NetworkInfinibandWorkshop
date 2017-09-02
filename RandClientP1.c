@@ -1342,7 +1342,7 @@ int dkv_set(void *dkv_h, const char *key, const char *value, unsigned length) {
     }
 
     /* Step #3: The client contacts KV-server with the ID returned in LOCATION, using SET/GET messages. */
-    return mkv_set(dkv_h, keyServerLocationID, key, value, 0);
+    return mkv_set(ctx->mkv, keyServerLocationID, key, value, 0);
 }
 
 
@@ -1376,7 +1376,7 @@ int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length) {
     }
 
     /* Step #3: The client contacts KV-server with the ID returned in LOCATION, using SET/GET messages. */
-    return mkv_get(dkv_h, keyServerLocationID, key, value, 0);
+    return mkv_get(ctx->mkv, keyServerLocationID, key, value, 0);
 }
 
 void dkv_release(const char *key, char *value, int kv_id, void *dkv_h) {
@@ -1465,7 +1465,9 @@ int main(int argc, char *argv[]) {
     char value[10] = "wedding";
     char key2[5] = "red2";
     char value2[11] = "wedding2";
-    mkv_send_credit(kv_ctx, 0, 2);
+    struct dkv_ctx *ctx = kv_ctx;
+
+    mkv_send_credit(ctx->mkv, 0, 2);
 
     if (dkv_set(kv_ctx, key, value, 0)) {
         fprintf(stderr, "Couldn't post send\n");
