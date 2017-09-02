@@ -1468,7 +1468,7 @@ int main(int argc, char *argv[]) {
     char value2[11] = "wedding2";
     struct dkv_ctx *ctx = kv_ctx;
 
-    mkv_send_credit(ctx->mkv, 0, 3);
+    mkv_send_credit(ctx->mkv, 0, 50);
 
     if (dkv_set(kv_ctx, key, value, strlen(value) + 1)) {
         fprintf(stderr, "Couldn't post send\n");
