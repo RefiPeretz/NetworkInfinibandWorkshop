@@ -154,7 +154,7 @@ void web(int fd, int hit)
 typedef struct Message {
     uint32_t mr_rkey;
     long unsigned addr;
-    int valueSize;
+    unsigned int valueSize;
 } Message;
 
 typedef struct kvMsg {
@@ -834,7 +834,7 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
     }
 
 
-    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, recv2Msg1, length)) <
+    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, recv2Msg1, roundup(kvHandle->defMsgSize, page_size))) <
         0) {
         perror("Couldn't post receive:");
         return 1;
