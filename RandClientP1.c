@@ -660,6 +660,96 @@ int kv_open(char *servername, void **kv_handle) {
     return 0;
 };
 
+int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, char *actualMessage) {
+    printf("Processing server message: %s\n", msg);
+    if (strlen(msg) == 0) {
+        fprintf(stderr, "Msg is empty!\n");
+        return 0;
+    }
+    struct ibv_mr *sendMr = ibv_reg_mr(kv_handle->ctx->pd, actualMessage, strlen(actualMessage) + 1,
+                                       IBV_ACCESS_LOCAL_WRITE);
+
+
+    struct Message *mr_msg = (struct Message *) calloc(1, sizeof(struct Message));
+    char *delim = ":";
+    mr_msg->addr = strtoul(strtok(msg, delim), NULL, 10);
+    mr_msg->mr_rkey = (uint32_t) atoi(strtok(NULL, delim));
+    printf("Parsed server message - addr: %lu, rkey: %d\n", mr_msg->addr, mr_msg->mr_rkey);
+
+    struct ibv_sge list = {.addr    = (uintptr_t) actualMessage, .length = strlen(actualMessage) + 1, .lkey = sendMr
+            ->lkey};
+
+    struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_RDMA_WRITE, .send_flags = IBV_SEND_SIGNALED, .wr.rdma.remote_addr = (uintptr_t) mr_msg
+            ->addr, .wr.rdma.rkey = mr_msg->mr_rkey};
+    struct ibv_send_wr *bad_wr;
+
+    if (ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr)) {
+        printf("Error in processServerRdmaWriteResponseCmd");
+    };
+
+    return 0;
+}
+
+
+int kv_set(void *kv_handle, const char *key, const char *value, unsigned int length) {
+    handle *kvHandle = kv_handle;
+    kv_cmd cmd = SET_CMD;
+
+    //first send msg to server with size and MR to read from.
+    char *msg = (char *) malloc(roundup(kvHandle->defMsgSize, page_size));
+    sprintf(msg, "%d:%s:%d", cmd, key, length);
+    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
+
+    if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg, strlen(msg) + 1)) {
+        perror("Couldn't post send: ");
+        return 1;
+    }
+
+    char *remoteMrMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
+    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, remoteMrMsg, roundup(kvHandle->defMsgSize, page_size))) <
+        0) {
+        perror("Couldn't post receive:");
+        return 1;
+    }
+
+    int scnt = 2, rcvd = 1;
+    while (scnt || rcvd) {
+        struct ibv_wc wc[5];
+        int ne;
+        do {
+            ne = ibv_poll_cq(kvHandle->ctx->cq, 5, wc);
+            if (ne < 0) {
+                fprintf(stderr, "poll CQ failed %d\n", ne);
+                return 1;
+            }
+
+        } while (ne < 1);
+
+        for (int i = 0; i < ne; ++i) {
+            if (wc[i].status != IBV_WC_SUCCESS) {
+                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status), wc[i].status,
+                        (int) wc[i].wr_id);
+                return 1;
+            }
+            if (wc[i].wr_id == PINGPONG_SEND_WRID) {
+
+                scnt--;
+            } else if (wc[i].wr_id == PINGPONG_RECV_WRID) {
+                //now we should have gotten his the server MR and we should
+                // write our actual message
+                printf("Got server set result msg: %s\n", remoteMrMsg);
+                processServerRdmaWriteResponseCmd(kv_handle, remoteMrMsg, value);
+                rcvd--;
+            } else {
+                fprintf(stderr, "Wrong wr_id %d\n", (int) wc[i].wr_id);
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+};
+
 int mkv_set(void *mkv_h, unsigned kv_id, const char *key, const char *value, unsigned int length) {
     struct mkv_handle *m_handle = mkv_h;
     return kv_set(m_handle->kv_handle[kv_id], key, value, length);
@@ -705,98 +795,8 @@ int sendMsgLogic(handle *kv_handle, char *msg) {
 
 }
 
-int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, char *actualMessage) {
-    printf("Processing server message: %s\n", msg);
-    if (strlen(msg) == 0) {
-        fprintf(stderr, "Msg is empty!\n");
-        return 0;
-    }
-    struct ibv_mr *sendMr = ibv_reg_mr(kv_handle->ctx->pd, actualMessage, strlen(actualMessage) + 1,
-                                       IBV_ACCESS_LOCAL_WRITE);
 
 
-    struct Message *mr_msg = (struct Message *) calloc(1, sizeof(struct Message));
-    char *delim = ":";
-    mr_msg->addr = strtoul(strtok(msg, delim), NULL, 10);
-    mr_msg->mr_rkey = (uint32_t) atoi(strtok(NULL, delim));
-    printf("Parsed server message - addr: %lu, rkey: %d\n", mr_msg->addr, mr_msg->mr_rkey);
-
-    struct ibv_sge list = {.addr    = (uintptr_t) actualMessage, .length = strlen(actualMessage) + 1, .lkey = sendMr
-            ->lkey};
-
-    struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_RDMA_WRITE, .send_flags = IBV_SEND_SIGNALED, .wr.rdma.remote_addr = (uintptr_t) mr_msg
-            ->addr, .wr.rdma.rkey = mr_msg->mr_rkey};
-    struct ibv_send_wr *bad_wr;
-
-    if (ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr)) {
-        printf("Error in processServerRdmaWriteResponseCmd");
-    };
-
-    return 0;
-}
-
-
-int kv_set(void *kv_handle, const char *key, const char *value, unsigned int length) {
-    handle *kvHandle = kv_handle;
-    kv_cmd cmd = SET_CMD;
-    //first send msg to server with size and MR to read from.
-    size_t actualMsgSize = roundup(strlen(value) + 1, page_size);
-    char *actualMsg = (char *) malloc(actualMsgSize);
-    sprintf(actualMsg, "%d:%s:%s", cmd, key, value);
-
-    //first send msg to server with size and MR to read from.
-    char *msg = (char *) malloc(roundup(kvHandle->defMsgSize, page_size));
-    sprintf(msg, "%d:%s:%d", cmd, key, length);
-    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
-
-    if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg, strlen(msg) + 1)) {
-        perror("Couldn't post send: ");
-        return 1;
-    }
-
-    char *remoteMrMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
-    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, remoteMrMsg, roundup(kvHandle->defMsgSize, page_size))) <
-        0) {
-        perror("Couldn't post receive:");
-        return 1;
-    }
-    int scnt = 2, rcvd = 1;
-    while (scnt || rcvd) {
-        struct ibv_wc wc[5];
-        int ne;
-        do {
-            ne = ibv_poll_cq(kvHandle->ctx->cq, 5, wc);
-            if (ne < 0) {
-                fprintf(stderr, "poll CQ failed %d\n", ne);
-                return 1;
-            }
-
-        } while (ne < 1);
-
-        for (int i = 0; i < ne; ++i) {
-            if (wc[i].status != IBV_WC_SUCCESS) {
-                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status), wc[i].status,
-                        (int) wc[i].wr_id);
-                return 1;
-            }
-            if (wc[i].wr_id == PINGPONG_SEND_WRID) {
-
-                scnt--;
-            } else if (wc[i].wr_id == PINGPONG_RECV_WRID) {
-                //now we should have gotten his the server MR and we should
-                // write our actual message
-                printf("Got server set result msg: %s\n", remoteMrMsg);
-                processServerRdmaWriteResponseCmd(kv_handle, remoteMrMsg, value);
-                rcvd--;
-            } else {
-                fprintf(stderr, "Wrong wr_id %d\n", (int) wc[i].wr_id);
-                return 1;
-            }
-        }
-    }
-
-    return 0;
-};
 
 int processServerGetReqResponseCmd(handle *kv_handle, struct Message *msg, char **value) {
     struct ibv_mr *sendMr = ibv_reg_mr(kv_handle->ctx->pd, *value, msg->valueSize, IBV_ACCESS_LOCAL_WRITE);
