@@ -39,10 +39,7 @@
     </ADDITIONAL_GENERATION_ENVIRONMENT>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandClientP1.c" afterPath="$PROJECT_DIR$/RandClientP1.c" />
-    </list>
+    <list default="true" id="76b71633-bdca-4654-bde6-c7357aa968f0" name="Default" comment="" />
     <list id="ed5b0da3-4860-4bf5-a85a-dd6805f11d6b" name="11" comment="11" />
     <list id="786bcf74-7ba9-41dc-ad33-e0d7ede81f2a" name="New changelist" comment="" />
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -163,14 +160,14 @@
                     <element signature="e#18715#20033#0" expanded="false" />
                     <element signature="e#20656#21956#0" expanded="false" />
                     <element signature="e#24221#25329#0" expanded="false" />
-                    <element signature="e#30654#30887#0" expanded="false" />
-                    <element signature="e#30892#30976#0" expanded="false" />
-                    <element signature="e#31355#31913#0" expanded="false" />
-                    <element signature="e#32560#32790#0" expanded="false" />
-                    <element signature="e#32793#33857#0" expanded="false" />
-                    <element signature="e#33860#34757#0" expanded="false" />
-                    <element signature="e#45584#45733#0" expanded="false" />
-                    <element signature="e#45735#46842#0" expanded="false" />
+                    <element signature="e#30574#30807#0" expanded="false" />
+                    <element signature="e#30812#30896#0" expanded="false" />
+                    <element signature="e#31275#31833#0" expanded="false" />
+                    <element signature="e#32480#32710#0" expanded="false" />
+                    <element signature="e#32713#33777#0" expanded="false" />
+                    <element signature="e#33780#34677#0" expanded="false" />
+                    <element signature="e#45504#45653#0" expanded="false" />
+                    <element signature="e#45655#46762#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -259,7 +256,7 @@
             <entry file="file://$PROJECT_DIR$/RandClientP1.c">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="23">
-                  <caret line="1488" column="6" selection-start-line="1488" selection-start-column="6" selection-end-line="1488" selection-end-column="6" />
+                  <caret line="1487" column="6" selection-start-line="1487" selection-start-column="6" selection-end-line="1487" selection-end-column="6" />
                   <folding>
                     <element signature="e#703#748#1" expanded="false" />
                     <element signature="e#1095#2587#0" expanded="false" />
@@ -288,22 +285,22 @@
                     <element signature="e#20035#20653#0" expanded="false" />
                     <element signature="e#24009#24218#0" expanded="false" />
                     <element signature="e#24221#25329#0" expanded="false" />
-                    <element signature="e#30419#30652#0" expanded="false" />
-                    <element signature="e#30654#30887#0" expanded="false" />
-                    <element signature="e#30892#30976#0" expanded="false" />
-                    <element signature="e#30979#31353#0" expanded="false" />
-                    <element signature="e#31355#31913#0" expanded="false" />
-                    <element signature="e#31915#32557#0" expanded="false" />
-                    <element signature="e#32560#32790#0" expanded="false" />
-                    <element signature="e#32793#33857#0" expanded="false" />
-                    <element signature="e#33860#34757#0" expanded="false" />
-                    <element signature="e#34759#39749#0" expanded="false" />
-                    <element signature="e#40184#42374#0" expanded="false" />
-                    <element signature="e#42376#43520#0" expanded="false" />
-                    <element signature="e#43523#44664#0" expanded="false" />
-                    <element signature="e#44666#45582#0" expanded="false" />
-                    <element signature="e#45584#45733#0" expanded="false" />
-                    <element signature="e#45735#46842#0" expanded="false" />
+                    <element signature="e#30339#30572#0" expanded="false" />
+                    <element signature="e#30574#30807#0" expanded="false" />
+                    <element signature="e#30812#30896#0" expanded="false" />
+                    <element signature="e#30899#31273#0" expanded="false" />
+                    <element signature="e#31275#31833#0" expanded="false" />
+                    <element signature="e#31835#32477#0" expanded="false" />
+                    <element signature="e#32480#32710#0" expanded="false" />
+                    <element signature="e#32713#33777#0" expanded="false" />
+                    <element signature="e#33780#34677#0" expanded="false" />
+                    <element signature="e#34679#39669#0" expanded="false" />
+                    <element signature="e#40104#42294#0" expanded="false" />
+                    <element signature="e#42296#43440#0" expanded="false" />
+                    <element signature="e#43443#44584#0" expanded="false" />
+                    <element signature="e#44586#45502#0" expanded="false" />
+                    <element signature="e#45504#45653#0" expanded="false" />
+                    <element signature="e#45655#46762#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -795,14 +792,7 @@
       <workItem from="1498900989666" duration="10984000" />
       <workItem from="1501917401053" duration="29069000" />
       <workItem from="1503729565252" duration="30044000" />
-      <workItem from="1504345548257" duration="7751000" />
-    </task>
-    <task id="LOCAL-00071" summary="Fixed using store MR on client">
-      <created>1498321405513</created>
-      <option name="number" value="00071" />
-      <option name="presentableId" value="LOCAL-00071" />
-      <option name="project" value="LOCAL" />
-      <updated>1498321405513</updated>
+      <workItem from="1504345548257" duration="7767000" />
     </task>
     <task id="LOCAL-00072" summary="RandEager works">
       <created>1498559494651</created>
@@ -1140,11 +1130,18 @@
       <option name="project" value="LOCAL" />
       <updated>1504354785684</updated>
     </task>
-    <option name="localTasksCounter" value="120" />
+    <task id="LOCAL-00120" summary="fixed variable length file sending">
+      <created>1504355398478</created>
+      <option name="number" value="00120" />
+      <option name="presentableId" value="LOCAL-00120" />
+      <option name="project" value="LOCAL" />
+      <updated>1504355398478</updated>
+    </task>
+    <option name="localTasksCounter" value="121" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="459996000" />
+    <option name="totallyTimeSpent" value="460012000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1215,7 +1212,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Eager client fix for creating servers" />
     <MESSAGE value="Added buffer for eager client" />
     <MESSAGE value="Created Msg que for each client on the server&#10;Added credit check and store" />
     <MESSAGE value="Added eager credits" />
@@ -1240,7 +1236,8 @@
     <MESSAGE value="fixed routing messages between indexer and servers" />
     <MESSAGE value="added support in length parameter" />
     <MESSAGE value="fixed support for length property" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed support for length property" />
+    <MESSAGE value="fixed variable length file sending" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed variable length file sending" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1248,22 +1245,22 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/RandClientP1.c</url>
-          <line>1464</line>
+          <line>1463</line>
           <option name="timeStamp" value="523" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/RandClientP1.c</url>
-          <line>1458</line>
+          <line>1457</line>
           <option name="timeStamp" value="524" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/RandClientP1.c</url>
-          <line>1461</line>
+          <line>1460</line>
           <option name="timeStamp" value="525" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/RandClientP1.c</url>
-          <line>1455</line>
+          <line>1454</line>
           <option name="timeStamp" value="526" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -1278,12 +1275,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/RandClientP1.c</url>
-          <line>1260</line>
+          <line>1259</line>
           <option name="timeStamp" value="531" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/RandClientP1.c</url>
-          <line>883</line>
+          <line>882</line>
           <option name="timeStamp" value="533" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -1640,14 +1637,14 @@
             <element signature="e#18715#20033#0" expanded="false" />
             <element signature="e#20656#21956#0" expanded="false" />
             <element signature="e#24221#25329#0" expanded="false" />
-            <element signature="e#30654#30887#0" expanded="false" />
-            <element signature="e#30892#30976#0" expanded="false" />
-            <element signature="e#31355#31913#0" expanded="false" />
-            <element signature="e#32560#32790#0" expanded="false" />
-            <element signature="e#32793#33857#0" expanded="false" />
-            <element signature="e#33860#34757#0" expanded="false" />
-            <element signature="e#45584#45733#0" expanded="false" />
-            <element signature="e#45735#46842#0" expanded="false" />
+            <element signature="e#30574#30807#0" expanded="false" />
+            <element signature="e#30812#30896#0" expanded="false" />
+            <element signature="e#31275#31833#0" expanded="false" />
+            <element signature="e#32480#32710#0" expanded="false" />
+            <element signature="e#32713#33777#0" expanded="false" />
+            <element signature="e#33780#34677#0" expanded="false" />
+            <element signature="e#45504#45653#0" expanded="false" />
+            <element signature="e#45655#46762#0" expanded="false" />
           </folding>
         </state>
       </provider>
