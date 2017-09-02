@@ -370,7 +370,7 @@ static int cstm_post_send(struct ibv_pd *pd, struct ibv_qp *qp, char *buf, int l
         return 1;
     }
     struct ibv_sge list = {.addr    = (uintptr_t) buf, .length = length, .lkey    = mr->lkey};
-    struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_SEND, .send_flags = 0,};
+    struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_SEND, .send_flags = IBV_SEND_SIGNALED,};
     struct ibv_send_wr *bad_wr;
 
     return ibv_post_send(qp, &wr, &bad_wr);
@@ -585,7 +585,7 @@ static unsigned int getKeyHash(const char *str) {
     while (hashedChar = *str++)
         hash = ((hash << 5) + hash) + hashedChar; /* hash * 33 + c */
 
-    return hash;
+    return hash%32000;
 }
 
 int processClientCmd(handle *kv_handle, char *msg) {
@@ -734,7 +734,7 @@ int main(int argc, char *argv[]) {
     kvHandle->defMsgSize = size;
     kvHandle->ib_port = ib_port;
     kvHandle->rx_depth = 500;
-    kvHandle->credits = 0;
+    kvHandle->credits = 50;
     gidx = -1;
 
     page_size = sysconf(_SC_PAGESIZE);
