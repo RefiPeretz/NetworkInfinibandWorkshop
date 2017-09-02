@@ -812,7 +812,7 @@ int processServerGetReqResponseCmd(handle *kv_handle, struct Message *msg, char 
     return 0;
 }
 
-int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, int kv_id, unsigned int length) {
+int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, int kv_id, unsigned int *length) {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = GET_CMD;
     struct Message *mr_msg;
@@ -834,7 +834,7 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
     }
 
 
-    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, recv2Msg1, roundup(kvHandle->defMsgSize, page_size))) <
+    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, recv2Msg1, length)) <
         0) {
         perror("Couldn't post receive:");
         return 1;
@@ -863,7 +863,7 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
                 return 1;
             }
 
-            recv2Msg = malloc(roundup(kvHandle->defMsgSize, page_size));
+            recv2Msg = malloc(length);
             switch ((int) wc[i].wr_id) {
                 case PINGPONG_SEND_WRID:
                     scnt--;
@@ -880,6 +880,7 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
                     mr_msg->addr = strtoul(strtok(recv2Msg1, delim), NULL, 10);
                     mr_msg->mr_rkey = atoi(strtok(NULL, delim));
                     mr_msg->valueSize = atoi(strtok(NULL, delim));
+                    length = (unsigned int *) mr_msg->valueSize;
                     recved--;
                     break;
 
