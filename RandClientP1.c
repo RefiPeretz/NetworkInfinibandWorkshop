@@ -1343,7 +1343,7 @@ int dkv_set(void *dkv_h, const char *key, const char *value, unsigned length) {
     }
 
     /* Step #3: The client contacts KV-server with the ID returned in LOCATION, using SET/GET messages. */
-    return mkv_set(ctx->mkv, keyServerLocationID, key, value, 0);
+    return mkv_set(ctx->mkv, keyServerLocationID, key, value, length);
 }
 
 
@@ -1377,7 +1377,7 @@ int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length) {
     }
 
     /* Step #3: The client contacts KV-server with the ID returned in LOCATION, using SET/GET messages. */
-    return mkv_get(ctx->mkv, keyServerLocationID, key, value, 0);
+    return mkv_get(ctx->mkv, keyServerLocationID, key, value, length);
 }
 
 void dkv_release(const char *key, char *value, int kv_id, void *dkv_h) {
@@ -1468,40 +1468,40 @@ int main(int argc, char *argv[]) {
     char value2[11] = "wedding2";
     struct dkv_ctx *ctx = kv_ctx;
 
-    mkv_send_credit(ctx->mkv, 0, 2);
+    mkv_send_credit(ctx->mkv, 0, 3);
 
-    if (dkv_set(kv_ctx, key, value, 0)) {
+    if (dkv_set(kv_ctx, key, value, strlen(value) + 1)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
     char *retVal = malloc(4096);
-    if (dkv_get(kv_ctx, key, &retVal, 0)) {
+    if (dkv_get(kv_ctx, key, &retVal, strlen(retVal) + 1)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
     retVal = malloc(4096);
-    if (dkv_get(kv_ctx, key, &retVal, 0)) {
+    if (dkv_get(kv_ctx, key, &retVal, strlen(retVal) + 1)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
     //dkv_release(retVal, key, kv_ctx);
 
-    if (dkv_set(kv_ctx, key2, value2, 0)) {
+    if (dkv_set(kv_ctx, key2, value2, strlen(value2) + 1)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
     retVal = malloc(4096);
-    if (dkv_get(kv_ctx, key2, &retVal, 0)) {
+    if (dkv_get(kv_ctx, key2, &retVal, strlen(retVal) + 1)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
     retVal = malloc(4096);
-    if (dkv_get(kv_ctx, key2, &retVal, 0)) {
+    if (dkv_get(kv_ctx, key2, &retVal, strlen(retVal) + 1)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
     retVal = malloc(4096);
-    if (dkv_get(kv_ctx, key, &retVal, 0)) {
+    if (dkv_get(kv_ctx, key, &retVal, strlen(retVal) + 1)) {
         fprintf(stderr, "Couldn't post send\n");
         return 1;
     }
