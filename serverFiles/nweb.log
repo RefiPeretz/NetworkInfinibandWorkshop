@@ -1,0 +1,255 @@
+ INFO: nweb starting:8889:6724
+ INFO: nweb starting:8889:7050
+ INFO: nweb starting:8889:7102
+ INFO: nweb starting:8889:7177
+ INFO: request:GET /index.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+ INFO: SEND:index.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 103
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: request:GET /favicon.ico HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: image/png,image/*;q=0.8,*/*;q=0.5**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:2
+NOT FOUND: failed to open file:favicon.ico
+ INFO: request:GET /favicon.ico HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:3
+NOT FOUND: failed to open file:favicon.ico
+ INFO: nweb starting:8889:8899
+ INFO: request:GET /index.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+ INFO: SEND:index.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 103
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: nweb starting:8889:9322
+ INFO: request:GET /index.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+ INFO: SEND:index.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 103
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: request:GET /index2.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:2
+ INFO: SEND:index2.html:2
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 104
+Connection: close
+Content-Type: text/html
+
+:2
+ INFO: request:GET /index2.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:3
+ INFO: SEND:index2.html:3
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 104
+Connection: close
+Content-Type: text/html
+
+:3
+ INFO: nweb starting:8889:9577
+ INFO: request:GET /index2.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+ INFO: SEND:index2.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 104
+Connection: close
+Content-Type: text/html
+
+:1
+FORBIDDEN: failed to read browser request:
+ INFO: nweb starting:8889:9745
+ INFO: request:GET /index2.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+ INFO: SEND:index2.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 104
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: request:GET /index1.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:2
+NOT FOUND: failed to open file:index1.html
+ INFO: request:GET /index.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:3
+ INFO: SEND:index.html:3
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 103
+Connection: close
+Content-Type: text/html
+
+:3
+ INFO: nweb starting:8889:9818
+ERROR: system call:bind Errno=98 exiting pid=9818
+ INFO: nweb starting:8889:9894
+ INFO: request:GET /index.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+ INFO: SEND:index.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 103
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: nweb starting:8889:9964
+ INFO: request:GET /index.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+ INFO: SEND:index.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 103
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: request:GET /index2.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:2
+ INFO: SEND:index2.html:2
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 104
+Connection: close
+Content-Type: text/html
+
+:2
+ INFO: request:GET /index.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:3
+ INFO: SEND:index.html:3
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 103
+Connection: close
+Content-Type: text/html
+
+:3
+ INFO: nweb starting:8889:10158
+ INFO: request:GET /index.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+ INFO: SEND:index.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 103
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: request:GET /index.html HTTP/1.1**Host: mlx-stud-04:8888**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:2
+ INFO: SEND:index.html:2
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 103
+Connection: close
+Content-Type: text/html
+
+:2
+ INFO: nweb starting:8889:10418
+ INFO: request:GET /index2.html HTTP/1.1**Host: mlx-stud-04:6666**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+ INFO: SEND:index2.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 104
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: request:GET /favicon.ico HTTP/1.1**Host: mlx-stud-04:6666**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: image/png,image/*;q=0.8,*/*;q=0.5**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:2
+FORBIDDEN: failed to read browser request:
+NOT FOUND: failed to open file:favicon.ico
+ INFO: nweb starting:8889:10676
+ INFO: request:GET /index2.html HTTP/1.1**Host: mlx-stud-04:6666**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+ INFO: SEND:index2.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 104
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: nweb starting:8889:10794
+ INFO: request:GET /index2.html HTTP/1.1**Host: mlx-stud-04:6666**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+ INFO: SEND:index2.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 104
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: nweb starting:8889:10845
+ INFO: request:GET /index2.html HTTP/1.1**Host: mlx-stud-04:6666**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+ INFO: SEND:index2.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 104
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: nweb starting:8889:11069
+ INFO: nweb starting:8889:11081
+ INFO: request:GET /index.html HTTP/1.1**Host: mlx-stud-04:6666**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+ INFO: SEND:index.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 103
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: nweb starting:8889:11219
+ INFO: request:GET /index.html HTTP/1.1**Host: mlx-stud-04:6666**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive**Cache-Control: max-age=0****:1
+ INFO: SEND:index.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 103
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: nweb starting:6666:11356
+ INFO: request:GET /index.html HTTP/1.1**Host: mlx-stud-04:6666**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive**Cache-Control: max-age=0****:1
+ INFO: SEND:index.html:1
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 103
+Connection: close
+Content-Type: text/html
+
+:1
+ INFO: request:GET /index2.html HTTP/1.1**Host: mlx-stud-04:6666**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:2
+ INFO: SEND:index2.html:2
+ INFO: Header:HTTP/1.1 200 OK
+Server: nweb/23.0
+Content-Length: 104
+Connection: close
+Content-Type: text/html
+
+:2
+ INFO: nweb starting:6666:11408
+ INFO: request:GET /index2%20.html HTTP/1.1**Host: mlx-stud-04:6666**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+NOT FOUND: failed to open file:index2%20.html
+ INFO: nweb starting:6666:11440
+ERROR: system call:bind Errno=98 exiting pid=11440
+ INFO: nweb starting:6666:11441
+ERROR: system call:bind Errno=98 exiting pid=11441
+ INFO: nweb starting:6666:11471
+ERROR: system call:bind Errno=98 exiting pid=11471
+ INFO: nweb starting:6666:11676
+ INFO: request:GET /index2%20.html HTTP/1.1**Host: mlx-stud-04:5555**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+NOT FOUND: failed to open file:index2%20.html
+ INFO: nweb starting:6666:11699
+ERROR: system call:bind Errno=98 exiting pid=11699
+ INFO: nweb starting:6666:11883
+ INFO: request:GET /index2%20.html HTTP/1.1**Host: mlx-stud-04:4444**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+NOT FOUND: failed to open file:index2%20.html
+ INFO: nweb starting:6666:11907
+ERROR: system call:bind Errno=98 exiting pid=11907
+ INFO: nweb starting:8889:12046
+ INFO: request:GET /index2%20.html HTTP/1.1**Host: mlx-stud-04:7777**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:1
+NOT FOUND: failed to open file:index2%20.html
+ INFO: request:GET /favicon.ico HTTP/1.1**Host: mlx-stud-04:7777**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: image/png,image/*;q=0.8,*/*;q=0.5**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:2
+NOT FOUND: failed to open file:favicon.ico
+ INFO: request:GET /favicon.ico HTTP/1.1**Host: mlx-stud-04:7777**User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0**Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8**Accept-Language: en-US,en;q=0.5**Accept-Encoding: gzip, deflate**Connection: keep-alive****:3
+NOT FOUND: failed to open file:favicon.ico

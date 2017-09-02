@@ -80,7 +80,7 @@ void logger(int type, char *s1, char *s2, int socket_fd)
 }
 
 /* this is a child web server process, so we can exit on errors */
-void web(int fd, int hit)
+void web(int fd, int hit, void* dkv_h)
 {
     int j, file_fd, buflen;
     long i, ret, len;
@@ -125,21 +125,44 @@ void web(int fd, int hit)
         }
     }
     if(fstr == 0) logger(FORBIDDEN,"file extension type not supported",buffer,fd);
+    char** value;
+    unsigned int* f_len;
+    dkv_get(dkv_h, buffer[5], value, f_len);
+    //dkv_get() ->>> get path,
+//    if(( file_fd = open(&buffer[5],O_RDONLY)) == -1) {  /* open the file for reading */
+//        logger(NOTFOUND, "failed to open file",&buffer[5],fd);
+//    }
+//    logger(LOG,"SEND",&buffer[5],hit);
+//    len = (long)lseek(file_fd, (off_t)0, SEEK_END); /* lseek to the file end to find the length */
 
-    if(( file_fd = open(&buffer[5],O_RDONLY)) == -1) {  /* open the file for reading */
-        logger(NOTFOUND, "failed to open file",&buffer[5],fd);
-    }
-    logger(LOG,"SEND",&buffer[5],hit);
-    len = (long)lseek(file_fd, (off_t)0, SEEK_END); /* lseek to the file end to find the length */
-    (void)lseek(file_fd, (off_t)0, SEEK_SET); /* lseek back to the file start ready for reading */
+
+    //(void)lseek(file_fd, (off_t)0, SEEK_SET); /* lseek back to the file start ready for reading */
     (void)sprintf(buffer,"HTTP/1.1 200 OK\nServer: nweb/%d.0\nContent-Length: %ld\nConnection: close\nContent-Type: %s\n\n", VERSION, len, fstr); /* Header + a blank line */
     logger(LOG,"Header",buffer,hit);
-    (void)write(fd,buffer,strlen(buffer));
 
+
+    (void)write(fd, buffer, strlen(buffer));
+
+    int counter = 0;
+    while(counter < f_len){
     /* send file in 8KB block - last block may be smaller */
-    while (	(ret = read(file_fd, buffer, BUFSIZE)) > 0 ) {
-        (void)write(fd,buffer,ret);
+        //char* end = buffer[0] + BUFSIZE - 1;
+        *buffer = buffer[0];
+        int chunkCounter = 0;
+        while (chunkCounter < BUFSIZE) {
+            buffer[chunkCounter] = *value;
+            ++ value;
+            counter++;
+            chunkCounter++;
+
+        }
+//        *dest = '\0';
+
+        (void)write(fd, buffer, chunkCounter);
     }
+//    while (	(ret = read(file_fd, buffer, BUFSIZE)) > 0 ) {
+//        (void)write(fd,buffer,ret);
+//    }
     sleep(1);	/* allow socket to drain before signalling the socket is closed */
     close(fd);
     exit(1);
@@ -660,96 +683,6 @@ int kv_open(char *servername, void **kv_handle) {
     return 0;
 };
 
-int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, char *actualMessage) {
-    printf("Processing server message: %s\n", msg);
-    if (strlen(msg) == 0) {
-        fprintf(stderr, "Msg is empty!\n");
-        return 0;
-    }
-    struct ibv_mr *sendMr = ibv_reg_mr(kv_handle->ctx->pd, actualMessage, strlen(actualMessage) + 1,
-                                       IBV_ACCESS_LOCAL_WRITE);
-
-
-    struct Message *mr_msg = (struct Message *) calloc(1, sizeof(struct Message));
-    char *delim = ":";
-    mr_msg->addr = strtoul(strtok(msg, delim), NULL, 10);
-    mr_msg->mr_rkey = (uint32_t) atoi(strtok(NULL, delim));
-    printf("Parsed server message - addr: %lu, rkey: %d\n", mr_msg->addr, mr_msg->mr_rkey);
-
-    struct ibv_sge list = {.addr    = (uintptr_t) actualMessage, .length = strlen(actualMessage) + 1, .lkey = sendMr
-            ->lkey};
-
-    struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_RDMA_WRITE, .send_flags = IBV_SEND_SIGNALED, .wr.rdma.remote_addr = (uintptr_t) mr_msg
-            ->addr, .wr.rdma.rkey = mr_msg->mr_rkey};
-    struct ibv_send_wr *bad_wr;
-
-    if (ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr)) {
-        printf("Error in processServerRdmaWriteResponseCmd");
-    };
-
-    return 0;
-}
-
-
-int kv_set(void *kv_handle, const char *key, const char *value, unsigned int length) {
-    handle *kvHandle = kv_handle;
-    kv_cmd cmd = SET_CMD;
-
-    //first send msg to server with size and MR to read from.
-    char *msg = (char *) malloc(roundup(kvHandle->defMsgSize, page_size));
-    sprintf(msg, "%d:%s:%d", cmd, key, length);
-    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
-
-    if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg, strlen(msg) + 1)) {
-        perror("Couldn't post send: ");
-        return 1;
-    }
-
-    char *remoteMrMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
-    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, remoteMrMsg, roundup(kvHandle->defMsgSize, page_size))) <
-        0) {
-        perror("Couldn't post receive:");
-        return 1;
-    }
-
-    int scnt = 2, rcvd = 1;
-    while (scnt || rcvd) {
-        struct ibv_wc wc[5];
-        int ne;
-        do {
-            ne = ibv_poll_cq(kvHandle->ctx->cq, 5, wc);
-            if (ne < 0) {
-                fprintf(stderr, "poll CQ failed %d\n", ne);
-                return 1;
-            }
-
-        } while (ne < 1);
-
-        for (int i = 0; i < ne; ++i) {
-            if (wc[i].status != IBV_WC_SUCCESS) {
-                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status), wc[i].status,
-                        (int) wc[i].wr_id);
-                return 1;
-            }
-            if (wc[i].wr_id == PINGPONG_SEND_WRID) {
-
-                scnt--;
-            } else if (wc[i].wr_id == PINGPONG_RECV_WRID) {
-                //now we should have gotten his the server MR and we should
-                // write our actual message
-                printf("Got server set result msg: %s\n", remoteMrMsg);
-                processServerRdmaWriteResponseCmd(kv_handle, remoteMrMsg, value);
-                rcvd--;
-            } else {
-                fprintf(stderr, "Wrong wr_id %d\n", (int) wc[i].wr_id);
-                return 1;
-            }
-        }
-    }
-
-    return 0;
-};
-
 int mkv_set(void *mkv_h, unsigned kv_id, const char *key, const char *value, unsigned int length) {
     struct mkv_handle *m_handle = mkv_h;
     return kv_set(m_handle->kv_handle[kv_id], key, value, length);
@@ -795,8 +728,98 @@ int sendMsgLogic(handle *kv_handle, char *msg) {
 
 }
 
+int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, char *actualMessage) {
+    printf("Processing server message: %s\n", msg);
+    if (strlen(msg) == 0) {
+        fprintf(stderr, "Msg is empty!\n");
+        return 0;
+    }
+    struct ibv_mr *sendMr = ibv_reg_mr(kv_handle->ctx->pd, actualMessage, strlen(actualMessage) + 1,
+                                       IBV_ACCESS_LOCAL_WRITE);
 
 
+    struct Message *mr_msg = (struct Message *) calloc(1, sizeof(struct Message));
+    char *delim = ":";
+    mr_msg->addr = strtoul(strtok(msg, delim), NULL, 10);
+    mr_msg->mr_rkey = (uint32_t) atoi(strtok(NULL, delim));
+    printf("Parsed server message - addr: %lu, rkey: %d\n", mr_msg->addr, mr_msg->mr_rkey);
+
+    struct ibv_sge list = {.addr    = (uintptr_t) actualMessage, .length = strlen(actualMessage) + 1, .lkey = sendMr
+            ->lkey};
+
+    struct ibv_send_wr wr = {.wr_id        = PINGPONG_SEND_WRID, .sg_list    = &list, .num_sge    = 1, .opcode = IBV_WR_RDMA_WRITE, .send_flags = IBV_SEND_SIGNALED, .wr.rdma.remote_addr = (uintptr_t) mr_msg
+            ->addr, .wr.rdma.rkey = mr_msg->mr_rkey};
+    struct ibv_send_wr *bad_wr;
+
+    if (ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr)) {
+        printf("Error in processServerRdmaWriteResponseCmd");
+    };
+
+    return 0;
+}
+
+
+int kv_set(void *kv_handle, const char *key, const char *value, unsigned int length) {
+    handle *kvHandle = kv_handle;
+    kv_cmd cmd = SET_CMD;
+    //first send msg to server with size and MR to read from.
+    size_t actualMsgSize = roundup(strlen(value) + 1, page_size);
+    char *actualMsg = (char *) malloc(actualMsgSize);
+    sprintf(actualMsg, "%d:%s:%s", cmd, key, value);
+
+    //first send msg to server with size and MR to read from.
+    char *msg = (char *) malloc(roundup(kvHandle->defMsgSize, page_size));
+    sprintf(msg, "%d:%s:%d", cmd, key, length);
+    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
+
+    if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg, strlen(msg) + 1)) {
+        perror("Couldn't post send: ");
+        return 1;
+    }
+
+    char *remoteMrMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
+    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, remoteMrMsg, roundup(kvHandle->defMsgSize, page_size))) <
+        0) {
+        perror("Couldn't post receive:");
+        return 1;
+    }
+    int scnt = 2, rcvd = 1;
+    while (scnt || rcvd) {
+        struct ibv_wc wc[5];
+        int ne;
+        do {
+            ne = ibv_poll_cq(kvHandle->ctx->cq, 5, wc);
+            if (ne < 0) {
+                fprintf(stderr, "poll CQ failed %d\n", ne);
+                return 1;
+            }
+
+        } while (ne < 1);
+
+        for (int i = 0; i < ne; ++i) {
+            if (wc[i].status != IBV_WC_SUCCESS) {
+                fprintf(stderr, "Failed status %s (%d) for wr_id %d\n", ibv_wc_status_str(wc[i].status), wc[i].status,
+                        (int) wc[i].wr_id);
+                return 1;
+            }
+            if (wc[i].wr_id == PINGPONG_SEND_WRID) {
+
+                scnt--;
+            } else if (wc[i].wr_id == PINGPONG_RECV_WRID) {
+                //now we should have gotten his the server MR and we should
+                // write our actual message
+                printf("Got server set result msg: %s\n", remoteMrMsg);
+                processServerRdmaWriteResponseCmd(kv_handle, remoteMrMsg, value);
+                rcvd--;
+            } else {
+                fprintf(stderr, "Wrong wr_id %d\n", (int) wc[i].wr_id);
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+};
 
 int processServerGetReqResponseCmd(handle *kv_handle, struct Message *msg, char **value) {
     struct ibv_mr *sendMr = ibv_reg_mr(kv_handle->ctx->pd, *value, msg->valueSize, IBV_ACCESS_LOCAL_WRITE);
@@ -812,7 +835,7 @@ int processServerGetReqResponseCmd(handle *kv_handle, struct Message *msg, char 
     return 0;
 }
 
-int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, int kv_id, unsigned int *length) {
+int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, int kv_id, unsigned int length) {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = GET_CMD;
     struct Message *mr_msg;
@@ -863,7 +886,7 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
                 return 1;
             }
 
-            recv2Msg = malloc(length);
+            recv2Msg = malloc(roundup(kvHandle->defMsgSize, page_size));
             switch ((int) wc[i].wr_id) {
                 case PINGPONG_SEND_WRID:
                     scnt--;
@@ -880,7 +903,6 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
                     mr_msg->addr = strtoul(strtok(recv2Msg1, delim), NULL, 10);
                     mr_msg->mr_rkey = atoi(strtok(NULL, delim));
                     mr_msg->valueSize = atoi(strtok(NULL, delim));
-                    length = (unsigned int *) mr_msg->valueSize;
                     recved--;
                     break;
 
@@ -1344,7 +1366,7 @@ int dkv_set(void *dkv_h, const char *key, const char *value, unsigned length) {
     }
 
     /* Step #3: The client contacts KV-server with the ID returned in LOCATION, using SET/GET messages. */
-    return mkv_set(ctx->mkv, keyServerLocationID, key, value, length);
+    return mkv_set(ctx->mkv, keyServerLocationID, key, value, 0);
 }
 
 
@@ -1378,7 +1400,7 @@ int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length) {
     }
 
     /* Step #3: The client contacts KV-server with the ID returned in LOCATION, using SET/GET messages. */
-    return mkv_get(ctx->mkv, keyServerLocationID, key, value, length);
+    return mkv_get(ctx->mkv, keyServerLocationID, key, value, 0);
 }
 
 void dkv_release(const char *key, char *value, int kv_id, void *dkv_h) {
@@ -1455,63 +1477,63 @@ int main(int argc, char *argv[]) {
     g_argc = argc;
     g_argv = argv;
 
-    struct kv_server_address indexer[2] = {{.servername = "mlx-stud-03", .port = 63335},
-                                           {.servername = NULL, .port = 0}};
+//    struct kv_server_address indexer[2] = {{.servername = "mlx-stud-03", .port = 63335},
+//                                           {.servername = NULL, .port = 0}};
+//
+//    struct kv_server_address servers[2] = {{.servername = "mlx-stud-02", .port = 65433},
+//                                           {.servername = NULL, .port = 0}};
+//    //assert(0 == mkv_open(servers, &kv_ctx));
+//    assert(0 == dkv_open(servers, indexer, &kv_ctx));
+//
+//    char key[4] = "red";
+//    char value[10] = "wedding";
+//    char key2[5] = "red2";
+//    char value2[11] = "wedding2";
+//    struct dkv_ctx *ctx = kv_ctx;
 
-    struct kv_server_address servers[2] = {{.servername = "mlx-stud-02", .port = 65433},
-                                           {.servername = NULL, .port = 0}};
-    //assert(0 == mkv_open(servers, &kv_ctx));
-    assert(0 == dkv_open(servers, indexer, &kv_ctx));
-
-    char key[4] = "red";
-    char value[10] = "wedding";
-    char key2[5] = "red2";
-    char value2[11] = "wedding2";
-    struct dkv_ctx *ctx = kv_ctx;
-
-    mkv_send_credit(ctx->mkv, 0, 50);
-
-    if (dkv_set(kv_ctx, key, value, strlen(value) + 1)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    char *retVal = malloc(4096);
-    if (dkv_get(kv_ctx, key, &retVal, strlen(retVal) + 1)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    retVal = malloc(4096);
-    if (dkv_get(kv_ctx, key, &retVal, strlen(retVal) + 1)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    //dkv_release(retVal, key, kv_ctx);
-
-    if (dkv_set(kv_ctx, key2, value2, strlen(value2) + 1)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    retVal = malloc(4096);
-    if (dkv_get(kv_ctx, key2, &retVal, strlen(retVal) + 1)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    retVal = malloc(4096);
-    if (dkv_get(kv_ctx, key2, &retVal, strlen(retVal) + 1)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    retVal = malloc(4096);
-    if (dkv_get(kv_ctx, key, &retVal, strlen(retVal) + 1)) {
-        fprintf(stderr, "Couldn't post send\n");
-        return 1;
-    }
-    //dkv_release(retVal, 0, kv_ctx);
-
-    //dkv_send_credit(kv_ctx, 0, 50);
-    //    struct dkv_handle *m_handle = kv_ctx;
-    //dkv_close(kv_ctx);
-    //    mkv_send_credit(kv_ctx, 0, 2);
+//    mkv_send_credit(ctx->mkv, 0, 2);
+//
+//    if (dkv_set(kv_ctx, key, value, 0)) {
+//        fprintf(stderr, "Couldn't post send\n");
+//        return 1;
+//    }
+//    char *retVal = malloc(4096);
+//    if (dkv_get(kv_ctx, key, &retVal, 0)) {
+//        fprintf(stderr, "Couldn't post send\n");
+//        return 1;
+//    }
+//    retVal = malloc(4096);
+//    if (dkv_get(kv_ctx, key, &retVal, 0)) {
+//        fprintf(stderr, "Couldn't post send\n");
+//        return 1;
+//    }
+//    //dkv_release(retVal, key, kv_ctx);
+//
+//    if (dkv_set(kv_ctx, key2, value2, 0)) {
+//        fprintf(stderr, "Couldn't post send\n");
+//        return 1;
+//    }
+//    retVal = malloc(4096);
+//    if (dkv_get(kv_ctx, key2, &retVal, 0)) {
+//        fprintf(stderr, "Couldn't post send\n");
+//        return 1;
+//    }
+//    retVal = malloc(4096);
+//    if (dkv_get(kv_ctx, key2, &retVal, 0)) {
+//        fprintf(stderr, "Couldn't post send\n");
+//        return 1;
+//    }
+//    retVal = malloc(4096);
+//    if (dkv_get(kv_ctx, key, &retVal, 0)) {
+//        fprintf(stderr, "Couldn't post send\n");
+//        return 1;
+//    }
+//    //dkv_release(retVal, 0, kv_ctx);
+//
+//    //dkv_send_credit(kv_ctx, 0, 50);
+//    struct dkv_handle *m_handle = kv_ctx;
+//    //dkv_close(kv_ctx);
+//    mkv_send_credit(kv_ctx, 0, 2);
 
     //    //Complicated Test:
     //    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
@@ -1554,11 +1576,14 @@ int main(int argc, char *argv[]) {
     //    printf("Stop test\n");
 
 
-//
-//    int i, port, pid, listenfd, socketfd, hit;
-//    socklen_t length;
-//    static struct sockaddr_in cli_addr; /* static = initialised to zeros */
-//    static struct sockaddr_in serv_addr; /* static = initialised to zeros */
+
+    int i,pid, listenfd, socketfd, hit;
+    char* curDir = "./serverFiles";
+    recursive_fill_kv(curDir,kv_ctx);
+    int port = 7777;
+    socklen_t length;
+    static struct sockaddr_in cli_addr; /* static = initialised to zeros */
+    static struct sockaddr_in serv_addr; /* static = initialised to zeros */
 //
 //    if( argc < 3  || argc > 3 || !strcmp(argv[1], "-?") ) {
 //        (void)printf("hint: nweb Port-Number Top-Directory\t\tversion %d\n\n"
@@ -1583,49 +1608,48 @@ int main(int argc, char *argv[]) {
 //        (void)printf("ERROR: Bad top directory %s, see nweb -?\n",argv[2]);
 //        exit(3);
 //    }
-//    if(chdir(argv[2]) == -1){
-//        (void)printf("ERROR: Can't Change to directory %s\n",argv[2]);
-//        exit(4);
-//    }
-//    /* Become deamon + unstopable and no zombies children (= no wait()) */
+    if(chdir(curDir) == -1){
+        (void)printf("ERROR: Can't Change to directory %s\n",curDir);
+        exit(4);
+    }
+    /* Become deamon + unstopable and no zombies children (= no wait()) */
 //    if(fork() != 0)
 //        return 0; /* parent returns OK to shell */
-//    (void)signal(SIGCLD, SIG_IGN); /* ignore child death */
-//    (void)signal(SIGHUP, SIG_IGN); /* ignore terminal hangups */
-//    for(i=0;i<32;i++)
-//        (void)close(i);		/* close open files */
-//    (void)setpgrp();		/* break away from process group */
-//    logger(LOG,"nweb starting",argv[1],getpid());
-//    /* setup the network socket */
-//    if((listenfd = socket(AF_INET, SOCK_STREAM,0)) <0)
-//        logger(ERROR, "system call","socket",0);
-//    port = atoi(argv[1]);
-//    if(port < 0 || port >60000)
-//        logger(ERROR,"Invalid port number (try 1->60000)",argv[1],0);
-//    serv_addr.sin_family = AF_INET;
-//    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-//    serv_addr.sin_port = htons(port);
-//    if(bind(listenfd, (struct sockaddr *)&serv_addr,sizeof(serv_addr)) <0)
-//        logger(ERROR,"system call","bind",0);
-//    if( listen(listenfd,64) <0)
-//        logger(ERROR,"system call","listen",0);
-//    for(hit=1; ;hit++) {
-//        length = sizeof(cli_addr);
-//        if((socketfd = accept(listenfd, (struct sockaddr *)&cli_addr, &length)) < 0)
-//            logger(ERROR,"system call","accept",0);
-//        if((pid = fork()) < 0) {
-//            logger(ERROR,"system call","fork",0);
-//        }
-//        else {
-//            if(pid == 0) { 	/* child */
-//                (void)close(listenfd);
-//                web(socketfd,hit); /* never returns */
-//            } else { 	/* parent */
-//                (void)close(socketfd);
-//            }
-//        }
-//    }
-//
+    (void)signal(SIGCLD, SIG_IGN); /* ignore child death */
+    (void)signal(SIGHUP, SIG_IGN); /* ignore terminal hangups */
+    for(i=0;i<32;i++)
+        (void)close(i);		/* close open files */
+    (void)setpgrp();		/* break away from process group */
+    logger(LOG,"nweb starting","8889",getpid());
+    /* setup the network socket */
+    if((listenfd = socket(AF_INET, SOCK_STREAM,0)) <0)
+        logger(ERROR, "system call","socket",0);
+    if(port < 0 || port >60000)
+        logger(ERROR,"Invalid port number (try 1->60000)","8888",0);
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    serv_addr.sin_port = htons(port);
+    if(bind(listenfd, (struct sockaddr *)&serv_addr,sizeof(serv_addr)) <0)
+        logger(ERROR,"system call","bind",0);
+    if( listen(listenfd,64) <0)
+        logger(ERROR,"system call","listen",0);
+    for(hit=1; ;hit++) {
+        length = sizeof(cli_addr);
+        if((socketfd = accept(listenfd, (struct sockaddr *)&cli_addr, &length)) < 0)
+            logger(ERROR,"system call","accept",0);
+        if((pid = fork()) < 0) {
+            logger(ERROR,"system call","fork",0);
+        }
+        else {
+            if(pid == 0) { 	/* child */
+                (void)close(listenfd);
+                web(socketfd,hit,kv_ctx); /* never returns */
+            } else { 	/* parent */
+                (void)close(socketfd);
+            }
+        }
+    }
+
 
 
     return 0;
