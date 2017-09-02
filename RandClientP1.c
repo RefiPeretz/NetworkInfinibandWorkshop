@@ -746,7 +746,7 @@ int kv_set(void *kv_handle, const char *key, const char *value, unsigned int len
 
     //first send msg to server with size and MR to read from.
     char *msg = (char *) malloc(roundup(kvHandle->defMsgSize, page_size));
-    sprintf(msg, "%d:%s:%d", cmd, key, strlen(value) + 1);
+    sprintf(msg, "%d:%s:%d", cmd, key, length);
     printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
 
     if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg, strlen(msg) + 1)) {
@@ -798,23 +798,6 @@ int kv_set(void *kv_handle, const char *key, const char *value, unsigned int len
     return 0;
 };
 
-
-int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value, unsigned *length) {
-    struct mkv_handle *m_handle = mkv_h;
-    return kv_get(m_handle->kv_handle[kv_id], key, value, m_handle->clientBuffers, kv_id);
-}
-
-int getFreeBufferIndex(handle *kvHandle) {
-    for (int i = 0; i < NUMBER_OF_BUFFERS; i++) {
-        if (kvHandle->isUsed[i] == UN_USED_BUFFER) {
-            kvHandle->isUsed[i] = USED_BUFFER;
-            return i;
-        }
-    }
-
-}
-
-
 int processServerGetReqResponseCmd(handle *kv_handle, struct Message *msg, char **value) {
     struct ibv_mr *sendMr = ibv_reg_mr(kv_handle->ctx->pd, *value, msg->valueSize, IBV_ACCESS_LOCAL_WRITE);
 
@@ -829,7 +812,7 @@ int processServerGetReqResponseCmd(handle *kv_handle, struct Message *msg, char 
     return 0;
 }
 
-int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, int kv_id) {
+int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, int kv_id, unsigned int length) {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = GET_CMD;
     struct Message *mr_msg;
@@ -949,6 +932,24 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
     free(mr_msg);
     return 0;
 };
+
+int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value, unsigned *length) {
+    struct mkv_handle *m_handle = mkv_h;
+    return kv_get(m_handle->kv_handle[kv_id], key, value, m_handle->clientBuffers, kv_id, length);
+}
+
+int getFreeBufferIndex(handle *kvHandle) {
+    for (int i = 0; i < NUMBER_OF_BUFFERS; i++) {
+        if (kvHandle->isUsed[i] == UN_USED_BUFFER) {
+            kvHandle->isUsed[i] = USED_BUFFER;
+            return i;
+        }
+    }
+
+}
+
+
+
 
 void kv_release(char *value) {
     if (value != NULL) {
