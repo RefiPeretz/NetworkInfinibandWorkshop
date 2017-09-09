@@ -127,17 +127,20 @@ void web(int fd, int hit, void* ctx)
     }
     if(fstr == 0) logger(FORBIDDEN,"file extension type not supported",buffer,fd);
     char* value;
-    unsigned int* f_len = NULL;
+    unsigned int f_len = 0;
     char* rkey = &buffer[5];
     //TODO transfer cur_Dir
     char* prefix = "./";
     char* key_to_send = malloc((strlen(prefix) + strlen(rkey) + 1) * sizeof(char));
-
+    //printf("before strcat\n");
+    key_to_send[0] = '\0';
     strcpy(key_to_send, prefix);
     strcat(key_to_send, rkey);
     key_to_send[strlen(prefix) + strlen(rkey)] = '\0';
+    //printf("after strcat\n");
+
     /* add the extension */
-    int getRes = dkv_get(dkv_h, key_to_send , &value, f_len);
+    int getRes = dkv_get(dkv_h, key_to_send , &value, &f_len);
     if(getRes){
         fprintf(stderr, "dkv_get failed with %s\n",key_to_send);
         return;
@@ -151,26 +154,28 @@ void web(int fd, int hit, void* ctx)
 
 
     //(void)lseek(file_fd, (off_t)0, SEEK_SET); /* lseek back to the file start ready for reading */
-    (void)sprintf(buffer,"HTTP/1.1 200 OK\nServer: nweb/%d.0\nContent-Length: %ld\nConnection: close\nContent-Type: %s\n\n", VERSION, len, fstr); /* Header + a blank line */
+    (void)sprintf(buffer,"HTTP/1.1 200 OK\nServer: nweb/%d.0\nContent-Length: %u\nConnection: close\nContent-Type: %s\n\n", VERSION, f_len, fstr); /* Header + a blank line */
     logger(LOG,"Header",buffer,hit);
 
 
     (void)write(fd, buffer, strlen(buffer));
 
     int counter = 0;
-    while(counter < *f_len){
+    while(counter < f_len){
     /* send file in 8KB block - last block may be smaller */
         //char* end = buffer[0] + BUFSIZE - 1;
+
         *buffer = buffer[0];
         int chunkCounter = 0;
-        while (chunkCounter < BUFSIZE) {
+        while (chunkCounter < BUFSIZE && counter < f_len ) {
             buffer[chunkCounter] = *value;
-            ++ value;
+            value++;
             counter++;
             chunkCounter++;
 
         }
-//        *dest = '\0';
+
+        buffer[chunkCounter] = '\0';
 
         (void)write(fd, buffer, chunkCounter);
     }
@@ -754,7 +759,7 @@ int sendMsgLogic(handle *kv_handle, char *msg) {
 
 
 int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, const char *actualMessage,unsigned length) {
-    printf("Processing server message: %s\n", msg);
+    //printf("Processing server message: %s\n", msg);
     if (strlen(msg) == 0) {
         fprintf(stderr, "Msg is empty!\n");
         return 0;
@@ -773,7 +778,7 @@ int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, const char *
     char *delim = ":";
     mr_msg->addr = strtoul(strtok(msg, delim), NULL, 10);
     mr_msg->mr_rkey = (uint32_t) atoi(strtok(NULL, delim));
-    printf("Parsed server message - addr: %lu, rkey: %d\n", mr_msg->addr, mr_msg->mr_rkey);
+    //printf("Parsed server message - addr: %lu, rkey: %d\n", mr_msg->addr, mr_msg->mr_rkey);
 
     struct ibv_sge list = {.addr    = (uintptr_t) terminatedMessage, .length = length, .lkey = sendMr
             ->lkey};
@@ -783,7 +788,7 @@ int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, const char *
     struct ibv_send_wr *bad_wr;
 
     if (ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr)) {
-        printf("Error in processServerRdmaWriteResponseCmd");
+        //printf("Error in processServerRdmaWriteResponseCmd");
     };
 
     return 0;
@@ -800,7 +805,7 @@ int kv_set(void *kv_handle, const char *key, const char *value, unsigned int len
     //first send msg to server with size and MR to read from.
     char *msg = (char *) malloc(roundup(kvHandle->defMsgSize, page_size));
     sprintf(msg, "%d:%s:%d", cmd, key, length);
-    printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
+    //printf("Sending set msg: %s with size %d\n", msg, strlen(msg) + 1);
 
     if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, msg, strlen(msg) + 1)) {
         perror("Couldn't post send: ");
@@ -839,7 +844,7 @@ int kv_set(void *kv_handle, const char *key, const char *value, unsigned int len
             } else if (wc[i].wr_id == PINGPONG_RECV_WRID) {
                 //now we should have gotten his the server MR and we should
                 // write our actual message
-                printf("Got server set result msg: %s\n", remoteMrMsg);
+                //printf("Got server set result msg: %s\n", remoteMrMsg);
                 processServerRdmaWriteResponseCmd(kv_handle, remoteMrMsg, value,length);
                 rcvd--;
             } else {
@@ -861,7 +866,7 @@ int processServerGetReqResponseCmd(handle *kv_handle, struct Message *msg, char 
     struct ibv_send_wr *bad_wr;
 
     if (ibv_post_send(kv_handle->ctx->qp, &wr, &bad_wr)) {
-        printf("processServerGetReqResponseCmd: Err during RDMA READ");
+        //printf("processServerGetReqResponseCmd: Err during RDMA READ");
     };
     return 0;
 }
@@ -873,7 +878,7 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
     mr_msg = (struct Message *) calloc(1, sizeof(struct Message));
     char *vmsg = malloc(roundup(kvHandle->defMsgSize, page_size));
     sprintf(vmsg, "%d:%s:%s", cmd, key, "");
-    printf("Sending get msg: %s\n", vmsg);
+    //printf("Sending get msg: %s\n", vmsg);
     if (cstm_post_send(kvHandle->ctx->pd, kvHandle->ctx->qp, vmsg, strlen(vmsg) + 1)) {
         perror("Couldn't post send: ");
         return 1;
@@ -897,7 +902,7 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
         perror("Couldn't post receive:");
         return 1;
     }
-    printf("Pooling for result value \n");
+    //printf("Pooling for result value \n");
     char *recv2Msg;
     int scnt = 1, recved = 1;
     int iterations = 10000;
@@ -928,8 +933,8 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
                     break;
 
                 case PINGPONG_RECV_WRID:
-                    printf("Got server get prep msg: %s\n", recv2Msg1);
-                    printf("Processing server Message: %s\n", recv2Msg1);
+                    //printf("Got server get prep msg: %s\n", recv2Msg1);
+                    //printf("Processing server Message: %s\n", recv2Msg1);
                     if (strlen(recv2Msg1) == 0) {
                         fprintf(stderr, "Msg is empty!\n");
                         return 0;
@@ -952,7 +957,7 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
 
     }
     if (iterations != 0) {
-        length = calloc(1, sizeof(unsigned int));
+//        *length = malloc(sizeof(unsigned int));
         *length = mr_msg->valueSize;
         *value = (char*) malloc(mr_msg->valueSize* sizeof(char));
         processServerGetReqResponseCmd(kv_handle, mr_msg, value);
@@ -1012,7 +1017,7 @@ void mkv_send_credit(void *mkv_h, unsigned kv_id, unsigned how_many_credits) {
     kv_cmd cmd = SET_CREDIT;
     char *msg = malloc(sizeof(char) * 20);
     sprintf(msg, "%d:%d", cmd, how_many_credits);
-    printf("Sending set credit msg: %s with size %d\n", msg, strlen(msg) + 1);
+    //printf("Sending set credit msg: %s with size %d\n", msg, strlen(msg) + 1);
 
     sendMsgLogic(m_handle->kv_handle[kv_id], msg);
 }
@@ -1063,7 +1068,7 @@ int kv_close(void *kv_handle) {
 };
 
 int processClientCmd(handle *kv_handle, char *msg) {
-    printf("Processing Message %s\n", msg);
+    //printf("Processing Message %s\n", msg);
     if (strlen(msg) == 0) {
         fprintf(stderr, "Msg is empty!: %s\n", msg);
         return 0;
@@ -1088,7 +1093,7 @@ int processClientCmd(handle *kv_handle, char *msg) {
             fprintf(stderr, "Error in fetching value!\n");
             return 1;
         }
-        printf("Sending value after 'get' msg: %s\n", *retValue);
+        //printf("Sending value after 'get' msg: %s\n", *retValue);
         if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, *retValue, strlen(*retValue) + 1)) {
             perror("Couldn't post send: ");
             return 1;
@@ -1118,7 +1123,7 @@ int mkv_open(struct kv_server_address *servers, void **mkv_h) {
     //TODO maby change to limit number of buffers
     ctx->clientBuffersNum = NUMBER_OF_BUFFERS;
     ctx->clientBuffers = calloc(0, MAX_MSG_TEST * ctx->num_servers * ctx->clientBuffersNum);
-
+    ctx->defMsgSize = 4096;
     for (count = 0; count < ctx->num_servers; count++) {
         if (kvHandleFactory(&servers[count], MAX_MSG_TEST, g_argc, g_argv, &ctx->kv_handle[count])) {
             return 1;
@@ -1219,7 +1224,8 @@ kvHandleFactory(struct kv_server_address *server, unsigned size, int argc, char 
 
     handle *kvHandle = calloc(1, sizeof *kvHandle);
     *p_kvHandle = kvHandle;
-    kvHandle->defMsgSize = size;
+//    kvHandle->defMsgSize = size;
+    kvHandle->defMsgSize = 4096;
     kvHandle->ib_port = ib_port;
     kvHandle->rx_depth = 500;
     gidx = -1;
@@ -1251,8 +1257,8 @@ kvHandleFactory(struct kv_server_address *server, unsigned size, int argc, char 
     kvHandle->my_dest.qpn = kvHandle->ctx->qp->qp_num;
     kvHandle->my_dest.psn = lrand48() & 0xffffff;
     inet_ntop(AF_INET6, &kvHandle->my_dest.gid, kvHandle->gid, sizeof kvHandle->gid);
-    printf("  local address:  LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n", kvHandle->my_dest.lid,
-           kvHandle->my_dest.qpn, kvHandle->my_dest.psn, kvHandle->gid);
+    //printf("  local address:  LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n", kvHandle->my_dest.lid,
+//           kvHandle->my_dest.qpn, kvHandle->my_dest.psn, kvHandle->gid);
 
 
     if (servername) {
@@ -1266,8 +1272,8 @@ kvHandleFactory(struct kv_server_address *server, unsigned size, int argc, char 
     }
 
     inet_ntop(AF_INET6, &kvHandle->rem_dest->gid, kvHandle->gid, sizeof kvHandle->gid);
-    printf("  remote address: LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n", kvHandle->rem_dest->lid,
-           kvHandle->rem_dest->qpn, kvHandle->rem_dest->psn, kvHandle->gid);
+    //printf("  remote address: LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n", kvHandle->rem_dest->lid,
+//           kvHandle->rem_dest->qpn, kvHandle->rem_dest->psn, kvHandle->gid);
 
     if (servername) {
         if (pp_connect_ctx(kvHandle->ctx, ib_port, kvHandle->my_dest.psn, mtu, sl, kvHandle->rem_dest, gidx)) {
@@ -1302,15 +1308,15 @@ int find_key_server(void *dkv_h, const char *key, char **findResultMsg, bool new
     if (new_val) {
         cmd = SET_FIND_KEY_SERVER;
     }
-    char *msg = malloc(roundup(m_handle->indexer->defMsgSize, page_size));
+    char *msg = malloc(roundup(m_handle->mkv->defMsgSize, page_size));
     sprintf(msg, "%d:%s:%d", cmd, key, m_handle->mkv->num_servers);
     fflush(stdout);
-    printf("Sending FIND key - server for key: %s -  msg: %s with size %d\n", key, msg, strlen(msg) + 1);
+    //printf("Sending FIND key - server for key: %s -  msg: %s with size %d\n", key, msg, strlen(msg) + 1);
     fflush(stdout);
     cstm_post_recv(m_handle->indexer->ctx->pd, m_handle->indexer->ctx->qp, *findResultMsg,
-                   roundup(m_handle->indexer->defMsgSize, page_size) + 1);
+                   roundup(m_handle->mkv->defMsgSize, page_size) + 1);
     cstm_post_send(m_handle->indexer->ctx->pd, m_handle->indexer->ctx->qp, msg, strlen(msg) + 1);
-    printf("Pooling for result value \n");
+    //printf("Pooling for result value \n");
     fflush(stdout);
     int scnt = 1, recved = 1;
     int iterations = 10000;
@@ -1341,7 +1347,7 @@ int find_key_server(void *dkv_h, const char *key, char **findResultMsg, bool new
                     break;
 
                 case PINGPONG_RECV_WRID:
-                    printf("Got server get prep msg: %s\n", *findResultMsg);
+                    //printf("Got server get prep msg: %s\n", *findResultMsg);
 
 
                     recved--;
@@ -1359,7 +1365,7 @@ int find_key_server(void *dkv_h, const char *key, char **findResultMsg, bool new
     }
     fflush(stdout);
     if (iterations == 0) {
-        printf("Failed getting response from server for location of a proper key server for key: %s\n", key);
+        ////printf("Failed getting response from server for location of a proper key server for key: %s\n", key);
         return -1;
     }
 
@@ -1379,7 +1385,7 @@ int dkv_set(void *dkv_h, const char *key, const char *value, unsigned length) {
 
     /* Step #2: The Index server responds with LOCATION(#kv-server-id) */
 
-    printf("Processing server Message: %s\n", findResultMsg);
+    //printf("Processing server Message: %s\n", findResultMsg);
     if (strlen(findResultMsg) == 0) {
         fprintf(stderr, "Msg is empty!\n");
         return 0;
@@ -1391,7 +1397,7 @@ int dkv_set(void *dkv_h, const char *key, const char *value, unsigned length) {
     free(findResultMsg);
 
     if (CMD != KEY_SERVER_LOCATION) {
-        printf("Didn't get correct message after sending request for key server location, got CMD: %d\n", CMD);
+        //printf("Didn't get correct message after sending request for key server location, got CMD: %d\n", CMD);
         return 1;
     }
 
@@ -1413,7 +1419,7 @@ int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length) {
 
     /* Step #2: The Index server responds with LOCATION(#kv-server-id) */
 
-    printf("Processing server Message: %s\n", findResultMsg);
+    ////printf("Processing server Message: %s\n", findResultMsg);
     if (strlen(findResultMsg) == 0) {
         fprintf(stderr, "Msg is empty!\n");
         return 0;
@@ -1425,7 +1431,7 @@ int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length) {
     free(findResultMsg);
 
     if (CMD != KEY_SERVER_LOCATION) {
-        printf("Didn't get correct message after sending request for key server location, got CMD: %d\n", CMD);
+        ////printf("Didn't get correct message after sending request for key server location, got CMD: %d\n", CMD);
         return 1;
     }
 
@@ -1443,7 +1449,7 @@ void dkv_release(const char *key, char *value, int kv_id, void *dkv_h) {
 
     /* Step #2: The Index server responds with LOCATION(#kv-server-id) */
 
-    printf("Processing server Message: %s\n", findResultMsg);
+    ////printf("Processing server Message: %s\n", findResultMsg);
     if (strlen(findResultMsg) == 0) {
         fprintf(stderr, "Msg is empty!\n");
         return;
@@ -1455,7 +1461,7 @@ void dkv_release(const char *key, char *value, int kv_id, void *dkv_h) {
     free(findResultMsg);
 
     if (CMD != KEY_SERVER_LOCATION) {
-        printf("Didn't get correct message after sending request for key server location, got CMD: %d\n", CMD);
+        ////printf("Didn't get correct message after sending request for key server location, got CMD: %d\n", CMD);
         return;
     }
 
@@ -1524,7 +1530,8 @@ int main(int argc, char *argv[]) {
     struct kv_server_address indexer[2] = {{.servername = "mlx-stud-03", .port = 63335},
                                            {.servername = NULL, .port = 0}};
 
-    struct kv_server_address servers[2] = {{.servername = "mlx-stud-02", .port = 65433},
+    struct kv_server_address servers[3] = {{.servername = "mlx-stud-02", .port = 65433},
+                                           {.servername = "mlx-stud-04", .port = 55541},
                                            {.servername = NULL, .port = 0}};
     //assert(0 == mkv_open(servers, &kv_ctx));
     assert(0 == dkv_open(servers, indexer, &kv_ctx));
@@ -1536,6 +1543,7 @@ int main(int argc, char *argv[]) {
     struct dkv_ctx *ctx = kv_ctx;
 
     mkv_send_credit(ctx->mkv, 0, 50);
+    mkv_send_credit(ctx->mkv, 1, 50);
 //
 //    if (dkv_set(kv_ctx, key, value, 0)) {
 //        fprintf(stderr, "Couldn't post send\n");
@@ -1583,7 +1591,7 @@ int main(int argc, char *argv[]) {
     //    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
     //    memset(msg,'w', MAX_MSG_TEST);
     //    msg[MAX_MSG_TEST] = '\0';
-    //    printf("Start test\n");
+    //    //printf("Start test\n");
     //
     //    char key[MAX_KEY];
     //    for(int i = 0; i < LOOP_ITER;i++){
@@ -1624,9 +1632,10 @@ int main(int argc, char *argv[]) {
     int i,pid, listenfd, socketfd, hit;
     char* curDir = "./";
     recursive_fill_kv(curDir, kv_ctx);
-    char* value;
-    unsigned int *f_len = NULL;
-    //int getRes = dkv_get(ctx, "./index.html", &value, f_len);
+//    char* value;
+//   unsigned int *f_len = NULL;
+//    int getRes = dkv_get(ctx, "./index.html", &value, f_len);
+
     int port = 5555;
     socklen_t length;
     static struct sockaddr_in cli_addr; /* static = initialised to zeros */
@@ -1664,10 +1673,10 @@ int main(int argc, char *argv[]) {
 //        return 0; /* parent returns OK to shell */
 //    (void)signal(SIGCLD, SIG_IGN); /* ignore child death */
 //    (void)signal(SIGHUP, SIG_IGN); /* ignore terminal hangups */
-    for(i=0;i<32;i++)
-        (void)close(i);		/* close open files */
-    (void)setpgrp();		/* break away from process group */
-    logger(LOG,"nweb starting","8889",getpid());
+//    for(i=0;i<32;i++)
+//        (void)close(i);		/* close open files */
+//    (void)setpgrp();		/* break away from process group */
+    logger(LOG,"nweb starting","5555",getpid());
     /* setup the network socket */
     if((listenfd = socket(AF_INET, SOCK_STREAM,0)) <0)
         logger(ERROR, "system call","socket",0);
@@ -1691,7 +1700,7 @@ int main(int argc, char *argv[]) {
 //        else {
 //            if(pid == 0) { 	/* child */
 //                (void)close(listenfd);
-                web(socketfd,hit,ctx); /* never returns */
+                web(socketfd,hit, ctx); /* never returns */
 //            } else { 	/* parent */
 //                (void)close(socketfd);
 //            }
