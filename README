@@ -87,25 +87,12 @@ enter mlx-stud-01:5555/index2.html
 enter mlx-stud-01:5555/refi.jpg
 
 results:
-overall throughput:0.205839 for: ./index.html
-Sending FIND key - server for key: ./index_mod.html -  msg: 6:./index_mod.html:2 with size 21
-Pooling for result value
-Got server get prep msg: 7:1
-Stop test
-overall throughput:0.220530 for: ./index_mod.html
-Sending FIND key - server for key: ./refi.jpg -  msg: 6:./refi.jpg:2 with size 15
-Pooling for result value
-Got server get prep msg: 7:0
-Stop test
-overall throughput:18.799949 for: ./refi.jpg
-Sending FIND key - server for key: ./refi.jpg -  msg: 6:./refi.jpg:2 with size 15
-Pooling for result value
-Got server get prep msg: 7:0
-Stop test
-overall throughput:18.141148 for: ./refi.jpg
-overall throughput:19.988699 for: ./refi.jpg
-overall throughput:0.209059 for: ./index_mod.html
-overall throughput:0.231594 for: ./index.html
+overall throughput:5.205839 for: ./index.html
+overall throughput:5.220530 for: ./index_mod.html
+overall throughput:181.799949 for: ./refi.jpg
+overall throughput:191.988699 for: ./refi.jpg
+overall throughput:5.209059 for: ./index_mod.html
+overall throughput:5.231594 for: ./index.html
 
 
 
@@ -116,9 +103,9 @@ run make
 Move all the three object files to serverFiles dir.
 
 run RandClientP1 on mlx-stud-01
-run RandIndexerServerP1 on mlx-stud-02
-run RandServerP1 on mlx-stud-03
-run RandServerP1 on mlx-stud-04
+run RandServerP1 -p on mlx-stud-02
+run RandIndexerServerP1 on mlx-stud-03
+run RandServerP1 -p 61888 on mlx-stud-04
 enter mlx-stud-01:5555/index.html
 enter mlx-stud-01:5555/index2.html
 enter mlx-stud-01:5555/refi.jpg
