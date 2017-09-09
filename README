@@ -79,22 +79,22 @@ We run one client one indexer and two servers(see USEAGE)
 
 
 We enter each url twice each time measure the throughput:
-enter mlx-stud-01:5555/index.html
-enter mlx-stud-01:5555/index2.html
-enter mlx-stud-01:5555/refi.jpg
-enter mlx-stud-01:5555/index.html
-enter mlx-stud-01:5555/index2.html
-enter mlx-stud-01:5555/refi.jpg
+enter mlx-stud-01:8845/index.html
+enter mlx-stud-01:8845/index2.html
+enter mlx-stud-01:8845/refi.jpg
+enter mlx-stud-01:8845/index.html
+enter mlx-stud-01:8845/index2.html
+enter mlx-stud-01:8845/refi.jpg
 
 results:
-overall throughput:5.205839 for: ./index.html
-overall throughput:5.220530 for: ./index_mod.html
-overall throughput:181.799949 for: ./refi.jpg
-overall throughput:191.988699 for: ./refi.jpg
-overall throughput:5.209059 for: ./index_mod.html
-overall throughput:5.231594 for: ./index.html
+overall throughput:5.205839 [MB/s] for: ./index.html
+overall throughput:5.220530 [MB/s] for: ./index_mod.html
+overall throughput:181.799949 [MB/s] for: ./refi.jpg
+overall throughput:191.988699 [MB/s] for: ./refi.jpg
+overall throughput:5.209059 [MB/s] for: ./index_mod.html
+overall throughput:5.231594 [MB/s] for: ./index.html
 
-
+We also check on big file 652KB with throughput : 10323.59458[MB/s]
 
 ===================Useage===================
 * In the tar you can find already compiled test scenario.
@@ -103,14 +103,15 @@ run make
 Move all the three object files to serverFiles dir.
 
 run RandClientP1 on mlx-stud-01
-run RandServerP1 -p on mlx-stud-02
-run RandIndexerServerP1 on mlx-stud-03
+run RandServerP1 -p 54222 on mlx-stud-02
+run RandIndexerServerP1 -p 62225 on mlx-stud-03
 run RandServerP1 -p 61888 on mlx-stud-04
-enter mlx-stud-01:5555/index.html
-enter mlx-stud-01:5555/index2.html
-enter mlx-stud-01:5555/refi.jpg
-enter mlx-stud-01:5555/index.html
-enter mlx-stud-01:5555/index2.html
-enter mlx-stud-01:5555/refi.jpg
+
+enter mlx-stud-01:8845/index.html
+enter mlx-stud-01:8845/index2.html
+enter mlx-stud-01:8845/refi.jpg
+enter mlx-stud-01:8845/index.html
+enter mlx-stud-01:8845/index2.html
+enter mlx-stud-01:8845/refi.jpg
 
 * You can change ports and server inside to code.
