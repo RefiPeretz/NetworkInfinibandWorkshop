@@ -742,7 +742,7 @@ int getCmdMsgLogic(handle* kv_handle, char* key){
 }
 
 void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct handle *curHandle) {
-    printf("Dict adding new key: %s ##### value: %s",key, msgSize );
+    printf("Dict adding new key: %s ##### value: %d",key, msgSize );
     if (curHandle->kvListSize == 0) {
         struct keyMrEntry *curMsg = calloc(1, sizeof(keyMrEntry));
         curMsg->key = malloc(strlen(key) + 1);

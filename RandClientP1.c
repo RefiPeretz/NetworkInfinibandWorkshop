@@ -80,14 +80,15 @@ void logger(int type, char *s1, char *s2, int socket_fd)
 }
 
 /* this is a child web server process, so we can exit on errors */
-void web(int fd, int hit, void* dkv_h)
+void web(int fd, int hit, void* ctx)
 {
+    struct dkv_ctx *dkv_h = ctx;
     int j, file_fd, buflen;
     long i, ret, len;
     char * fstr;
-    static char buffer[BUFSIZE+1]; /* static so zero filled */
+    char buffer[BUFSIZE+1]; /* static so zero filled */
 
-    ret =read(fd,buffer,BUFSIZE); 	/* read Web request in one go */
+    ret = read(fd, buffer, BUFSIZE); 	/* read Web request in one go */
     if(ret == 0 || ret == -1) {	/* read failure stop now */
         logger(FORBIDDEN,"failed to read browser request","",fd);
     }
@@ -125,20 +126,21 @@ void web(int fd, int hit, void* dkv_h)
         }
     }
     if(fstr == 0) logger(FORBIDDEN,"file extension type not supported",buffer,fd);
-    char** value;
-    unsigned int* f_len;
-    char* key = &buffer[5];
+    char* value;
+    unsigned int* f_len = NULL;
+    char* rkey = &buffer[5];
     //TODO transfer cur_Dir
     char* prefix = "./";
-    char* key_to_send = malloc((strlen(prefix) + strlen(key) + 1) * sizeof(char));
+    char* key_to_send = malloc((strlen(prefix) + strlen(rkey) + 1) * sizeof(char));
 
-    strcat(key_to_send, prefix);
-    strcat(key_to_send, key);
-
+    strcpy(key_to_send, prefix);
+    strcat(key_to_send, rkey);
+    key_to_send[strlen(prefix) + strlen(rkey)] = '\0';
     /* add the extension */
-    int getRes = dkv_get(dkv_h, "./index.html", value, f_len);
+    int getRes = dkv_get(dkv_h, key_to_send , &value, f_len);
     if(getRes){
         fprintf(stderr, "dkv_get failed with %s\n",key_to_send);
+        return;
     }
     //dkv_get() ->>> get path,
 //    if(( file_fd = open(&buffer[5],O_RDONLY)) == -1) {  /* open the file for reading */
@@ -156,7 +158,7 @@ void web(int fd, int hit, void* dkv_h)
     (void)write(fd, buffer, strlen(buffer));
 
     int counter = 0;
-    while(counter < f_len){
+    while(counter < *f_len){
     /* send file in 8KB block - last block may be smaller */
         //char* end = buffer[0] + BUFSIZE - 1;
         *buffer = buffer[0];
@@ -622,6 +624,16 @@ static void usage(const char *argv0) {
 }
 
 
+int getFreeBufferIndex(handle *kvHandle) {
+    for (int i = 0; i < NUMBER_OF_BUFFERS; i++) {
+        if (kvHandle->isUsed[i] == UN_USED_BUFFER) {
+            kvHandle->isUsed[i] = USED_BUFFER;
+            return i;
+        }
+    }
+    return -1;
+}
+
 int getFromStore(handle *store, const char *key, char **value) {
     int listSize = store->kvListSize;
     for (int i = 0; i < listSize; i++) {
@@ -695,11 +707,11 @@ int kv_open(char *servername, void **kv_handle) {
     return 0;
 };
 
+
 int mkv_set(void *mkv_h, unsigned kv_id, const char *key, const char *value, unsigned int length) {
     struct mkv_handle *m_handle = mkv_h;
     return kv_set(m_handle->kv_handle[kv_id], key, value, length);
 }
-
 
 int sendMsgLogic(handle *kv_handle, char *msg) {
     if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, msg, strlen(msg) + 1)) {
@@ -740,6 +752,7 @@ int sendMsgLogic(handle *kv_handle, char *msg) {
 
 }
 
+
 int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, const char *actualMessage,unsigned length) {
     printf("Processing server message: %s\n", msg);
     if (strlen(msg) == 0) {
@@ -749,7 +762,7 @@ int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, const char *
 
     char * terminatedMessage = (char *) malloc(sizeof(char) * (length + 1));
     memcpy(terminatedMessage, actualMessage, length);
-    terminatedMessage[length] = '\0';
+    //terminatedMessage[length] = '\0';
     struct ibv_mr *sendMr = ibv_reg_mr(kv_handle->ctx->pd, terminatedMessage, length, IBV_ACCESS_LOCAL_WRITE);
     if (!sendMr) {
         fprintf(stderr, "Couldn't register MR in processServerRdmaWriteResponseCmd\n");
@@ -776,7 +789,6 @@ int processServerRdmaWriteResponseCmd(handle *kv_handle, char *msg, const char *
     return 0;
 }
 
-
 int kv_set(void *kv_handle, const char *key, const char *value, unsigned int length) {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = SET_CMD;
@@ -796,7 +808,7 @@ int kv_set(void *kv_handle, const char *key, const char *value, unsigned int len
     }
 
     char *remoteMrMsg = malloc(roundup(kvHandle->defMsgSize, page_size));
-    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, remoteMrMsg, roundup(kvHandle->defMsgSize, page_size))) <
+    if ((cstm_post_recv(kvHandle->ctx->pd, kvHandle->ctx->qp, remoteMrMsg, roundup(kvHandle->defMsgSize, page_size) + 1)) <
         0) {
         perror("Couldn't post receive:");
         return 1;
@@ -854,7 +866,7 @@ int processServerGetReqResponseCmd(handle *kv_handle, struct Message *msg, char 
     return 0;
 }
 
-int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, int kv_id, unsigned int length) {
+int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, int kv_id, unsigned int *length) {
     handle *kvHandle = kv_handle;
     kv_cmd cmd = GET_CMD;
     struct Message *mr_msg;
@@ -867,8 +879,12 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
         return 1;
     }
     char *recv2Msg1;
-    if (kvHandle->usedBuffers < NUMBER_OF_BUFFERS) {
+    if (kvHandle->usedBuffers < NUMBER_OF_BUFFERS) { //TODO: we need to use the size
         int freeIndex = getFreeBufferIndex(kv_handle);
+        if(freeIndex == -1){
+            perror("couldn't fine free buffer");
+
+        }
         recv2Msg1 = clientBuffers + (kv_id * MAX_MSG_TEST + freeIndex * MAX_MSG_TEST);
         kvHandle->usedBuffers++;
     } else {
@@ -919,7 +935,7 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
                         return 0;
                     };
                     char *delim = ":";
-                    mr_msg->addr = strtoul(strtok(recv2Msg1, delim), NULL, 10);
+                    mr_msg->addr = strtoul(strtok(recv2Msg1, delim), NULL, 10); //TODO: BUGGGGGGG
                     mr_msg->mr_rkey = atoi(strtok(NULL, delim));
                     mr_msg->valueSize = atoi(strtok(NULL, delim));
                     recved--;
@@ -936,7 +952,9 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
 
     }
     if (iterations != 0) {
-        *value = calloc(1, mr_msg->valueSize * sizeof(char));
+        length = calloc(1, sizeof(unsigned int));
+        *length = mr_msg->valueSize;
+        *value = (char*) malloc(mr_msg->valueSize* sizeof(char));
         processServerGetReqResponseCmd(kv_handle, mr_msg, value);
         int scntGetReqres = 1;
         while (scntGetReqres) {
@@ -978,16 +996,6 @@ int kv_get(void *kv_handle, const char *key, char **value, char *clientBuffers, 
 int mkv_get(void *mkv_h, unsigned kv_id, const char *key, char **value, unsigned *length) {
     struct mkv_handle *m_handle = mkv_h;
     return kv_get(m_handle->kv_handle[kv_id], key, value, m_handle->clientBuffers, kv_id, length);
-}
-
-int getFreeBufferIndex(handle *kvHandle) {
-    for (int i = 0; i < NUMBER_OF_BUFFERS; i++) {
-        if (kvHandle->isUsed[i] == UN_USED_BUFFER) {
-            kvHandle->isUsed[i] = USED_BUFFER;
-            return i;
-        }
-    }
-
 }
 
 
@@ -1296,12 +1304,14 @@ int find_key_server(void *dkv_h, const char *key, char **findResultMsg, bool new
     }
     char *msg = malloc(roundup(m_handle->indexer->defMsgSize, page_size));
     sprintf(msg, "%d:%s:%d", cmd, key, m_handle->mkv->num_servers);
+    fflush(stdout);
     printf("Sending FIND key - server for key: %s -  msg: %s with size %d\n", key, msg, strlen(msg) + 1);
-
+    fflush(stdout);
     cstm_post_recv(m_handle->indexer->ctx->pd, m_handle->indexer->ctx->qp, *findResultMsg,
-                   roundup(m_handle->indexer->defMsgSize, page_size));
+                   roundup(m_handle->indexer->defMsgSize, page_size) + 1);
     cstm_post_send(m_handle->indexer->ctx->pd, m_handle->indexer->ctx->qp, msg, strlen(msg) + 1);
     printf("Pooling for result value \n");
+    fflush(stdout);
     int scnt = 1, recved = 1;
     int iterations = 10000;
 
@@ -1347,7 +1357,7 @@ int find_key_server(void *dkv_h, const char *key, char **findResultMsg, bool new
         iterations--;
 
     }
-
+    fflush(stdout);
     if (iterations == 0) {
         printf("Failed getting response from server for location of a proper key server for key: %s\n", key);
         return -1;
@@ -1420,7 +1430,7 @@ int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length) {
     }
 
     /* Step #3: The client contacts KV-server with the ID returned in LOCATION, using SET/GET messages. */
-    return mkv_get(ctx->mkv, keyServerLocationID, key, value, 0);
+    return mkv_get(ctx->mkv, keyServerLocationID, key, value, length);
 }
 
 void dkv_release(const char *key, char *value, int kv_id, void *dkv_h) {
@@ -1485,6 +1495,9 @@ void recursive_fill_kv(char const *dirname, void *dkv_h) {
                 char* fstr = (char *)0;
                 for(int i=0;extensions[i].ext != 0;i++) {
                     len = strlen(extensions[i].ext);
+                    if(len == 0){
+                        continue;
+                    }
                     if(!strncmp(&path[buflen-len], extensions[i].ext, len)) {
                         fstr = extensions[i].filetype;
                         dkv_set(dkv_h, path, p, fsize + 1);
@@ -1610,7 +1623,10 @@ int main(int argc, char *argv[]) {
 
     int i,pid, listenfd, socketfd, hit;
     char* curDir = "./";
-    recursive_fill_kv(curDir,kv_ctx);
+    recursive_fill_kv(curDir, kv_ctx);
+    char* value;
+    unsigned int *f_len = NULL;
+    //int getRes = dkv_get(ctx, "./index.html", &value, f_len);
     int port = 5555;
     socklen_t length;
     static struct sockaddr_in cli_addr; /* static = initialised to zeros */
@@ -1675,7 +1691,7 @@ int main(int argc, char *argv[]) {
 //        else {
 //            if(pid == 0) { 	/* child */
 //                (void)close(listenfd);
-                web(socketfd,hit,kv_ctx); /* never returns */
+                web(socketfd,hit,ctx); /* never returns */
 //            } else { 	/* parent */
 //                (void)close(socketfd);
 //            }
