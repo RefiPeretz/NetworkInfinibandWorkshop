@@ -142,7 +142,11 @@ void web(int fd, int hit, void* ctx)
     /* add the extension */
     int getRes = dkv_get(dkv_h, key_to_send , &value, &f_len);
     if(getRes){
-        fprintf(stderr, "dkv_get failed with %s\n",key_to_send);
+        fprintf(stderr, "dkv_get failed with %s\n", key_to_send);
+        (void)sprintf(buffer,"HTTP/1.1 404 NOT FOUND\nServer: nweb/%d.0\nContent-Length: %u\nConnection: close\nContent-Type: %s\n\n", VERSION, 0, fstr); /* Header + a blank line */
+        (void)write(fd, buffer, strlen(buffer));
+        close(fd);
+
         return;
     }
     //dkv_get() ->>> get path,
@@ -1311,12 +1315,12 @@ int find_key_server(void *dkv_h, const char *key, char **findResultMsg, bool new
     char *msg = malloc(roundup(m_handle->mkv->defMsgSize, page_size));
     sprintf(msg, "%d:%s:%d", cmd, key, m_handle->mkv->num_servers);
     fflush(stdout);
-    //printf("Sending FIND key - server for key: %s -  msg: %s with size %d\n", key, msg, strlen(msg) + 1);
+    printf("Sending FIND key - server for key: %s -  msg: %s with size %d\n", key, msg, strlen(msg) + 1);
     fflush(stdout);
     cstm_post_recv(m_handle->indexer->ctx->pd, m_handle->indexer->ctx->qp, *findResultMsg,
                    roundup(m_handle->mkv->defMsgSize, page_size) + 1);
     cstm_post_send(m_handle->indexer->ctx->pd, m_handle->indexer->ctx->qp, msg, strlen(msg) + 1);
-    //printf("Pooling for result value \n");
+    printf("Pooling for result value \n");
     fflush(stdout);
     int scnt = 1, recved = 1;
     int iterations = 10000;
@@ -1347,7 +1351,7 @@ int find_key_server(void *dkv_h, const char *key, char **findResultMsg, bool new
                     break;
 
                 case PINGPONG_RECV_WRID:
-                    //printf("Got server get prep msg: %s\n", *findResultMsg);
+                    printf("Got server get prep msg: %s\n", *findResultMsg);
 
 
                     recved--;
@@ -1397,7 +1401,7 @@ int dkv_set(void *dkv_h, const char *key, const char *value, unsigned length) {
     free(findResultMsg);
 
     if (CMD != KEY_SERVER_LOCATION) {
-        //printf("Didn't get correct message after sending request for key server location, got CMD: %d\n", CMD);
+        printf("Didn't get correct message after sending request for key server location, got CMD: %d\n", CMD);
         return 1;
     }
 
@@ -1431,7 +1435,11 @@ int dkv_get(void *dkv_h, const char *key, char **value, unsigned *length) {
     free(findResultMsg);
 
     if (CMD != KEY_SERVER_LOCATION) {
-        ////printf("Didn't get correct message after sending request for key server location, got CMD: %d\n", CMD);
+        fprintf(stderr, "Didn't get correct message after sending request for key server location, got CMD: %d\n", CMD);
+        return 1;
+    }
+    if (keyServerLocationID == -1) {
+        fprintf(stderr, "Didn't find any stored value for key %s\n", key);
         return 1;
     }
 
@@ -1527,156 +1535,29 @@ int main(int argc, char *argv[]) {
     g_argc = argc;
     g_argv = argv;
 
-    struct kv_server_address indexer[2] = {{.servername = "mlx-stud-03", .port = 63335},
+    struct kv_server_address indexer[2] = {{.servername = "mlx-stud-03", .port = 62225},
                                            {.servername = NULL, .port = 0}};
 
-    struct kv_server_address servers[3] = {{.servername = "mlx-stud-02", .port = 65433},
-                                           {.servername = "mlx-stud-04", .port = 55541},
+    struct kv_server_address servers[3] = {{.servername = "mlx-stud-02", .port = 54222},
+                                           {.servername = "mlx-stud-04", .port = 61888},
                                            {.servername = NULL, .port = 0}};
     //assert(0 == mkv_open(servers, &kv_ctx));
     assert(0 == dkv_open(servers, indexer, &kv_ctx));
-////
-//    char key[4] = "red";
-//    char value[10] = "wedding";
-//    char key2[5] = "red2";
-//    char value2[11] = "wedding2";
     struct dkv_ctx *ctx = kv_ctx;
 
     mkv_send_credit(ctx->mkv, 0, 50);
     mkv_send_credit(ctx->mkv, 1, 50);
-//
-//    if (dkv_set(kv_ctx, key, value, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    char *retVal = malloc(4096);
-//    if (dkv_get(kv_ctx, key, &retVal, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    retVal = malloc(4096);
-//    if (dkv_get(kv_ctx, key, &retVal, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    //dkv_release(retVal, key, kv_ctx);
-//
-//    if (dkv_set(kv_ctx, key2, value2, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    retVal = malloc(4096);
-//    if (dkv_get(kv_ctx, key2, &retVal, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    retVal = malloc(4096);
-//    if (dkv_get(kv_ctx, key2, &retVal, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    retVal = malloc(4096);
-//    if (dkv_get(kv_ctx, key, &retVal, 0)) {
-//        fprintf(stderr, "Couldn't post send\n");
-//        return 1;
-//    }
-//    //dkv_release(retVal, 0, kv_ctx);
-//
-//    //dkv_send_credit(kv_ctx, 0, 50);
-//    struct dkv_handle *m_handle = kv_ctx;
-//    //dkv_close(kv_ctx);
-//    mkv_send_credit(kv_ctx, 0, 2);
-
-    //    //Complicated Test:
-    //    char* msg = malloc((MAX_MSG_TEST * sizeof(char)) + 1);
-    //    memset(msg,'w', MAX_MSG_TEST);
-    //    msg[MAX_MSG_TEST] = '\0';
-    //    //printf("Start test\n");
-    //
-    //    char key[MAX_KEY];
-    //    for(int i = 0; i < LOOP_ITER;i++){
-    //        sprintf(key, "test%d", i);
-    //        if (kv_set(kvHandle, key, msg))
-    //        {
-    //            fprintf(stderr, "Couldn't post send\n");
-    //            return 1;
-    //        }
-    //    }
-    //    for(int i = 0; i < LOOP_ITER;i++){
-    //        char *returnedVal = malloc(MAX_MSG_TEST + 1);
-    //        sprintf(key, "test%d", i);
-    //        if (kv_get(kvHandle, key, &returnedVal))
-    //        {
-    //            fprintf(stderr, "Couldn't kv get the requested key\n");
-    //            return 1;
-    //        }
-    //        //printf("Got value: %s", returnedVal);
-    //        kv_release(returnedVal);
-    //    }
-    //    for(int i = 0; i < LOOP_ITER;i++){
-    //        char *returnedVal = malloc(MAX_MSG_TEST + 1);
-    //        sprintf(key, "test%d", i);
-    //        if (kv_get(kvHandle, key, &returnedVal))
-    //        {
-    //            fprintf(stderr, "Couldn't kv get the requested key\n");
-    //            return 1;
-    //        }
-    //        //printf("Got value: %s", returnedVal);
-    //        kv_release(returnedVal);
-    //    }
-    //
-    //    printf("Stop test\n");
 
 
 
     int i,pid, listenfd, socketfd, hit;
     char* curDir = "./";
     recursive_fill_kv(curDir, kv_ctx);
-//    char* value;
-//   unsigned int *f_len = NULL;
-//    int getRes = dkv_get(ctx, "./index.html", &value, f_len);
-
-    int port = 5555;
+    int port = 8845;
     socklen_t length;
     static struct sockaddr_in cli_addr; /* static = initialised to zeros */
     static struct sockaddr_in serv_addr; /* static = initialised to zeros */
-//
-//    if( argc < 3  || argc > 3 || !strcmp(argv[1], "-?") ) {
-//        (void)printf("hint: nweb Port-Number Top-Directory\t\tversion %d\n\n"
-//                             "\tnweb is a small and very safe mini web server\n"
-//                             "\tnweb only servers out file/web pages with extensions named below\n"
-//                             "\t and only from the named directory or its sub-directories.\n"
-//                             "\tThere is no fancy features = safe and secure.\n\n"
-//                             "\tExample: nweb 8181 /home/nwebdir &\n\n"
-//                             "\tOnly Supports:", VERSION);
-//        for(i=0;extensions[i].ext != 0;i++)
-//            (void)printf(" %s",extensions[i].ext);
-//
-//        (void)printf("\n\tNot Supported: URLs including \"..\", Java, Javascript, CGI\n"
-//                             "\tNot Supported: directories / /etc /bin /lib /tmp /usr /dev /sbin \n"
-//                             "\tNo warranty given or implied\n\tNigel Griffiths nag@uk.ibm.com\n"  );
-//        exit(0);
-//    }
-//    if( !strncmp(argv[2],"/"   ,2 ) || !strncmp(argv[2],"/etc", 5 ) ||
-//        !strncmp(argv[2],"/bin",5 ) || !strncmp(argv[2],"/lib", 5 ) ||
-//        !strncmp(argv[2],"/tmp",5 ) || !strncmp(argv[2],"/usr", 5 ) ||
-//        !strncmp(argv[2],"/dev",5 ) || !strncmp(argv[2],"/sbin",6) ){
-//        (void)printf("ERROR: Bad top directory %s, see nweb -?\n",argv[2]);
-//        exit(3);
-//    }
-//    if(chdir(curDir) == -1){
-//        (void)printf("ERROR: Can't Change to directory %s\n",curDir);
-//        exit(4);
-//    }
-    /* Become deamon + unstopable and no zombies children (= no wait()) */
-//    if(fork() != 0)
-//        return 0; /* parent returns OK to shell */
-//    (void)signal(SIGCLD, SIG_IGN); /* ignore child death */
-//    (void)signal(SIGHUP, SIG_IGN); /* ignore terminal hangups */
-//    for(i=0;i<32;i++)
-//        (void)close(i);		/* close open files */
-//    (void)setpgrp();		/* break away from process group */
-    logger(LOG,"nweb starting","5555",getpid());
+    logger(LOG,"nweb starting","8845",getpid());
     /* setup the network socket */
     if((listenfd = socket(AF_INET, SOCK_STREAM,0)) <0)
         logger(ERROR, "system call","socket",0);
@@ -1693,17 +1574,7 @@ int main(int argc, char *argv[]) {
         length = sizeof(cli_addr);
         if((socketfd = accept(listenfd, (struct sockaddr *)&cli_addr, &length)) < 0)
             logger(ERROR,"system call","accept",0);
-
-//        if((pid = fork()) < 0) {
-//            logger(ERROR,"system call","fork",0);
-//        }
-//        else {
-//            if(pid == 0) { 	/* child */
-//                (void)close(listenfd);
-                web(socketfd,hit, ctx); /* never returns */
-//            } else { 	/* parent */
-//                (void)close(socketfd);
-//            }
+                web(socketfd,hit, ctx);
         }
 
 

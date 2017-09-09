@@ -580,9 +580,8 @@ void addKeyMrElement(int key, int serverID, struct handle *curHandle) {
 //Our super delicious hash function. - djb2 http://www.cse.yorku.ca/~oz/hash.html
 static unsigned int getKeyHash(const char *str) {
 
-    unsigned long hash = 5381;
+    unsigned long hash = 5380;
     int hashedChar;
-
     while (hashedChar = *str++)
         hash = ((hash << 5) + hash) + hashedChar; /* hash * 33 + c */
 
