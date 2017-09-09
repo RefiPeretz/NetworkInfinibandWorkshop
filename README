@@ -64,58 +64,66 @@ RandIndexerServerP1.c - The indexer server, manage storage keys to each server.
 according to ex description when client request url the indexer will locate
 the server which hold the relevant content reference the client to it.
 
-RandServerP1 - server which work the same as ex3. When ask for a key
+RandServerP1.c - server which work the same as ex3. When ask for a key
 which is the relevant URL. the server will send back the content of the
 requested URL.
 
 RandClientP1.c - DKVS-backed Web client able to generate requests to multiple
 
 ===================Tests===================
-We tested all 3 parts.
-Fot the las part we did also testing with not enough credits on purpose and
-only than release.
+We created a in the dir "serverFiles" you can find test scenario.
+The folder hold 2 basic html files and a jpg image.
+We also add the three object files RandServerP1 RandClientP1 RandIndexerServerP1.
+This is our root directory.
+We run one client one indexer and two servers(see USEAGE)
 
-For the first three tests on all pars we did a session of SET and two gets
-on the same value.
-NUMBER_OF_BUFFERS = 2.
 
-Throughput results:
-P1: 71.76[Mbit/s]
-P2: 70.31[Mbit/s]
-P3: 65.57[Mbit/s] (Make seance since there is redundant checks for credits)
+We enter each url twice each time measure the throughput:
+enter mlx-stud-01:5555/index.html
+enter mlx-stud-01:5555/index2.html
+enter mlx-stud-01:5555/refi.jpg
+enter mlx-stud-01:5555/index.html
+enter mlx-stud-01:5555/index2.html
+enter mlx-stud-01:5555/refi.jpg
 
-To check part three we delibertly send more requests than the server can handle and than
-we cal mkv_release some.
-
-Scenario:
-SET
-GET
-GET
-RELEASE
-SET
-GET
-GET
-GET
-RELEASE
-
-Throughput results:
-P3: 1.8[Mbit/s] (We can make it quicker with more efficient timeout methods)
+results:
+overall throughput:0.205839 for: ./index.html
+Sending FIND key - server for key: ./index_mod.html -  msg: 6:./index_mod.html:2 with size 21
+Pooling for result value
+Got server get prep msg: 7:1
+Stop test
+overall throughput:0.220530 for: ./index_mod.html
+Sending FIND key - server for key: ./refi.jpg -  msg: 6:./refi.jpg:2 with size 15
+Pooling for result value
+Got server get prep msg: 7:0
+Stop test
+overall throughput:18.799949 for: ./refi.jpg
+Sending FIND key - server for key: ./refi.jpg -  msg: 6:./refi.jpg:2 with size 15
+Pooling for result value
+Got server get prep msg: 7:0
+Stop test
+overall throughput:18.141148 for: ./refi.jpg
+overall throughput:19.988699 for: ./refi.jpg
+overall throughput:0.209059 for: ./index_mod.html
+overall throughput:0.231594 for: ./index.html
 
 
 
 ===================Useage===================
+* In the tar you can find already compiled test scenario.
 run make
 
-server: serverP3
-client client P3 servername
+Move all the three object files to serverFiles dir.
 
-Run the third scenario test.
-SET
-GET
-GET
-RELEASE
-SET
-GET
-GET
-GET
-RELEASE
+run RandClientP1 on mlx-stud-01
+run RandIndexerServerP1 on mlx-stud-02
+run RandServerP1 on mlx-stud-03
+run RandServerP1 on mlx-stud-04
+enter mlx-stud-01:5555/index.html
+enter mlx-stud-01:5555/index2.html
+enter mlx-stud-01:5555/refi.jpg
+enter mlx-stud-01:5555/index.html
+enter mlx-stud-01:5555/index2.html
+enter mlx-stud-01:5555/refi.jpg
+
+* You can change ports and server inside to code.

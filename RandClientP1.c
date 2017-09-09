@@ -18,13 +18,13 @@
 #include <sys/mman.h>
 
 
-
+#include "MetricsIBV.h"
 #include "pingpong.h"
 
 #define MAX_KEY 10
-#define MAX_MSG_TEST 16384
+#define MAX_MSG_TEST 65536
 #define LOOP_ITER 50
-#define NUMBER_OF_BUFFERS 4
+#define NUMBER_OF_BUFFERS 6
 #define EAGER_PROTOCOL_LIMIT (1 << 22) /* 4KB limit */
 #define USED_BUFFER 1
 #define UN_USED_BUFFER 0
@@ -138,8 +138,13 @@ void web(int fd, int hit, void* ctx)
     strcat(key_to_send, rkey);
     key_to_send[strlen(prefix) + strlen(rkey)] = '\0';
     //printf("after strcat\n");
+    struct timeval start, end;
 
     /* add the extension */
+    if (gettimeofday(&start, NULL)) {
+        perror("gettimeofday");
+        return;
+    }
     int getRes = dkv_get(dkv_h, key_to_send , &value, &f_len);
     if(getRes){
         fprintf(stderr, "dkv_get failed with %s\n", key_to_send);
@@ -149,6 +154,14 @@ void web(int fd, int hit, void* ctx)
 
         return;
     }
+    if (gettimeofday(&end, NULL)) {
+        perror("gettimeofday");
+        return;
+    }
+    printf("Stop test\n");
+    double testTime = timeDifference(start,end);
+    double rdmaThroughput = calcAverageThroughput(1,f_len,testTime);
+    printf("overall throughput:%f for: %s\n",rdmaThroughput,key_to_send);
     //dkv_get() ->>> get path,
 //    if(( file_fd = open(&buffer[5],O_RDONLY)) == -1) {  /* open the file for reading */
 //        logger(NOTFOUND, "failed to open file",&buffer[5],fd);
