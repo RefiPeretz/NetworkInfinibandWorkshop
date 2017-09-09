@@ -1118,7 +1118,7 @@ int mkv_open(struct kv_server_address *servers, void **mkv_h) {
     //TODO maby change to limit number of buffers
     ctx->clientBuffersNum = NUMBER_OF_BUFFERS;
     ctx->clientBuffers = calloc(0, MAX_MSG_TEST * ctx->num_servers * ctx->clientBuffersNum);
-
+    ctx->defMsgSize = 4096;
     for (count = 0; count < ctx->num_servers; count++) {
         if (kvHandleFactory(&servers[count], MAX_MSG_TEST, g_argc, g_argv, &ctx->kv_handle[count])) {
             return 1;
@@ -1302,13 +1302,13 @@ int find_key_server(void *dkv_h, const char *key, char **findResultMsg, bool new
     if (new_val) {
         cmd = SET_FIND_KEY_SERVER;
     }
-    char *msg = malloc(roundup(m_handle->indexer->defMsgSize, page_size));
+    char *msg = malloc(roundup(m_handle->mkv->defMsgSize, page_size));
     sprintf(msg, "%d:%s:%d", cmd, key, m_handle->mkv->num_servers);
     fflush(stdout);
     printf("Sending FIND key - server for key: %s -  msg: %s with size %d\n", key, msg, strlen(msg) + 1);
     fflush(stdout);
     cstm_post_recv(m_handle->indexer->ctx->pd, m_handle->indexer->ctx->qp, *findResultMsg,
-                   roundup(m_handle->indexer->defMsgSize, page_size) + 1);
+                   roundup(m_handle->mkv->defMsgSize, page_size) + 1);
     cstm_post_send(m_handle->indexer->ctx->pd, m_handle->indexer->ctx->qp, msg, strlen(msg) + 1);
     printf("Pooling for result value \n");
     fflush(stdout);
@@ -1691,7 +1691,7 @@ int main(int argc, char *argv[]) {
 //        else {
 //            if(pid == 0) { 	/* child */
 //                (void)close(listenfd);
-                web(socketfd,hit,ctx); /* never returns */
+                web(socketfd,hit, kv_ctx); /* never returns */
 //            } else { 	/* parent */
 //                (void)close(socketfd);
 //            }
