@@ -742,6 +742,7 @@ int getCmdMsgLogic(handle* kv_handle, char* key){
 }
 
 void addKeyMrElement(const char *key, struct ibv_mr *curMr, int msgSize, struct handle *curHandle) {
+    printf("Dict adding new key: %s ##### value: %s",key, msgSize );
     if (curHandle->kvListSize == 0) {
         struct keyMrEntry *curMsg = calloc(1, sizeof(keyMrEntry));
         curMsg->key = malloc(strlen(key) + 1);
@@ -846,7 +847,10 @@ int processClientCmd(handle *kv_handle, char *msg)
 
         printf("Checking client credits:  %d\n", kv_handle->credits);
         if(kv_handle->credits == 0){
-            insert(kv_handle, key);
+            if(!insert(kv_handle, key)){
+                printf("Storing message failed! :( \n");
+                return 1;
+            }
             printf("Storing msg due to insufficient funds :( \n");
             return 0;
         }

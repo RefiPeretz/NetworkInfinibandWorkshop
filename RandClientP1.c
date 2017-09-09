@@ -22,9 +22,9 @@
 #include "pingpong.h"
 
 #define MAX_KEY 10
-#define MAX_MSG_TEST 4096
+#define MAX_MSG_TEST 16384
 #define LOOP_ITER 50
-#define NUMBER_OF_BUFFERS 2
+#define NUMBER_OF_BUFFERS 4
 #define EAGER_PROTOCOL_LIMIT (1 << 22) /* 4KB limit */
 #define USED_BUFFER 1
 #define UN_USED_BUFFER 0
@@ -1480,8 +1480,19 @@ void recursive_fill_kv(char const *dirname, void *dkv_h) {
                 size_t fsize = lseek(fd, (size_t) 0, SEEK_END);
                 void *p = mmap(0, fsize, PROT_READ, MAP_PRIVATE, fd, 0);
                 /* TODO (1LOC): Add a print here to see you found the full paths... */
-                dkv_set(dkv_h, path, &p[2], fsize + 1);
-                munmap(p, fsize);
+                int len;
+                int buflen=strlen(path);
+                char* fstr = (char *)0;
+                for(int i=0;extensions[i].ext != 0;i++) {
+                    len = strlen(extensions[i].ext);
+                    if(!strncmp(&path[buflen-len], extensions[i].ext, len)) {
+                        fstr = extensions[i].filetype;
+                        dkv_set(dkv_h, path, p, fsize + 1);
+                        munmap(p, fsize);
+                        break;
+                    }
+                }
+
                 close(fd);
             }
             free(path);

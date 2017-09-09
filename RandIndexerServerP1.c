@@ -482,8 +482,9 @@ bool insert(handle *kvHandle, char *data) {
         } else {
             kvHandle->rear = kvHandle->msgQue[kvHandle->msgQueItemCount];
         }
+        return true;
     }
-
+    return false;
 }
 
 char *pop(handle *kvHandle) {
@@ -605,6 +606,8 @@ int processClientCmd(handle *kv_handle, char *msg) {
         //We need to find location for the value using hash of the requested key and number
         // of servers as input.
         unsigned int hashedKey = getKeyHash(key);
+        printf("SET_FIND_KEY_SERVER: storing %s with hash %d \n", key, hashedKey);
+
         int serverId = getFromStore(kv_handle, hashedKey);
         if (serverId == -1) {
             //Couldn't find existing spot - let's associate it to new KV SERVER!
@@ -613,7 +616,7 @@ int processClientCmd(handle *kv_handle, char *msg) {
         }
         char *answer = malloc(roundup(kv_handle->defMsgSize, page_size));
         sprintf(answer, "%d:%d", KEY_SERVER_LOCATION, serverId);
-        printf("Prepared the key server location info from store - %s\n", answer);
+        printf("SET_FIND_KEY_SERVER: Prepared the key server location info from store - %s\n", answer);
 
         if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, answer, strlen(answer) + 1)) {
             perror("Couldn't post send: ");
@@ -624,13 +627,17 @@ int processClientCmd(handle *kv_handle, char *msg) {
         //We need the find location of the value using hash of the requested key and number
         // of servers as input.
         unsigned int hashedKey = getKeyHash(key);
+        printf("FIND_KEY_SERVER: got hashfor %s from store - %d\n",key, hashedKey);
+
         int serverId = getFromStore(kv_handle, hashedKey);
+        printf("FIND_KEY_SERVER: got server id from store - %d\n", serverId);
+
         if (serverId == -1) {
             fprintf(stderr, "couldn't find any server holding this key!\n");
         }
         char *answer = malloc(roundup(kv_handle->defMsgSize, page_size));
         sprintf(answer, "%d:%d", KEY_SERVER_LOCATION, serverId);
-        printf("Prepared the key server location info from store - %s\n", answer);
+        printf("FIND_KEY_SERVER: getting server location info from store - %s\n", answer);
         if (cstm_post_send(kv_handle->ctx->pd, kv_handle->ctx->qp, answer, strlen(answer) + 1)) {
             perror("Couldn't post send: ");
             return 1;
