@@ -586,6 +586,14 @@ static unsigned int getKeyHash(const char *str) {
         hash = ((hash << 5) + hash) + hashedChar; /* hash * 33 + c */
 
     return hash%32000;
+
+//    unsigned long result = 0x55555555;
+//
+//    while (*str) {
+//        result ^= *str++;
+//        result = result << 2;
+//    }
+//    return result % 32000;
 }
 
 int processClientCmd(handle *kv_handle, char *msg) {
